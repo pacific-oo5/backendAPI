@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
+from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -27,13 +28,13 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.ngrok-free.app']
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    # for Django
+    # Для Django
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,14 +42,30 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # framework
+    # Framework
     'rest_framework',
-    'corsheaders',
+    'drf_spectacular',  # Для документации API
+    'django.contrib.sites',  # Обязательно для allauth
+    'rest_framework.authtoken', # Не обязательно, если используем JWT, но можно оставить
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',  # Если не используете соц. сети, можно удалить
+    'dj_rest_auth',
+    'dj_rest_auth.registration',  # Для регистрации через dj-rest-auth
+    'rest_framework_simplejwt',  # Для JWT токенов
+    'corsheaders',  # Для CORS
+    # 'multiselectfield', # Ваше кастомное поле, если оно нужно
+
+    # Ваши приложения
+    'api.apps.ApiConfig',
+    'userauth.apps.UserauthConfig'  # Ваше приложение userauth
+
 ]
+
+
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
     # ________________________________________________________
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -57,6 +74,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware'
 ]
 
 ROOT_URLCONF = 'backendAPI.urls'
@@ -76,9 +94,6 @@ TEMPLATES = [
         },
     },
 ]
-
-WSGI_APPLICATION = 'backendAPI.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
@@ -131,3 +146,105 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_AUTH = {
+    'USE_JWT': True,
+    'JWT_AUTH_COOKIE': 'djangojwtauth_cookie',
+    'JWT_AUTH_REFRESH_COOKIE': 'djangojwtauth_refresh_cookie',
+    'USER_DETAILS_SERIALIZER': 'dj_rest_auth.serializers.UserDetailsSerializer',
+    'JWT_AUTH_HTTPONLY': True,
+
+    'LOGIN_SERIALIZER': 'api.serializers.CustomLoginSerializer',
+}
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'userauth.serializers.CustomRegisterSerializer',
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication', # Для админки и сессий
+        # 'rest_framework.authentication.TokenAuthentication', # Можно удалить, если только JWT
+        'rest_framework_simplejwt.authentication.JWTAuthentication', # Для заголовка Bearer токена
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication' # Для токенов в HTTP-Only куках
+    ),
+}
+
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'UPDATE_LAST_LOGIN': True,
+
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'AUDIENCE': None,
+    'ISSUER': None,
+    'JWK_URL': None,
+    'LEEWAY': 0,
+
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+    'TOKEN_USER_CLASS': 'rest_framework_simplejwt.models.TokenUser',
+
+    # Вот это ключевая настройка:
+    'USER_ID_FIELD': 'id', # Какое поле в User модели будет использоваться для ID в токене
+    'USER_ID_CLAIM': 'user_id',
+
+    # Используйте email как поле, по которому будет производиться поиск пользователя
+    # при получении токенов через TokenObtainPairView
+    'USERNAME_FIELD': 'email', # <--- ДОБАВЬТЕ/ИЗМЕНИТЕ ЭТУ СТРОКУ
+
+    'JTI_CLAIM': 'jti',
+
+    'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
+}
+
+
+SPECTACULAR_SETTINGS = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'TITLE': 'СЛАДКИЙ МАЛЬЧИК',
+    'DESCRIPTION': 'ХЗ ЧТО ЗНАЧИТ',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    # OTHER SETTINGS
+}
+
+CORS_ALLOW_ALL_ORIGINS = False
+
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
+
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'https://a9d5-185-117-149-248.ngrok-free.app',
+]
+
+
+SITE_ID = 1
+
+# НОВЫЕ, РЕКОМЕНДОВАННЫЕ НАСТРОЙКИ ALLAUTH:
+# Разрешить вход как по username, так и по email
+ACCOUNT_LOGIN_METHODS = ['email']
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_USERNAME_REQUIRED = False
+
+
+# Эти настройки по-прежнему актуальны:
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_SIGNUP_FIELDS = ['username', 'user_r', 'email', 'password']
+
+WSGI_APPLICATION = 'backendAPI.wsgi.application'
+
+AUTH_USER_MODEL = 'userauth.CustomUser'
+
