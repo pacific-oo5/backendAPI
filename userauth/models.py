@@ -1,6 +1,7 @@
 from django.contrib.auth.models import BaseUserManager, AbstractUser
 from django.db import models
 
+
 class CustomUserManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
         """

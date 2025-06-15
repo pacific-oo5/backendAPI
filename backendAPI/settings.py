@@ -28,7 +28,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.ngrok-free.app']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',  # Для JWT токенов
     'corsheaders',  # Для CORS
     # 'multiselectfield', # Ваше кастомное поле, если оно нужно
+    'django_filters',
 
     # Ваши приложения
     'api.apps.ApiConfig',
@@ -166,19 +167,24 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 
+    'DEFAULT_FILTER_BACKENDS': [
+            'django_filters.rest_framework.DjangoFilterBackend',
+            'rest_framework.filters.SearchFilter',
+        ],
+
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication', # Для админки и сессий
         # 'rest_framework.authentication.TokenAuthentication', # Можно удалить, если только JWT
         'rest_framework_simplejwt.authentication.JWTAuthentication', # Для заголовка Bearer токена
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication' # Для токенов в HTTP-Only куках
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication', # Для токенов в HTTP-Only куках
     ),
 }
 
 
 SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': False,
     'UPDATE_LAST_LOGIN': True,
@@ -219,13 +225,17 @@ SPECTACULAR_SETTINGS = {
     # OTHER SETTINGS
 }
 
-CORS_ALLOW_ALL_ORIGINS = False
 
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000']
+
+CORS_ALLOWED_ORIGINS = ['http://192.168.0.106:3001', 'http://localhost:3000', 'https://hardy-griffon-stunning.ngrok-free.app']
 
 CSRF_TRUSTED_ORIGINS = [
+    'http://192.168.0.106:3001',
     'http://localhost:3000',
-    'https://a9d5-185-117-149-248.ngrok-free.app',
+    'http://localhost:3001',
+    'https://hardy-griffon-stunning.ngrok-free.app',
+    'https://quality-herring-fine.ngrok-free.app',
+
 ]
 
 
@@ -248,3 +258,5 @@ WSGI_APPLICATION = 'backendAPI.wsgi.application'
 
 AUTH_USER_MODEL = 'userauth.CustomUser'
 
+CORS_ALLOW_ALL_ORIGINS = True   # на время отладки
+CORS_ALLOW_CREDENTIALS = True

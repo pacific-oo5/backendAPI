@@ -4,8 +4,10 @@ from rest_framework_simplejwt.tokens import RefreshToken # Для генерац
 from dj_rest_auth.serializers import LoginSerializer
 from allauth.account.auth_backends import AuthenticationBackend
 from django.contrib.auth import get_user_model
-from api.models import Vacancy
+from api.models import Vacancy, VacancyResponse
 
+
+User = get_user_model()
 
 class CustomLoginSerializer(LoginSerializer):
     # Мы явно убираем поле 'username' из ожидаемых входных данных
@@ -97,7 +99,8 @@ class RegisterSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"email": "Пользователь с таким email уже существует."})
         return data
 
-    def validate_email(self, value):
+    @staticmethod
+    def validate_email(value):
         # Проверка уникальности email при регистрации
         if get_user_model().objects.filter(email=value).exists():
             raise serializers.ValidationError("Пользователь с таким email уже существует.")
@@ -174,9 +177,31 @@ class CustomAuthSerializer(serializers.Serializer):
 
 class VacancySerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    username = serializers.CharField(source='user.username', read_only=True)
+
     class Meta:
         model = Vacancy
         fields = '__all__'
         # Если вы хотите разрешить только определенные поля для записи, используйте read_only_fields
         # read_only_fields = ('published_at', 'is_active',)
 
+
+class VacancyResponseSerializer(serializers.ModelSerializer):
+    worker = serializers.SerializerMethodField()
+
+    class Meta:
+        model = VacancyResponse
+        fields = ['id', 'vacancy', 'worker', 'is_favorite', 'responded_at', 'status']
+
+    def get_worker(self, obj):
+        return {
+            'id': obj.worker.id,
+            'username': obj.worker.username,
+            'email': obj.worker.email,
+        }
+
+
+class RespondedUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'status']  # добавь, что нужно
