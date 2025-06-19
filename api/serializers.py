@@ -1,11 +1,12 @@
+from email.policy import default
+
 from rest_framework import serializers
 from django.contrib.auth import authenticate # Функция authenticate из Django
 from rest_framework_simplejwt.tokens import RefreshToken # Для генерации токенов
 from dj_rest_auth.serializers import LoginSerializer
 from allauth.account.auth_backends import AuthenticationBackend
 from django.contrib.auth import get_user_model
-from api.models import Vacancy, VacancyResponse
-
+from api.models import Vacancy, VacancyResponse, Anketa
 
 User = get_user_model()
 
@@ -58,69 +59,6 @@ class CustomLoginSerializer(LoginSerializer):
         # Добавляем найденного пользователя в validated_data
         attrs['user'] = user
         return attrs
-
-
-class RegisterSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(required=False, allow_blank=True)
-    email = serializers.EmailField(required=True)
-    user_r = serializers.BooleanField(
-        required=False,  # Сделать необязательным, если пользователь не отметит
-        default=False,  # По умолчанию считаем, что пользователь не рекрутер
-        help_text="Отметьте, если вы хотите публиковать вакансии."
-    )
-    password = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
-    password_confirm = serializers.CharField(write_only=True, required=True, style={'input_type': 'password'})
-
-    def save(self, request):
-        user = super().save(request)  # Сначала вызываем родительский save(), чтобы создать пользователя
-
-        # Теперь устанавливаем значение user_r на основе поля is_recruiter
-        # Если is_recruiter не было предоставлено или было False, user_r будет False (по умолчанию)
-        user.user_r = self.validated_data.get('user_r', False)
-        user.save()
-
-        return user
-
-    class Meta:
-        model = get_user_model()
-        fields = ('username', 'user_r', 'email', 'password', 'password_confirm')
-        extra_kwargs = {
-            'password': {'write_only': True},
-            'email': {'required': True},
-        }
-
-    def validate(self, data):
-        # Проверка совпадения паролей
-        if data['password'] != data['password_confirm']:
-            raise serializers.ValidationError({"password": "Пароли не совпадают."})
-
-        # Проверка уникальности email
-        if get_user_model().objects.filter(email=data['email']).exists():
-            raise serializers.ValidationError({"email": "Пользователь с таким email уже существует."})
-        return data
-
-    @staticmethod
-    def validate_email(value):
-        # Проверка уникальности email при регистрации
-        if get_user_model().objects.filter(email=value).exists():
-            raise serializers.ValidationError("Пользователь с таким email уже существует.")
-        return value
-
-    def create(self, validated_data):
-        # Удаляем password_confirm, так как он не нужен для создания объекта User
-        validated_data.pop('password_confirm')
-        username = validated_data['email'] # Используем email как username
-        if get_user_model().objects.filter(username=username).exists():
-             # Если username (email) уже занят, можно добавить суффикс или попросить пользователя ввести username
-            username = f"{validated_data['email'].split('@')[0]}_{get_user_model().objects.count() + 1}" # Очень простой способ избежать дубликатов
-
-        user = get_user_model().objects.create_user(
-            username=username, # Заменили на сгенерированный username
-            email=validated_data['email'],
-            user_r=validated_data['user_r'],
-            password=validated_data['password'],
-        )
-        return user
 
 
 class CustomAuthSerializer(serializers.Serializer):
@@ -178,30 +116,43 @@ class CustomAuthSerializer(serializers.Serializer):
 class VacancySerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     username = serializers.CharField(source='user.username', read_only=True)
+    telegram_link = serializers.SerializerMethodField
 
     class Meta:
         model = Vacancy
-        fields = '__all__'
+        fields = ['id','username', 'user', 'name', 'description', 'about_me', 'work_type', 'work_time',
+            'salary', 'country', 'city', 'is_remote', 'requirements',
+            'responsibilities', 'telegram', 'telegram_link', 'published_at', 'is_active']
         # Если вы хотите разрешить только определенные поля для записи, используйте read_only_fields
         # read_only_fields = ('published_at', 'is_active',)
 
 
+
 class VacancyResponseSerializer(serializers.ModelSerializer):
-    worker = serializers.SerializerMethodField()
+    status = serializers.CharField(read_only=True)
+    anketa_id = serializers.SerializerMethodField()
+    anketa_username = serializers.SerializerMethodField()
 
     class Meta:
         model = VacancyResponse
-        fields = ['id', 'vacancy', 'worker', 'is_favorite', 'responded_at', 'status']
+        fields = ['id', 'vacancy', 'worker', 'is_favorite', 'responded_at', 'status', 'anketa_id', 'anketa_username']
+        read_only_fields = ['id', 'responded_at']
 
-    def get_worker(self, obj):
-        return {
-            'id': obj.worker.id,
-            'username': obj.worker.username,
-            'email': obj.worker.email,
-        }
+    def get_anketa_id(self, obj):
+        return obj.anketa.id if obj.anketa else None
+
+    def get_anketa_username(self, obj):
+        return obj.anketa.user.username if obj.anketa and obj.anketa.user else None
 
 
 class RespondedUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'status']  # добавь, что нужно
+
+
+class AnketaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Anketa
+        fields = '__all__'
+        read_only_fields = ['user']

@@ -1,6 +1,7 @@
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from rest_framework import serializers
 
+
 class CustomRegisterSerializer(RegisterSerializer):
     user_r = serializers.BooleanField(required=False)
 

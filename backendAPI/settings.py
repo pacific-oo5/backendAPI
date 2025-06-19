@@ -58,12 +58,10 @@ INSTALLED_APPS = [
     'django_filters',
 
     # Ваши приложения
-    'api.apps.ApiConfig',
+    'api',
     'userauth.apps.UserauthConfig'  # Ваше приложение userauth
 
 ]
-
-
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

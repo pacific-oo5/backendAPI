@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
+
 class CustomRegisterView(RegisterView):
     serializer_class = CustomRegisterSerializer
 
@@ -19,7 +20,3 @@ class UserDetailsView(APIView):
             "email": user.email,
             "user_r": user.user_r
         })
-
-
-# class UserListView(generics.ListAPIView):
-#     queryset = User.objects.all()
