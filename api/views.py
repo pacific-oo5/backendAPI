@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import VacancyResponse, Vacancy, Anketa
@@ -13,7 +12,7 @@ from rest_framework import viewsets
 
 
 class VacancyListView(generics.ListAPIView):
-    queryset = Vacancy.objects.filter(is_active=True)
+    queryset = Vacancy.objects.filter(is_active=True).order_by('-published_at')
     serializer_class = VacancySerializer
     permission_classes = [permissions.AllowAny]
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
@@ -22,8 +21,7 @@ class VacancyListView(generics.ListAPIView):
         'work_type': ['exact'],
         'work_time': ['exact'],
     }
-    search_fields = ('name', 'location')
-
+    search_fields = ('name', 'city', 'country')
 
 class VacancyDetailView(generics.RetrieveAPIView):
     queryset = Vacancy.objects.all()

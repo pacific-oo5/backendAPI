@@ -132,10 +132,12 @@ class VacancyResponseSerializer(serializers.ModelSerializer):
     status = serializers.CharField(read_only=True)
     anketa_id = serializers.SerializerMethodField()
     anketa_username = serializers.SerializerMethodField()
+    email = serializers.CharField(source='worker.user.email', read_only=True)
+
 
     class Meta:
         model = VacancyResponse
-        fields = ['id', 'vacancy', 'worker', 'is_favorite', 'responded_at', 'status', 'anketa_id', 'anketa_username']
+        fields = ['id', 'vacancy', 'worker', 'is_favorite', 'responded_at', 'status', 'anketa_id', 'anketa_username', 'email']
         read_only_fields = ['id', 'responded_at']
 
     def get_anketa_id(self, obj):

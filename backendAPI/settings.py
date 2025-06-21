@@ -28,7 +28,13 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '192.168.0.106',
+    'quality-herring-fine.ngrok-free.app',
+    'hardy-griffon-stunning.ngrok-free.app',
+]
 
 
 # Application definition
@@ -255,6 +261,5 @@ ACCOUNT_SIGNUP_FIELDS = ['username', 'user_r', 'email', 'password']
 WSGI_APPLICATION = 'backendAPI.wsgi.application'
 
 AUTH_USER_MODEL = 'userauth.CustomUser'
-
-CORS_ALLOW_ALL_ORIGINS = True   # на время отладки
+  # на время отладки
 CORS_ALLOW_CREDENTIALS = True
