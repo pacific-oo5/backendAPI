@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 from django.contrib.auth import get_user_model
 
-from api.validation import validate_phone_number, validate_telegram
+from api.validation import validate_phone_number
 
 
 STATUS_CHOICES = (
@@ -79,14 +79,6 @@ class Vacancy(models.Model):
     responsibilities = models.TextField(
         verbose_name='Обязанности',
         help_text='Что нужно будет делать на работе'
-    )
-    telegram = models.CharField(
-        max_length=32,
-        verbose_name='Telegram username',
-        validators=[validate_telegram],
-        null=True,
-        blank=True,
-        help_text='Укажите имя Telegram без @, например: myusername'
     )
     published_at = models.DateTimeField(
         auto_now=True,

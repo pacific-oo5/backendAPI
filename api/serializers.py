@@ -122,7 +122,7 @@ class VacancySerializer(serializers.ModelSerializer):
         model = Vacancy
         fields = ['id','username', 'user', 'name', 'description', 'about_me', 'work_type', 'work_time',
             'salary', 'country', 'city', 'is_remote', 'requirements',
-            'responsibilities', 'telegram', 'telegram_link', 'published_at', 'is_active']
+            'responsibilities', 'published_at', 'is_active']
         # Если вы хотите разрешить только определенные поля для записи, используйте read_only_fields
         # read_only_fields = ('published_at', 'is_active',)
 
