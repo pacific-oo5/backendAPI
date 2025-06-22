@@ -6,14 +6,13 @@
 
 - Python 3.10+
 - Git
-- PostgreSQL (опционально)
 
 ## 🚀 Установка
 
 ```bash
 # 1. Клонировать репозиторий
-git clone https://github.com/yourusername/yourproject.git
-cd yourproject
+git clone https://github.com/pacific-oo5/backendAPI.git
+cd backendAPI
 
 # 2. Создать виртуальное окружение
 python -m venv venv
