@@ -1,5 +1,3 @@
-from email.policy import default
-
 from rest_framework import serializers
 from django.contrib.auth import authenticate # Функция authenticate из Django
 from rest_framework_simplejwt.tokens import RefreshToken # Для генерации токенов
@@ -116,7 +114,6 @@ class CustomAuthSerializer(serializers.Serializer):
 class VacancySerializer(serializers.ModelSerializer):
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
     username = serializers.CharField(source='user.username', read_only=True)
-    telegram_link = serializers.SerializerMethodField
 
     class Meta:
         model = Vacancy

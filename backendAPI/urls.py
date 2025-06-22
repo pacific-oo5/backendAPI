@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.urls import path, include
-from dj_rest_auth.registration.views import RegisterView
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 urlpatterns = [

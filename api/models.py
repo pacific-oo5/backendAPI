@@ -94,11 +94,6 @@ class Vacancy(models.Model):
     def get_responded_workers(self):
         return [resp.worker.id for resp in self.responses.all()]
 
-    def telegram_link(self):
-        if self.telegram:
-            return f"https://t.me/{self.telegram}"
-        return None
-
     def __str__(self):
         return str(self.name)
 
