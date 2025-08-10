@@ -11,7 +11,7 @@ from django.views.decorators.http import require_POST
 from django.contrib import messages
 
 from .choices import STATUS_CHOICES, WORK_CHOICES, WOKR_TIME_CHOICES
-from .models import VacancyResponse, Vacancy, Anketa
+from .models import VacancyResponse, Vacancy, Anketa, VacancyView
 from .forms import AnketaForm, VacancyForm
 from .ai_search import get_similar_vacancies
 
@@ -152,10 +152,11 @@ def vacancy_toggle(request, pk):
 @login_required
 def vacancy_stats(request, pk):
     vacancy = get_object_or_404(Vacancy, pk=pk, user=request.user)
-    # Примерные данные, можно заменить на реальные просмотры/отклики
+    views_count = VacancyView.objects.filter(vacancy=vacancy).count()
+    responses_count = VacancyResponse.objects.filter(vacancy=vacancy).count()
     stats = {
-        "views": 123,
-        "responses": 10,
+        "views": views_count,
+        "responses": responses_count,
         "created": vacancy.published_at,
         "is_active": vacancy.is_active,
     }

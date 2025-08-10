@@ -80,7 +80,13 @@ class Vacancy(models.Model):
     def __str__(self):
         return str(self.name)
 
-
+class VacancyView(models.Model):
+    vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), null=True, blank=True, on_delete=models.SET_NULL)
+    ip = models.GenericIPAddressField(null=True, blank=True)
+    viewed_at = models.DateTimeField(auto_now_add=True)
+    
+    
 class VacancyResponse(models.Model):
     worker = models.ForeignKey(
         get_user_model(),
