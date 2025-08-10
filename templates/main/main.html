@@ -1,0 +1,187 @@
+{% load vacancy_tags %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>СЛАДКИЙ МАЛЬЧИК</title>
+    <link rel="stylesheet" href="{% static 'main/css/main.css' %}">
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Навигационное меню -->
+    {% include 'partials/menu.html' %}
+    
+    {% block content %}
+
+    <main class="container my-5">
+        {% include 'partials/search_form.html' %}
+    <!-- Кнопка фильтрации для мобилки -->
+        <button id="mobileFilterBtn" class="btn btn-primary d-md-none" aria-label="Фильтрация">
+            <i class="bi bi-funnel"></i>
+        </button>
+
+        <!-- Модальное окно фильтрации -->
+        <div class="modal fade" id="mobileFilterModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen-sm-down">
+            <div class="modal-content">
+            <form method="get">
+                <div class="modal-header">
+                <h5 class="modal-title">Фильтрация</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                {% include 'partials/filter_form.html' %}
+                </div>
+                <div class="modal-footer">
+                <button type="submit" class="btn btn-primary w-100">Найти</button>
+                </div>
+            </form>
+            </div>
+        </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-12">
+                <h1 class="display-4">Найдите работу мечты</h1>
+                <p class="lead">Лучшие вакансии в одном месте</p>
+            </div>
+        </div>
+
+        <!-- Вакансии -->
+        <div class="row">
+            <h2 class="mb-4">Последние вакансии</h2>
+            <div class="row" id="vacancy-container">
+                {% include 'partials/vacancy_list.html' %}
+            </div>
+        </div>
+        </main>
+        {% endblock %}
+
+    <!-- Футер -->
+    {% include 'partials/footer.html' %}
+    
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <!-- Bootstrap JS + Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script>
+  window.onload = function () {
+    google.accounts.id.initialize({
+      client_id: 'ВАШ_GOOGLE_CLIENT_ID',
+      callback: handleCredentialResponse,
+    });
+    google.accounts.id.prompt(); // Показывает One Tap
+  }
+
+  function handleCredentialResponse(response) {
+    // Отправь токен на сервер
+    fetch('/google-onetap-login/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      body: JSON.stringify({credential: response.credential})
+    }).then(res => {
+      if (res.ok) location.reload();
+    });
+  }
+</script>
+
+    <script>
+        let page = 2
+        let loading = false;
+        let hasNext = true;
+
+        function getQueryParams() {
+            const params = new URLSearchParams(window.location.search);
+            params.set('page', page);
+            return params.toString();
+        }
+
+        async function loadMore() {
+            if (loading || !hasNext) return;
+            loading = true;
+            document.getElementById("loading").style.display = "block";
+
+            const res = await fetch(`/?${getQueryParams()}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const data = await res.json();
+
+            const container = document.getElementById("vacancy-container");
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = data.html;
+
+            tempDiv.querySelectorAll('.col-md-6').forEach(el => {
+                container.appendChild(el);
+            });
+
+            hasNext = data.has_next;
+            page++;
+            loading = false;
+            document.getElementById("loading").style.display = "none";
+        }
+
+        window.addEventListener("scroll", () => {
+            if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 200) {
+                loadMore();
+            }
+        });
+
+        const filterBtn = document.getElementById('mobileFilterBtn');
+        const footer = document.querySelector('footer');
+
+        function checkFilterBtnVisibility() {
+            if (window.innerWidth > 768) {
+                filterBtn.style.display = 'none';
+                return;
+            }
+
+            const footerRect = footer.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+
+            // Если футер виден хотя бы частично — скрываем кнопку
+            if (footerRect.top < windowHeight) {
+                filterBtn.style.display = 'none';
+            } else {
+                filterBtn.style.display = 'block';
+            }
+        }
+
+    window.addEventListener('scroll', checkFilterBtnVisibility);
+    window.addEventListener('resize', checkFilterBtnVisibility);
+
+    // Инициализация состояния при загрузке
+    document.addEventListener('DOMContentLoaded', checkFilterBtnVisibility);
+
+    filterBtn.addEventListener('click', () => {
+        const modal = new bootstrap.Modal(document.getElementById('mobileFilterModal'));
+        modal.show();
+    });
+
+    function checkFilterBtnVisibility() {
+    if (window.innerWidth > 768) {
+        filterBtn.classList.remove('show');
+        return;
+    }
+
+    const footerRect = footer.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+
+    if (footerRect.top < windowHeight) {
+        filterBtn.classList.remove('show');
+    } else {
+        filterBtn.classList.add('show');
+    }
+}
+    </script>
+
+</body>
+</html>

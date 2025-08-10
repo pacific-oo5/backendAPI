@@ -1,234 +1,257 @@
 from django.contrib.auth import get_user_model
-from django.shortcuts import get_object_or_404
-from rest_framework import generics, permissions
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.urls import reverse, reverse_lazy
+from django.views import generic
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
+from django.contrib import messages
+
+from .choices import STATUS_CHOICES, WORK_CHOICES, WOKR_TIME_CHOICES
 from .models import VacancyResponse, Vacancy, Anketa
-from .permissions import IsRecruiter, IsNotRecruiter
-from .serializers import VacancySerializer, VacancyResponseSerializer, AnketaSerializer
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework import viewsets
+from .forms import AnketaForm, VacancyForm
+from .ai_search import get_similar_vacancies
 
 
-class VacancyListView(generics.ListAPIView):
-    queryset = Vacancy.objects.filter(is_active=True).order_by('-published_at')
-    serializer_class = VacancySerializer
-    permission_classes = [permissions.AllowAny]
-    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
-    filterset_fields = {
-        'salary': ['gte', 'lte'],
-        'work_type': ['exact'],
-        'work_time': ['exact'],
-    }
-    search_fields = ('name', 'city', 'country')
-
-class VacancyDetailView(generics.RetrieveAPIView):
-    queryset = Vacancy.objects.all()
-    serializer_class = VacancySerializer
-    permission_classes = [permissions.AllowAny]
-
-
-class VacancyViewSet(viewsets.ModelViewSet):
-    serializer_class = VacancySerializer
-    permission_classes = [permissions.IsAuthenticated, IsRecruiter]
+class MyVacancyListView(generic.ListView):
+    model = Vacancy
+    template_name = 'vacancy/profile.html'
 
     def get_queryset(self):
         return Vacancy.objects.filter(user=self.request.user)
+    
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-
-class RespondToVacancyView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request, pk):
-        user = request.user
-        anketa_id = request.data.get("anketa_id")
-
-        if not anketa_id:
-            return Response({'detail': 'Анкета не выбрана.'}, status=400)
-
-        try:
-            vacancy = Vacancy.objects.get(id=pk)
-        except Vacancy.DoesNotExist:
-            return Response({'detail': 'Vacancy not found'}, status=404)
-
-        try:
-            anketa = Anketa.objects.get(id=anketa_id, user=user, is_active=True)
-        except Anketa.DoesNotExist:
-            return Response({'detail': 'Анкета не найдена или не активна.'}, status=404)
-
-        obj, created = VacancyResponse.objects.get_or_create(worker=user, vacancy=vacancy)
-
-        if not created:
-            return Response({'detail': 'Уже откликнулись.'}, status=400)
-
-        obj.anketa = anketa
-        obj.save()
-
-        return Response({'detail': 'Успешно откликнулись.'}, status=201)
-
-
-class VacancyResponsesView(generics.ListAPIView):
-    serializer_class = VacancyResponseSerializer
-    permission_classes = [permissions.IsAuthenticated]
+class VacancyListView(generic.ListView):
+    model = Vacancy
+    template_name = 'main/main.html'
+    context_object_name = 'vacancies'
+    paginate_by = 10
 
     def get_queryset(self):
-        vacancy_id = self.kwargs.get('vacancy_id')
-        return VacancyResponse.objects.filter(vacancy__id=vacancy_id, vacancy__user=self.request.user)
+        queryset = Vacancy.objects.filter(is_active=True).order_by('-published_at')
+        query = self.request.GET.get('q')
+        work_type = self.request.GET.get('work_type')
+        work_time = self.request.GET.get('work_time')
+        min_salary = self.request.GET.get('min_salary')
+        max_salary = self.request.GET.get('max_salary')
 
+        if query:
+            queryset = queryset.filter(
+                Q(name__icontains=query) |
+                Q(description__icontains=query) |
+                Q(city__icontains=query) |
+                Q(country__icontains=query)
+            )
+        if work_type:
+            queryset = queryset.filter(work_type=work_type)
+        if work_time:
+            queryset = queryset.filter(work_time=work_time)
+        if min_salary:
+            queryset = queryset.filter(salary__gte=min_salary)
+        if max_salary:
+            queryset = queryset.filter(salary__lte=max_salary)
 
-class FavoriteVacancyListView(generics.ListAPIView):
-    serializer_class = VacancySerializer
-    permission_classes = [permissions.IsAuthenticated]
+        return queryset
 
-    def get_queryset(self):
-        return Vacancy.objects.filter(responses__worker=self.request.user, responses__is_favorite=True).distinct()
+    def get(self, request, *args, **kwargs):
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            self.object_list = self.get_queryset()
+            page = self.request.GET.get('page', 1)
+            paginator = self.get_paginator(self.object_list, self.paginate_by)
+            vacancies = paginator.get_page(page)
+            html = render_to_string('partials/vacancy_list.html', {'vacancies': vacancies})
+            return JsonResponse({
+                'html': html,
+                'has_next': vacancies.has_next()
+            })
+        return super().get(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'work_type_selected': self.request.GET.get('work_type', ''),
+            'work_time_selected': self.request.GET.get('work_time', ''),
+            'search_query': self.request.GET.get('q', ''),
+            'min_salary': self.request.GET.get('min_salary', ''),
+            'max_salary': self.request.GET.get('max_salary', ''),
+            'work_choices': WORK_CHOICES,
+            'work_time_choices': WOKR_TIME_CHOICES,
+        })
+        return context
 
-class AddToFavoritesView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+class VacancyDetailView(generic.DetailView):
+    model = Vacancy
+    template_name = 'vacancy/vacancy_detail.html'
+    context_object_name = 'vacancy'
 
-    def post(self, request, vacancy_id):
-        user = request.user
-        try:
-            vacancy = Vacancy.objects.get(id=vacancy_id)
-        except Vacancy.DoesNotExist:
-            return Response({'detail': 'Vacancy not found'}, status=404)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        all_vacancies = Vacancy.objects.filter(is_active=True).order_by('-published_at')
 
-        response, _ = VacancyResponse.objects.get_or_create(worker=user, vacancy=vacancy)
-        response.is_favorite = True
-        response.save()
-
-        return Response({'detail': 'Added to favorites'}, status=200)
-
-
-class RespondedUsersView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, vacancy_id):
-        try:
-            vacancy = Vacancy.objects.get(id=vacancy_id)
-        except Vacancy.DoesNotExist:
-            return Response({'detail': 'Vacancy not found'}, status=404)
-
-        if vacancy.user != request.user:
-            return Response({'detail': 'Нет доступа'}, status=403)
-
-        responses = VacancyResponse.objects.filter(vacancy=vacancy).select_related('worker')
-        serializer = VacancyResponseSerializer(responses, many=True)
-        return Response(serializer.data)
-
-
-class MyVacancyListView(generics.ListAPIView):
-    serializer_class = VacancySerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return Vacancy.objects.filter(user=self.request.user)
-
-
-# class VacancyViewSet(viewsets.ModelViewSet):
-#     queryset = Vacancy.objects.filter(is_active=True)
-#     serializer_class = VacancySerializer
-#     filterset_class = VacancyFilter
-#     filter_backends = [django_filters.rest_framework.DjangoFilterBackend, filters.SearchFilter]
-#     search_fields = ['name', 'description', 'location']
-
-
-class AcceptOrRejectResponseView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request, vacancy_id, worker_id):
-        try:
-            response = VacancyResponse.objects.select_related('vacancy').get(vacancy_id=vacancy_id, worker_id=worker_id)
-        except VacancyResponse.DoesNotExist:
-            return Response({'detail': 'Response not found'}, status=404)
-
-        if response.vacancy.user != request.user:
-            return Response({'detail': 'Нет доступа'}, status=403)
-
-        status_value = request.data.get('status')  # "accepted" или "rejected"
-        if status_value not in ['accepted', 'rejected', 'pending']:
-            return Response({'detail': 'Недопустимый статус'}, status=400)
-
-        response.status = status_value
-        response.save()
-
-        return Response({'detail': f'Response {status_value}'}, status=200)
-
-
-class UserResponsesView(generics.ListAPIView):
-    serializer_class = VacancyResponseSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return VacancyResponse.objects.filter(worker=self.request.user)
-
-
-class FavoriteVacancyListView(generics.ListAPIView):
-    serializer_class = VacancySerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return Vacancy.objects.filter(responses__worker=self.request.user, responses__is_favorite=True).distinct()
-
-
-class AnketaViewSet(viewsets.ModelViewSet):
-    serializer_class = AnketaSerializer
-    permission_classes = [permissions.IsAuthenticated, IsNotRecruiter]
-
-    def get_queryset(self):
-        return Anketa.objects.filter(user=self.request.user)
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-
-
-class PublicAnketaViewSet(viewsets.ViewSet):
-    def retrieve(self, request, username=None, pk=None):
-        User = get_user_model()
-        user = get_object_or_404(User, username=username)
-        anketa = get_object_or_404(Anketa, user=user, pk=pk, is_active=True)
-        serializer = AnketaSerializer(anketa)
-        return Response(serializer.data)
-
-
-class MyContentView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request):
-        user = request.user
-        if user.user_r:
-            vacancies = Vacancy.objects.filter(user=user)
-            serializer = VacancySerializer(vacancies, many=True)
-            return Response({"vacancies": serializer.data})
+        user = self.request.user
+        if user.is_authenticated and not user.user_r:  # type: ignore # только соискатель
+            context['ankets'] = Anketa.objects.filter(user=user, is_active=True)
+            context['has_responded'] = self.object.responses.filter(worker=user).exists() # type: ignore
         else:
-            ankets = Anketa.objects.filter(user=user)
-            serializer = AnketaSerializer(ankets, many=True)
-            return Response({"ankets": serializer.data})
+            context['ankets'] = []
+            context['has_responded'] = False
+
+        context['similar_vacancies'] = get_similar_vacancies(self.object, all_vacancies, top_n=6) # type: ignore
+        return context
 
 
-class AcceptOrRejectResponseView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+@login_required
+def respond_to_vacancy(request, pk):
+    vacancy = get_object_or_404(Vacancy, pk=pk)
+    
+    # Только соискатели (user_r == False)
+    if request.user.user_r:
+        messages.error(request, "Только соискатели могут откликаться.")
+        return redirect('api:vacancy_detail', pk=pk)
 
-    def post(self, request, vacancy_id, response_id):
-        try:
-            response = VacancyResponse.objects.select_related('vacancy').get(id=response_id, vacancy__id=vacancy_id)
-        except VacancyResponse.DoesNotExist:
-            return Response({'detail': 'Response not found'}, status=404)
+    ankets = Anketa.objects.filter(user=request.user, is_active=True)
+    
+    if request.method == "POST":
+        anketa_id = request.POST.get("anketa")
+        anketa = get_object_or_404(Anketa, pk=anketa_id, user=request.user)
 
-        if response.vacancy.user != request.user:
-            return Response({'detail': 'Нет доступа'}, status=403)
+        # Проверка на дубликат отклика
+        if VacancyResponse.objects.filter(worker=request.user, vacancy=vacancy).exists():
+            messages.warning(request, "Вы уже откликались на эту вакансию.")
+            return redirect('api:vacancy_detail', pk=pk)
 
-        status_value = request.data.get('status')  # "accepted" или "rejected"
-        if status_value not in ['accepted', 'rejected']:
-            return Response({'detail': 'Недопустимый статус'}, status=400)
+        VacancyResponse.objects.create(
+            worker=request.user,
+            vacancy=vacancy,
+            anketa=anketa
+        )
+        messages.success(request, "Отклик отправлен!")
+        return redirect('api:vacancy_detail', pk=pk)
 
-        response.status = status_value
+    return render(request, "respond_to_vacancy.html", {
+        "vacancy": vacancy,
+        "ankets": ankets
+    })
+
+
+@login_required
+@require_POST
+def vacancy_toggle(request, pk):
+    vacancy = get_object_or_404(Vacancy, pk=pk, user=request.user)
+    action = request.POST.get("action")
+    if action == "deactivate":
+        vacancy.is_active = False
+    elif action == "activate":
+        vacancy.is_active = True
+    vacancy.save()
+    return redirect('profile')
+
+@login_required
+def vacancy_stats(request, pk):
+    vacancy = get_object_or_404(Vacancy, pk=pk, user=request.user)
+    # Примерные данные, можно заменить на реальные просмотры/отклики
+    stats = {
+        "views": 123,
+        "responses": 10,
+        "created": vacancy.published_at,
+        "is_active": vacancy.is_active,
+    }
+    return render(request, "vacancy/vacancy_stats.html", {"vacancy": vacancy, "stats": stats})
+
+
+@require_POST
+@login_required
+def vacancy_delete(request, pk):
+    vacancy = get_object_or_404(Vacancy, pk=pk, user=request.user)
+    vacancy.delete()
+    return redirect('profile')
+
+class VacancyUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Vacancy
+    form_class = VacancyForm
+    template_name = 'vacancy/vacancy_create.html'
+
+    def get_queryset(self):
+        return Vacancy.objects.filter(user=self.request.user)
+
+    def get_success_url(self):
+        return reverse('profile')
+#! FORMS    
+
+class VacancyCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Vacancy
+    form_class = VacancyForm
+    template_name = 'vacancy/vacancy_create.html'
+    success_url = reverse_lazy('profile')
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
+
+
+class AnketaCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Anketa
+    form_class = AnketaForm
+    template_name = 'form/anketa_form.html'
+    success_url = reverse_lazy('profile')  # можно на список анкет
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+class AnketaDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Anketa
+    template_name = "anketa/anketa_detail.html"
+    context_object_name = "anketa"
+
+    def get(self, request, *args, **kwargs):
+        anketa = self.get_object()
+
+        # Если соискатель — доступ только к своей анкете
+        if not request.user.user_r: # type: ignore
+            if anketa.user != request.user: # type: ignore
+                messages.error(request, "Вы не можете просматривать чужую анкету.")
+                return redirect("profile")
+
+        # Если работодатель — доступ только к анкетам, откликнувшимся на его вакансии
+        else:
+            has_access = VacancyResponse.objects.filter(
+                anketa=anketa,
+                vacancy__user=request.user
+            ).exists()
+            if not has_access:
+                messages.error(request, "У вас нет доступа к этой анкете.")
+                return redirect("profile")
+
+        return super().get(request, *args, **kwargs)
+
+
+class AnketaUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
+    model = Anketa
+    form_class = AnketaForm
+    template_name = 'form/anketa_form.html'
+
+    def get_success_url(self):
+        return reverse_lazy('anketa_detail', kwargs={'pk': self.object.pk}) # type: ignore
+
+    def test_func(self):
+        # Только владелец анкеты может её редактировать
+        return self.get_object().user == self.request.user # type: ignore
+    
+
+@login_required
+@require_POST
+def response_update_status(request, pk):
+    response = get_object_or_404(VacancyResponse, pk=pk, vacancy__user=request.user)
+    status = request.POST.get('status')
+
+    if status in dict(STATUS_CHOICES):
+        response.status = status
         response.save()
 
-        return Response({'detail': f'Response {status_value}'}, status=200)
+    return redirect('profile')

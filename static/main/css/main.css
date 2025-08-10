@@ -1,0 +1,27 @@
+
+.vacancy-card {
+    transition: transform 0.3s;
+    margin-bottom: 20px;
+}
+.vacancy-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+.navbar-brand {
+    font-weight: 700;
+}
+
+#mobileFilterBtn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1050;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+#mobileFilterBtn.show {
+    opacity: 1;
+    pointer-events: auto;
+}

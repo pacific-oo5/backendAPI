@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Выбор роли</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .role-option {
+      border: 2px solid #e0e0e0;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .role-option:hover {
+      border-color: #0d6efd;
+      background-color: #f0f8ff;
+    }
+    .role-option input[type="radio"] {
+      display: none;
+    }
+    .role-option.active {
+      border-color: #0d6efd;
+      background-color: #eaf4ff;
+    }
+    .role-icon {
+      font-size: 40px;
+      color: #0d6efd;
+      margin-bottom: 10px;
+    }
+    @media (max-width: 768px) {
+      .role-option {
+        margin-bottom: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 class="text-center mb-4">Выберите свою роль</h2>
+    <form method="post" id="role-form">
+      {% csrf_token %}
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-6 mb-3">
+          <label class="role-option w-100" id="employer-option">
+            <input type="radio" name="user_r" value="employer">
+            <i class="bi bi-building role-icon"></i>
+            <h5>Я работодатель</h5>
+          </label>
+        </div>
+        <div class="col-12 col-sm-6 mb-3">
+          <label class="role-option w-100" id="seeker-option">
+            <input type="radio" name="user_r" value="seeker">
+            <i class="bi bi-person-badge role-icon"></i>
+            <h5>Я соискатель</h5>
+          </label>
+        </div>
+      </div>
+      <div class="text-center mt-3">
+        <button type="submit" class="btn btn-primary px-4">Продолжить</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const options = document.querySelectorAll('.role-option');
+    options.forEach(option => {
+      option.addEventListener('click', () => {
+        options.forEach(o => o.classList.remove('active'));
+        option.classList.add('active');
+        option.querySelector('input[type="radio"]').checked = true;
+      });
+    });
+  </script>
+</body>
+</html>

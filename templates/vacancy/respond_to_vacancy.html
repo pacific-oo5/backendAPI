@@ -1,0 +1,14 @@
+<h2>Отклик на вакансию: {{ vacancy.name }}</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="anketa">Выберите анкету:</label>
+        <select name="anketa" id="anketa" class="form-select" required>
+            {% for anketa in ankets %}
+                <option value="{{ anketa.id }}">{{ anketa.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Отправить</button>
+    <a href="{% url 'api:vacancy_detail' vacancy.id %}" class="btn btn-secondary">Назад</a>
+</form>

@@ -1,36 +1,25 @@
 from django.urls import path
-from .views import RespondToVacancyView, AddToFavoritesView, RespondedUsersView, \
-    VacancyDetailView, AcceptOrRejectResponseView, UserResponsesView, \
-    FavoriteVacancyListView, MyContentView, AnketaViewSet, PublicAnketaViewSet, VacancyResponsesView
-from rest_framework.routers import DefaultRouter
-from api.views import VacancyListView, VacancyViewSet
 
-anketa_public = PublicAnketaViewSet.as_view({'get': 'retrieve'})
-
-router = DefaultRouter()
-router.register(r'my/vacancies', VacancyViewSet, basename='my-vacancies')
-router.register(r'my/anketas', AnketaViewSet, basename='anketa')
+from .views import AnketaCreateView, VacancyCreateView, VacancyListView, vacancy_delete, vacancy_toggle, \
+    VacancyUpdateView, VacancyDetailView, vacancy_stats, respond_to_vacancy, \
+        AnketaDetailView, AnketaUpdateView, response_update_status
 
 
+app_name = 'api'
 urlpatterns = [
-    path('vacancies/', VacancyListView.as_view(), name='vacancy-list'),
-    path('vacancies/<int:pk>/', VacancyDetailView.as_view(), name='vacancy-detail'),
-    path('anketas/@<str:username>/anketa/<int:pk>/', anketa_public, name='public-anketa-detail'),
-    path('vacancies/favorites/', FavoriteVacancyListView.as_view(), name='favorite-vacancies'),
-    path('vacancies/<int:pk>/respond/', RespondToVacancyView.as_view(), name='vacancy-respond'),
-    path('vacancies/<int:vacancy_id>/responses/', RespondedUsersView.as_view(), name='vacancy-responses'),
-    path('vacancies/<int:pk>/favorite/', AddToFavoritesView.as_view(), name='vacancy-favorite'),
+    path('vacancies', VacancyListView.as_view(), name='vacancy_list'),
+    path('vacancies/<int:pk>/', VacancyDetailView.as_view(), name='vacancy_detail'),
+    path('vacancy/create', VacancyCreateView.as_view(), name='vacancy_create'),
+    path('vacancy/<int:pk>/toggle/', vacancy_toggle, name='vacancy_toggle'),
+    path('vacancy/<int:pk>/delete/', vacancy_delete, name='vacancy_delete'),
+    path("vacancy/<int:pk>/stats/", vacancy_stats, name="vacancy_stats"),
+    path('vacancy/<int:pk>/update/', VacancyUpdateView.as_view(), name='vacancy_update'),
+    path('vacancies/<int:pk>/respond/', respond_to_vacancy, name='respond_to_vacancy'),
+    path('response/<int:pk>/update-status/', response_update_status, name='response_update_status'),
 ]
 
 urlpatterns += [
-    path('my/', MyContentView.as_view(), name='my'),
-    path('my/responses/', UserResponsesView.as_view(), name='my-responses'),
+    path('anketa/create/', AnketaCreateView.as_view(), name='anketa_create'),
+    path('anketa/<int:pk>/', AnketaDetailView.as_view(), name='anketa_detail'),
+    path('anketa/<int:pk>/edit/', AnketaUpdateView.as_view(), name='anketa_edit'),
 ]
-
-urlpatterns += [
-    path('vacancies/<int:vacancy_id>/responses/<int:response_id>/set_status/', AcceptOrRejectResponseView.as_view(), name='set-response-status'),
-    path('vacancies/<int:vacancy_id>/responses/', VacancyResponsesView.as_view(), name='vacancy-responses'),
-    path('vacancies/favorites/', FavoriteVacancyListView.as_view(), name='favorite-vacancies'),
-]
-
-urlpatterns += router.urls

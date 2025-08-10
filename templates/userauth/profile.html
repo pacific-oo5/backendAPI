@@ -1,0 +1,221 @@
+{% extends 'main/main.html' %}
+{% load static %}
+{% block content %}
+
+{% if messages %}
+  <div class="mt-3">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+
+      <div class="card shadow-sm mb-4">
+        <div class="card-body d-flex align-items-center flex-wrap">
+          <img src="{{ user.profile_picture.url|default:'/static/img/default-avatar.png' }}"
+               alt="Аватар"
+               class="rounded-circle me-3"
+               width="70"
+               height="70">
+          <div>
+            <h5 class="mb-0">{{ user.get_full_name|default:user.email }}</h5>
+            <small class="text-muted">{{ user.email }}</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">
+          {% if user.user_r %}Мои вакансии{% else %}Профиль соискателя{% endif %}
+        </h5>
+        {% if user.user_r %}
+          <a href="{% url 'api:vacancy_create' %}" class="btn btn-success btn-sm">+ Создать вакансию</a>
+        {% else %}
+          <a href="{% url 'api:anketa_create' %}" class="btn btn-success btn-sm">+ Создать анкету</a>
+        {% endif %}
+      </div>
+
+      {% if not user.user_r %}
+      <!-- Вкладки для соискателя -->
+      <ul class="nav nav-tabs mb-3" id="profileTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="ankets-tab" data-bs-toggle="tab" data-bs-target="#ankets" type="button" role="tab" aria-controls="ankets" aria-selected="true">Мои анкеты</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="responses-tab" data-bs-toggle="tab" data-bs-target="#responses" type="button" role="tab" aria-controls="responses" aria-selected="false">Мои отклики</button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="profileTabsContent">
+        <!-- Мои анкеты -->
+        <div class="tab-pane fade show active" id="ankets" role="tabpanel" aria-labelledby="ankets-tab">
+          {% if ankets %}
+            <div class="row">
+              {% for anketa in ankets %}
+                <div class="col-12 col-md-6 mb-3">
+                  <div class="card shadow-sm h-100">
+                    <div class="card-body">
+                      <h6 class="card-title">{{ anketa.name }}</h6>
+                      <p class="card-text text-muted small">{{ anketa.city }}</p>
+                      <a href="{% url 'api:anketa_detail' anketa.pk %}" class="btn btn-outline-primary btn-sm">Подробнее</a>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p>У вас ещё нет активных анкет.</p>
+          {% endif %}
+        </div>
+
+        <!-- Мои отклики -->
+        <div class="tab-pane fade" id="responses" role="tabpanel" aria-labelledby="responses-tab">
+          {% if responses %}
+            <div class="row">
+              {% for response in responses %}
+                <div class="col-12 mb-3">
+                  <div class="card shadow-sm">
+                    <div class="card-body">
+                      <h6 class="card-title">{{ response.vacancy.name }}</h6>
+                      <p class="mb-1"><strong>Анкета:</strong> {{ response.anketa.name }}</p>
+                      <p class="mb-1"><strong>Статус отклика:</strong> {{ response.get_status_display }}</p>
+                      <a href="{% url 'api:vacancy_detail' response.vacancy.pk %}" class="btn btn-outline-primary btn-sm me-2">Вакансия</a>
+                      <a href="{% url 'api:anketa_detail' response.anketa.pk %}" class="btn btn-outline-secondary btn-sm">Анкета</a>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p>Вы ещё не отправляли отклики.</p>
+          {% endif %}
+        </div>
+      </div>
+
+      {% else %}
+      <!-- Для работодателей оставить старый вывод вакансий -->
+      <!-- Вкладки для работодателя -->
+<ul class="nav nav-tabs mb-3" id="profileTabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="vacancies-tab" data-bs-toggle="tab" data-bs-target="#vacancies" type="button" role="tab" aria-controls="vacancies" aria-selected="true">Мои вакансии</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="responses-tab" data-bs-toggle="tab" data-bs-target="#responses" type="button" role="tab" aria-controls="responses" aria-selected="false">Отклики</button>
+  </li>
+</ul>
+
+<div class="tab-content" id="profileTabsContent">
+  <!-- Мои вакансии -->
+  <div class="tab-pane fade show active" id="vacancies" role="tabpanel" aria-labelledby="vacancies-tab">
+    <div class="row">
+      {% for vacancy in vacancies %}
+      <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card vacancy-card h-100 position-relative">
+          <div class="card-body">
+            <!-- Дропдаун и контент вакансии как у тебя -->
+            <h5 class="card-title">{{ vacancy.name }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">До {{ vacancy.salary }} сом</h6>
+            <p class="card-text">{{ vacancy.description|truncatechars:100 }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="badge 
+                {% if vacancy.is_remote %}bg-primary
+                {% elif vacancy.work_time == 'По выходным' %}bg-dark
+                {% else %}bg-success{% endif %}">
+                {% if vacancy.is_remote %}Удалённая работа
+                {% else %}{{ vacancy.work_time }}{% endif %}
+              </span>
+              <a href="{% url 'api:vacancy_detail' vacancy.id %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
+            </div>
+          </div>
+          <div class="card-footer bg-transparent">
+            <small class="text-muted">
+              {% if vacancy.city %}{{ vacancy.city }}{% endif %}
+              {% if vacancy.country and vacancy.city %}, {% endif %}
+              {% if vacancy.country %}{{ vacancy.country }}{% endif %}
+            </small>
+          </div>
+        </div>
+      </div>
+      {% empty %}
+        <p>У вас пока нет вакансий.</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Отклики -->
+  <div class="tab-pane fade" id="responses" role="tabpanel" aria-labelledby="responses-tab">
+    {% if responses %}
+      <div class="list-group">
+        {% for response in responses %}
+          <div class="list-group-item mb-3 shadow-sm">
+            <h6>{{ response.vacancy.name }}</h6>
+            <p><strong>Анкета:</strong> {{ response.anketa.name }}</p>
+            <p><strong>Соискатель:</strong> {{ response.worker.get_full_name|default:response.worker.email }}</p>
+            <p><strong>Статус:</strong> {{ response.get_status_display }}</p>
+            <form method="post" action="{% url 'api:response_update_status' response.id %}" class="d-flex gap-2 align-items-center">
+                {% csrf_token %}
+                <select name="status" class="form-select form-select-sm" style="max-width: 180px;">
+                    {% for key, val in response.status_choices %}
+                        <option value="{{ key }}" {% if response.status == key %}selected{% endif %}>{{ val }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-sm btn-primary">Обновить</button>
+            </form>
+            <a href="{% url 'api:anketa_detail' response.anketa.pk %}" class="btn btn-outline-secondary btn-sm mt-2">Посмотреть анкету</a>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Пагинация -->
+      <nav aria-label="Page navigation" class="mt-3">
+        <ul class="pagination justify-content-center">
+          {% if responses.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ responses.previous_page_number }}" aria-label="Previous">
+                &laquo;
+              </a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+          {% endif %}
+
+          {% for num in responses.paginator.page_range %}
+            {% if responses.number == num %}
+              <li class="page-item active" aria-current="page"><span class="page-link">{{ num }}</span></li>
+            {% else %}
+              <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endif %}
+          {% endfor %}
+
+          {% if responses.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?page={{ responses.next_page_number }}" aria-label="Next">
+                &raquo;
+              </a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% else %}
+      <p>Нет откликов.</p>
+    {% endif %}
+  </div>
+</div>
+
+        {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+

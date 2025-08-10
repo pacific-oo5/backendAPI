@@ -1,0 +1,28 @@
+{% for vacancy in vacancies %}
+<div class="col-md-6 col-lg-4 mb-4">
+    <div class="card vacancy-card h-100">
+        <div class="card-body">
+            <h5 class="card-title">{{ vacancy.name }}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">До {{ vacancy.salary }} сом</h6>
+            <p class="card-text">{{ vacancy.description|truncatechars:100 }}</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="badge 
+                    {% if vacancy.is_remote %}bg-primary
+                    {% elif vacancy.work_time == 'По выходным' %}bg-dark
+                    {% else %}bg-success{% endif %}">
+                    {% if vacancy.is_remote %}Удалённая работа
+                    {% else %}{{ vacancy.work_time }}{% endif %}
+                </span>
+                <a href="{% url 'api:vacancy_detail' vacancy.id %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
+            </div>
+        </div>
+        <div class="card-footer bg-transparent">
+            <small class="text-muted">
+                {% if vacancy.city %}{{ vacancy.city }}{% endif %}
+                {% if vacancy.country and vacancy.city %}, {% endif %}
+                {% if vacancy.country %}{{ vacancy.country }}{% endif %}
+            </small>
+        </div>
+    </div>
+</div>
+{% endfor %}

@@ -1,0 +1,60 @@
+{% extends 'main/main.html' %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="mb-4 text-center">Создать анкету</h2>
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <div class="form-text">{{ field.help_text }}</div>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="d-grid gap-2 d-sm-flex justify-content-sm-end mt-4">
+                            <button type="submit" class="btn btn-primary px-4">Сохранить</button>
+                            <a href="{% url 'profile' %}" class="btn btn-outline-secondary">Отмена</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Делаем поля формы красивыми */
+    input, select, textarea {
+        border-radius: 0.5rem;
+        border: 1px solid #ced4da;
+        width: 100%;
+        padding: 0.6rem 0.75rem;
+        font-size: 1rem;
+    }
+
+    textarea {
+        resize: vertical;
+    }
+
+    /* На маленьких экранах кнопки становятся в столбик */
+    @media (max-width: 576px) {
+        .d-sm-flex {
+            flex-direction: column;
+        }
+        .d-sm-flex .btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

@@ -2,16 +2,22 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser
 
-# admin.site.register(CustomUser, UserAdmin)
-
-# Если вы хотите добавить или изменить отображение полей в админке для CustomUser,
-# вы можете создать свой собственный Admin-класс:
 class CustomUserAdmin(UserAdmin):
-    # Добавьте ваше поле 'user_r' в список отображаемых полей
-    fieldsets = UserAdmin.fieldsets + (
-        ('Дополнительные поля', {'fields': ('user_r',)}),
+    list_display = ('email', 'first_name', 'user_r', 'is_staff')
+    list_filter = ('user_r', 'is_staff', 'is_superuser')
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Персональная информация', {'fields': ('first_name', 'user_r')}),
+        ('Права', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
+        ('Важные даты', {'fields': ('last_login', 'date_joined')}),
     )
-    # Или добавьте его в list_display для таблицы
-    list_display = UserAdmin.list_display + ('user_r',)
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'password1', 'password2', 'user_r'),
+        }),
+    )
+    search_fields = ('email', 'first_name')
+    ordering = ('email',)
 
 admin.site.register(CustomUser, CustomUserAdmin)

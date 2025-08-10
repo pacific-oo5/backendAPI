@@ -1,0 +1,70 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand">СЛАДКИЙ МАЛЬЧИК</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <!-- <li class=" nav-item"> 
+                        {% if user.is_authenticated %}
+                            <img src="{{ user_avatar_url }}" alt="Avatar" class="rounded-circle" width="40">
+                        {% endif %}
+                    </li> -->
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{% url 'home' %}">Главная</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'home' %}">Вакансии</a>
+                    </li>
+                    {% if not user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'employers' %}">Работодателям</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'applicants' %}">Соискателям</a>
+                    </li>
+                    {% endif %}
+                </ul>
+
+                {% if user.is_authenticated %}
+                    <div class="d-flex align-items-center gap-2 mt-2">
+                        {% if not in_profile %}
+                        <a href="{% url 'profile' %}" class="btn btn-primary d-flex align-items-center">
+                            <i class="bi bi-person-fill me-1"></i> Профиль
+                        </a>
+                        {% endif %}
+                        <button type="button" class="btn btn-outline-danger d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#logoutModal">
+                            Выйти
+                        </button>
+                    </div>
+                {% else %}
+                    <div class="d-flex mt-2">
+                        <a href="{% url 'auth' %}" class="btn btn-outline-primary me-2 d-flex align-items-center">
+                            Войти
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+
+    <!-- Модальное окно -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="logoutModalLabel">Подтверждение выхода</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        Вы уверены, что хотите выйти?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
+        <a href="{% url 'custom_logout' %}" class="btn btn-danger">Да, выйти</a>
+      </div>
+    </div>
+  </div>
+</div>

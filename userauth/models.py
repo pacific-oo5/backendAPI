@@ -1,6 +1,6 @@
+from django.conf import settings
 from django.contrib.auth.models import BaseUserManager, AbstractUser
 from django.db import models
-from .validation import validate_profile_username
 
 class CustomUserManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
@@ -36,14 +36,16 @@ class CustomUser(AbstractUser):
         unique=False,
         null=True,
         blank=True,
-        verbose_name='Имя пользователя (не используется для входа)'
+        verbose_name='Имя пользователя'
     )
+    photo = models.ImageField(upload_to='users/photos/', null=True, blank=True, verbose_name='Фото профиля', )
+
     email = models.EmailField(unique=True, blank=False, null=False, verbose_name='Электронная почта')
     first_name = models.CharField(max_length=150, blank=True, verbose_name='Имя')
     user_r = models.BooleanField(verbose_name="Разрешение на публикацию вакансий", default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
 
@@ -54,3 +56,27 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+    
+    # @property
+    # def avatar(self):
+    #     if self.photo:
+    #         return self.photo.url
+    #     return f'{settings.STATIC_URL}images/avatar.svg'
+    
+
+class Profile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='avatars/', null=True, blank=True)
+    displayname = models.CharField(max_length=20, null=True, blank=True)
+    info = models.TextField(null=True, blank=True) 
+    
+    def __str__(self):
+        return str(self.user)
+    
+    @property
+    def name(self):
+        if self.displayname:
+            return self.displayname
+        return self.user.username 
+    
+    

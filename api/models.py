@@ -1,24 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.contrib.auth import get_user_model
-
-from api.validation import validate_phone_number
-
-
-STATUS_CHOICES = (
-        ('pending', 'Ожидание'),
-        ('accepted', 'Принят'),
-        ('rejected', 'Отклонён'),
-    )
-WORK_CHOICES = (
-        ('Работа', 'Работа'),
-        ('Практика', 'Практика'),
-    )
-WOKR_TIME_CHOICES = (
-    ('Гибкий график', 'Гибкий график'),
-    ('Полный рабочий день', 'Полный рабочий день'),
-    ('По выходным', 'По выходным')
-)
+from .choices import STATUS_CHOICES, WORK_CHOICES, WOKR_TIME_CHOICES
 
 
 class Vacancy(models.Model):
@@ -92,7 +75,7 @@ class Vacancy(models.Model):
 
 
     def get_responded_workers(self):
-        return [resp.worker.id for resp in self.responses.all()]
+        return [resp.worker.id for resp in self.responses.all()] # type: ignore
 
     def __str__(self):
         return str(self.name)
@@ -128,6 +111,11 @@ class VacancyResponse(models.Model):
         verbose_name='Анкета'
     )
 
+    @property
+    def status_choices(self):
+        return STATUS_CHOICES
+
+    
     class Meta:
         unique_together = ('worker', 'vacancy')
 
@@ -163,7 +151,6 @@ class Anketa(models.Model):
     )
     phone_number = models.CharField(
         max_length=20,
-        validators=[validate_phone_number],
         verbose_name='Телефон',
         help_text='Введите номер телефона в формате +996XXXXXXXXX'
     )
