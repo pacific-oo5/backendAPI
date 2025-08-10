@@ -144,14 +144,6 @@ REST_FRAMEWORK = {
     ]
 }
 
-# DRF Spectacular (OpenAPI) - можно удалить если не используется
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'API Documentation',
-    'VERSION': '1.0.0',
-    'SERVE_INCLUDE_SCHEMA': False,
-}
-
-
 ACCOUNT_SIGNUP_FIELDS = {
     'email': {
         'required': True,
