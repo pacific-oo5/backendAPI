@@ -1,6 +1,13 @@
 import os
+import warnings
 from pathlib import Path
 from dotenv import load_dotenv
+
+warnings.filterwarnings(
+    "ignore",
+    message="app_settings.*is deprecated",
+    category=UserWarning,
+)
 
 load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,15 +27,12 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     # Сторонние приложения
-    'rest_framework',
-    'rest_framework.authtoken',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'dj_rest_auth',
-    'dj_rest_auth.registration',
-
+    'rest_framework.authtoken',
     # Ваши приложения
     'api',
     'userauth.apps.UserauthConfig'
@@ -42,7 +46,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'allauth.account.middleware.AccountMiddleware'
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'backendAPI.urls'
@@ -116,6 +120,8 @@ ACCOUNT_SIGNUP_FIELDS = {
 
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_LOGIN_METHODS = ['email']  # Разрешить вход только по email
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # 'mandatory' или 'optional' если нужно подтверждение
 ACCOUNT_UNIQUE_EMAIL = True
@@ -134,32 +140,23 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 # REST Framework settings
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ]
-}
-
-ACCOUNT_SIGNUP_FIELDS = {
-    'email': {
-        'required': True,
-        'label': 'Email',
-    },
-    'username': {
-        'required': False,
-        'label': 'Username',
-    }
-}
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': (
+#         'rest_framework.authentication.SessionAuthentication',
+#         'rest_framework.authentication.TokenAuthentication',
+#     ),
+#     'DEFAULT_PERMISSION_CLASSES': [
+#         'rest_framework.permissions.IsAuthenticated',
+#     ]
+# }
 
 
-REST_AUTH = {
-    'USE_JWT': True,
-    'JWT_AUTH_HTTPONLY': False,
-}
+
+
+# REST_AUTH = {
+#     'USE_JWT': True,
+#     'JWT_AUTH_HTTPONLY': False,
+# }
 
 ACCOUNT_SIGNUP_REDIRECT_URL = '/select-role/'
 SOCIALACCOUNT_AUTO_SIGNUP = True  # включено по умолчанию

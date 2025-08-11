@@ -117,6 +117,8 @@ class VacancyResponse(models.Model):
         verbose_name='Анкета'
     )
 
+    responded_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
     @property
     def status_choices(self):
         return STATUS_CHOICES

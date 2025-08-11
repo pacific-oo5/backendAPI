@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -18,7 +17,7 @@ from .ai_search import get_similar_vacancies
 
 class MyVacancyListView(generic.ListView):
     model = Vacancy
-    template_name = 'vacancy/profile.html'
+    template_name = 'userauth/profile.html'
 
     def get_queryset(self):
         return Vacancy.objects.filter(user=self.request.user)
@@ -131,7 +130,7 @@ def respond_to_vacancy(request, pk):
         messages.success(request, "Отклик отправлен!")
         return redirect('api:vacancy_detail', pk=pk)
 
-    return render(request, "respond_to_vacancy.html", {
+    return render(request, "vacancy/respond_to_vacancy.html", {
         "vacancy": vacancy,
         "ankets": ankets
     })
@@ -192,6 +191,10 @@ class VacancyCreateView(LoginRequiredMixin, generic.CreateView):
         kwargs = super().get_form_kwargs()
         kwargs['request'] = self.request
         return kwargs
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user 
+        return super().form_valid(form)
 
 
 class AnketaCreateView(LoginRequiredMixin, generic.CreateView):

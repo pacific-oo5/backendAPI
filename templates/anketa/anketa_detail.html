@@ -13,7 +13,9 @@
             <p><small class="text-muted">Создана: {{ anketa.created_at|date:"d.m.Y H:i" }}</small></p>
 
             <div class="d-flex gap-2 mt-4">
+                {% if not user.user_r %}
                 <a href="{% url 'api:anketa_edit' anketa.pk %}" class="btn btn-primary">Редактировать</a>
+                {% endif %}
                 <a href="{% url 'profile' %}" class="btn btn-secondary">Назад</a>
             </div>
         </div>

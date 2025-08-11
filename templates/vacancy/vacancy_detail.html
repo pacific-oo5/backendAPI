@@ -71,7 +71,7 @@
                                 {% if related.is_remote %}Удалённая работа
                                 {% else %}{{ related.work_time }}{% endif %}
                             </span>
-                            <a href="{% url 'vacancy_detail' vacancy.id %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
+                            <a href="{% url 'api:vacancy_detail' vacancy.id %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
                         </div>
                     </div>
                     <div class="card-footer bg-transparent">

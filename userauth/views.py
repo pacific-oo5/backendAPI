@@ -11,10 +11,6 @@ from django.core.paginator import Paginator
 from .forms import *
 from api.models import Vacancy, Anketa, VacancyResponse
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 
@@ -25,23 +21,6 @@ class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter
     callback_url = "http://localhost:3000/"
     client_class = OAuth2Client
-
-# @ensure_csrf_cookie
-# def get_csrf_token(request):
-#     return JsonResponse({'detail': 'CSRF cookie set'})    
-
-
-class UserDetailsView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        user = request.user
-        return Response({
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "user_r": user.user_r
-        })
 
 class AuthView(View):
     template_name = 'auth/login_register.html'

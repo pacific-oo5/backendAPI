@@ -118,6 +118,31 @@
       {% for vacancy in vacancies %}
       <div class="col-md-6 col-lg-4 mb-4">
         <div class="card vacancy-card h-100 position-relative">
+          <div class="dropdown text-end position-absolute top-0 end-0 m-2" style="z-index: 1055;">
+          <button class="btn btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" href="{% url 'api:vacancy_update' vacancy.id %}">Редактировать</a></li>
+            <li><a class="dropdown-item" href="{% url 'api:vacancy_stats' vacancy.id %}">Статистика</a></li>
+            <li>
+              <form action="{% url 'api:vacancy_toggle' vacancy.id %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="{% if vacancy.is_active %}deactivate{% else %}activate{% endif %}">
+                <button type="submit" class="dropdown-item">
+                  {% if vacancy.is_active %}Деактивировать{% else %}Активировать{% endif %}
+                </button>
+              </form>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <form action="{% url 'api:vacancy_delete' vacancy.id %}" method="post" onsubmit="return confirm('Вы уверены, что хотите удалить эту вакансию?');">
+                {% csrf_token %}
+                <button class="dropdown-item text-danger" type="submit">Удалить</button>
+              </form>
+            </li>
+          </ul>
+        </div>
           <div class="card-body">
             <!-- Дропдаун и контент вакансии как у тебя -->
             <h5 class="card-title">{{ vacancy.name }}</h5>
@@ -159,6 +184,7 @@
             <p><strong>Анкета:</strong> {{ response.anketa.name }}</p>
             <p><strong>Соискатель:</strong> {{ response.worker.get_full_name|default:response.worker.email }}</p>
             <p><strong>Статус:</strong> {{ response.get_status_display }}</p>
+            <p><strong>Отклик:</strong> {{ response.responded_at }}</p>
             <form method="post" action="{% url 'api:response_update_status' response.id %}" class="d-flex gap-2 align-items-center">
                 {% csrf_token %}
                 <select name="status" class="form-select form-select-sm" style="max-width: 180px;">
