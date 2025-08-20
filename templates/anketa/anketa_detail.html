@@ -1,22 +1,23 @@
 {% extends 'main/main.html' %}
+{% load i18n %}
 {% block content %}
 <div class="container mt-5">
     <div class="card shadow-sm border-0">
         <div class="card-body p-4">
             <h2 class="mb-3">{{ anketa.name }}</h2>
-            <p><strong>Обо мне:</strong> {{ anketa.about_me }}</p>
-            <p><strong>Опыт:</strong> {{ anketa.experience }}</p>
-            <p><strong>Страна:</strong> {{ anketa.country }}</p>
-            <p><strong>Город:</strong> {{ anketa.city }}</p>
-            <p><strong>Телефон:</strong> {{ anketa.phone_number }}</p>
-            <p><strong>Активна:</strong> {{ anketa.is_active|yesno:"Да,Нет" }}</p>
-            <p><small class="text-muted">Создана: {{ anketa.created_at|date:"d.m.Y H:i" }}</small></p>
+            <p><strong>{% trans "Обо мне:" %}</strong> {{ anketa.about_me }}</p>
+            <p><strong>{% trans "Опыт:" %}</strong> {{ anketa.experience }}</p>
+            <p><strong>{% trans "Страна:" %}</strong> {{ anketa.country }}</p>
+            <p><strong>{% trans "Город:" %}</strong> {{ anketa.city }}</p>
+            <p><strong>{% trans "Телефон:" %}</strong> {{ anketa.phone_number }}</p>
+            <p><strong>{% trans "Активна:" %}</strong> {{ anketa.is_active|yesno:_("Да,Нет") }}</p>
+            <p><small class="text-muted">{% trans "Создана:" %} {{ anketa.created_at|date:"d.m.Y H:i" }}</small></p>
 
             <div class="d-flex gap-2 mt-4">
                 {% if not user.user_r %}
-                <a href="{% url 'api:anketa_edit' anketa.pk %}" class="btn btn-primary">Редактировать</a>
+                <a href="{% url 'api:anketa_edit' anketa.pk %}" class="btn btn-primary">{% trans "Редактировать" %}</a>
                 {% endif %}
-                <a href="{% url 'profile' %}" class="btn btn-secondary">Назад</a>
+                <a href="{% url 'profile' %}" class="btn btn-secondary">{% trans "Назад" %}</a>
             </div>
         </div>
     </div>

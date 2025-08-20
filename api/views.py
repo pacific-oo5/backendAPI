@@ -9,10 +9,13 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 
-from .choices import STATUS_CHOICES, WORK_CHOICES, WOKR_TIME_CHOICES
+from .choices import STATUS_CHOICES, WORK_CHOICES, WORK_TIME_CHOICES
 from .models import VacancyResponse, Vacancy, Anketa, VacancyView
 from .forms import AnketaForm, VacancyForm
 from .ai_search import get_similar_vacancies
+
+from django.utils.translation import gettext_lazy as _
+
 
 
 class MyVacancyListView(generic.ListView):
@@ -77,7 +80,7 @@ class VacancyListView(generic.ListView):
             'min_salary': self.request.GET.get('min_salary', ''),
             'max_salary': self.request.GET.get('max_salary', ''),
             'work_choices': WORK_CHOICES,
-            'work_time_choices': WOKR_TIME_CHOICES,
+            'work_time_choices': WORK_TIME_CHOICES,
         })
         return context
 
@@ -108,7 +111,7 @@ def respond_to_vacancy(request, pk):
     
     # Только соискатели (user_r == False)
     if request.user.user_r:
-        messages.error(request, "Только соискатели могут откликаться.")
+        messages.error(request, _("Только соискатели могут откликаться."))
         return redirect('api:vacancy_detail', pk=pk)
 
     ankets = Anketa.objects.filter(user=request.user, is_active=True)
@@ -119,7 +122,7 @@ def respond_to_vacancy(request, pk):
 
         # Проверка на дубликат отклика
         if VacancyResponse.objects.filter(worker=request.user, vacancy=vacancy).exists():
-            messages.warning(request, "Вы уже откликались на эту вакансию.")
+            messages.warning(request, _("Вы уже откликались на эту вакансию."))
             return redirect('api:vacancy_detail', pk=pk)
 
         VacancyResponse.objects.create(
@@ -127,7 +130,7 @@ def respond_to_vacancy(request, pk):
             vacancy=vacancy,
             anketa=anketa
         )
-        messages.success(request, "Отклик отправлен!")
+        messages.success(request, _("Отклик отправлен!"))
         return redirect('api:vacancy_detail', pk=pk)
 
     return render(request, "vacancy/respond_to_vacancy.html", {
@@ -219,7 +222,7 @@ class AnketaDetailView(LoginRequiredMixin, generic.DetailView):
         # Если соискатель — доступ только к своей анкете
         if not request.user.user_r: # type: ignore
             if anketa.user != request.user: # type: ignore
-                messages.error(request, "Вы не можете просматривать чужую анкету.")
+                messages.error(request, _("Вы не можете просматривать чужую анкету."))
                 return redirect("profile")
 
         # Если работодатель — доступ только к анкетам, откликнувшимся на его вакансии
@@ -229,7 +232,7 @@ class AnketaDetailView(LoginRequiredMixin, generic.DetailView):
                 vacancy__user=request.user
             ).exists()
             if not has_access:
-                messages.error(request, "У вас нет доступа к этой анкете.")
+                messages.error(request, _("У вас нет доступа к этой анкете."))
                 return redirect("profile")
 
         return super().get(request, *args, **kwargs)
@@ -253,6 +256,9 @@ class AnketaUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateVi
 def response_update_status(request, pk):
     response = get_object_or_404(VacancyResponse, pk=pk, vacancy__user=request.user)
     status = request.POST.get('status')
+
+    if response.status == 'accepted':
+        return redirect('profile')
 
     if status in dict(STATUS_CHOICES):
         response.status = status

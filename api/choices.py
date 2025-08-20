@@ -1,16 +1,18 @@
-
+from django.utils.translation import gettext_lazy as _
 
 STATUS_CHOICES = (
-        ('pending', 'Ожидание'),
-        ('accepted', 'Принят'),
-        ('rejected', 'Отклонён'),
-    )
+    ('pending', _('Ожидание')),
+    ('accepted', _('Принят')),
+    ('rejected', _('Отклонён')),
+)
+
 WORK_CHOICES = (
-        ('Работа', 'Работа'),
-        ('Практика', 'Практика'),
-    )
-WOKR_TIME_CHOICES = (
-    ('Гибкий график', 'Гибкий график'),
-    ('Полный рабочий день', 'Полный рабочий день'),
-    ('По выходным', 'По выходным')
+    ('work', _('Работа')),
+    ('practice', _('Практика')),
+)
+
+WORK_TIME_CHOICES = (
+    ('flexible', _('Гибкий график')),
+    ('full_time', _('Полный рабочий день')),
+    ('weekends', _('По выходным'))
 )

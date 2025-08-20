@@ -1,7 +1,8 @@
 from django.conf import settings
 from django.db import models
 from django.contrib.auth import get_user_model
-from .choices import STATUS_CHOICES, WORK_CHOICES, WOKR_TIME_CHOICES
+from .choices import STATUS_CHOICES, WORK_CHOICES, WORK_TIME_CHOICES
+from django.utils.translation import gettext_lazy as _
 
 
 class Vacancy(models.Model):
@@ -9,68 +10,68 @@ class Vacancy(models.Model):
         get_user_model(),
         on_delete=models.CASCADE,
         related_name='vacancies',
-        verbose_name='Владелец вакансии',
-        help_text='Пользователь, разместивший вакансию'
+        verbose_name=_('Владелец вакансии'),
+        help_text=_('Пользователь, разместивший вакансию')
     )
     name = models.CharField(
-        verbose_name='Название',
+        verbose_name=_('Название'),
         max_length=100,
-        help_text='Название вакансии, например: Python разработчик'
+        help_text=_('Название вакансии, например: Python разработчик')
     )
     description = models.TextField(
-        verbose_name='Описание',
-        help_text='Краткое описание вакансии'
+        verbose_name=_('Описание'),
+        help_text=_('Краткое описание вакансии')
     )
     about_me = models.TextField(
-        verbose_name='О вас или компании',
-        help_text='Информация о работодателе или команде'
+        verbose_name=_('О вас или компании'),
+        help_text=_('Информация о работодателе или команде')
     )
     work_type = models.CharField(
-        verbose_name='Тип занятости',
+        verbose_name=_('Тип занятости'),
         choices=WORK_CHOICES,
         max_length=20,
-        help_text='Выберите тип занятости: полная или частичная'
+        help_text=_('Выберите тип занятости: полная или частичная')
     )
     work_time = models.CharField(
-        choices=WOKR_TIME_CHOICES,
+        choices=WORK_TIME_CHOICES,
         max_length=20,
-        help_text='Выберите время работы: день или ночь'
+        help_text=_('Выберите время работы: день или ночь')
     )
     salary = models.IntegerField(
-        verbose_name='Зарплата',
-        help_text='Укажите зарплату в сомах'
+        verbose_name=_('Зарплата'),
+        help_text=_('Укажите зарплату в сомах')
     )
     country = models.CharField(
         null=True,
-        verbose_name='Страна',
-        help_text='Страна, где предлагается вакансия'
+        verbose_name=_('Страна'),
+        help_text=_('Страна, где предлагается вакансия')
     )
     city = models.CharField(
         null=True,
-        verbose_name='Город',
-        help_text='Город, где предлагается вакансия'
+        verbose_name=_('Город'),
+        help_text=_('Город, где предлагается вакансия')
     )
     is_remote = models.BooleanField(
-        verbose_name='Удаленный',
+        verbose_name=_('Удаленный'),
         default=False,
-        help_text='Отметьте, если работа удалённая'
+        help_text=_('Отметьте, если работа удалённая')
     )
     requirements = models.TextField(
-        verbose_name='Требования',
-        help_text='Требуемые навыки и квалификация'
+        verbose_name=_('Требования'),
+        help_text=_('Требуемые навыки и квалификация')
     )
     responsibilities = models.TextField(
-        verbose_name='Обязанности',
-        help_text='Что нужно будет делать на работе'
+        verbose_name=_('Обязанности'),
+        help_text=_('Что нужно будет делать на работе')
     )
     published_at = models.DateTimeField(
         auto_now=True,
-        help_text='Дата последней публикации вакансии'
+        help_text=_('Дата последней публикации вакансии')
     )
     is_active = models.BooleanField(
-        verbose_name='Активен',
+        verbose_name=_('Активен'),
         default=True,
-        help_text='Если выключить, вакансия будет скрыта'
+        help_text=_('Если выключить, вакансия будет скрыта')
     )
 
 
@@ -80,10 +81,22 @@ class Vacancy(models.Model):
     def __str__(self):
         return str(self.name)
 
+
 class VacancyView(models.Model):
     vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE)
     user = models.ForeignKey(get_user_model(), null=True, blank=True, on_delete=models.SET_NULL)
     ip = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(null=True, blank=True)
+    referrer = models.URLField(null=True, blank=True)
+    country = models.CharField(max_length=50, blank=True, null=True)
+    city = models.CharField(max_length=50, blank=True, null=True)
+
+    ACTION_CHOICES = [
+        ("view", "Просмотр"),
+        ("response", "Отклик"),
+    ]
+    action = models.CharField(max_length=20, choices=ACTION_CHOICES, default="view")
+
     viewed_at = models.DateTimeField(auto_now_add=True)
     
     
@@ -92,21 +105,20 @@ class VacancyResponse(models.Model):
         get_user_model(),
         on_delete=models.CASCADE,
         related_name='responses',
-        verbose_name='Откликнувшийся воркер'
+        verbose_name=_('Откликнувшийся воркер')
     )
     vacancy = models.ForeignKey(
         'Vacancy',
         on_delete=models.CASCADE,
         related_name='responses',
-        verbose_name='Вакансия'
+        verbose_name=_('Вакансия')
     )
-    is_favorite = models.BooleanField(default=False, verbose_name='Избранное')
-    responded_at = models.DateTimeField(auto_now_add=True)
+    is_favorite = models.BooleanField(default=False, verbose_name=_('Избранное'))
     status = models.CharField(
         max_length=10,
         choices=STATUS_CHOICES,
         default='pending',
-        verbose_name='Статус отклика'
+        verbose_name=_('Статус отклика')
     )
     anketa = models.ForeignKey(
         'Anketa',
@@ -114,7 +126,7 @@ class VacancyResponse(models.Model):
         null=True,
         blank=True,
         related_name='responses',
-        verbose_name='Анкета'
+        verbose_name=_('Анкета')
     )
 
     responded_at = models.DateTimeField(auto_now=True, null=True, blank=True)
@@ -133,43 +145,43 @@ class Anketa(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name='ankets',
-        help_text='Пользователь, к которому привязана анкета'
+        help_text=_('Пользователь, к которому привязана анкета')
     )
     name = models.CharField(
-        verbose_name='Название',
-        help_text='Название анкеты, например: Backend разработчик'
+        verbose_name=_('Название'),
+        help_text=_('Название анкеты, например: Backend разработчик')
     )
     about_me = models.TextField(
-        verbose_name='Обо мне',
-        help_text='Расскажите кратко о себе, навыках и целях'
+        verbose_name=_('Обо мне'),
+        help_text=_('Расскажите кратко о себе, навыках и целях')
     )
     experience = models.TextField(
-        verbose_name='Опыт работы',
-        help_text='Опишите, где и кем вы работали ранее'
+        verbose_name=_('Опыт работы'),
+        help_text=_('Опишите, где и кем вы работали ранее')
     )
     country = models.CharField(
         null=True,
-        verbose_name='Страна',
-        help_text='Укажите страну проживания'
+        verbose_name=_('Страна'),
+        help_text=_('Укажите страну проживания')
     )
     city = models.CharField(
         null=True,
-        verbose_name='Город',
-        help_text='Укажите город проживания'
+        verbose_name=_('Город'),
+        help_text=_('Укажите город проживания')
     )
     phone_number = models.CharField(
         max_length=20,
-        verbose_name='Телефон',
-        help_text='Введите номер телефона в формате +996XXXXXXXXX'
+        verbose_name=_('Телефон'),
+        help_text=_('Введите номер телефона в формате +996XXXXXXXXX')
     )
     is_active = models.BooleanField(
         default=True,
-        verbose_name='Активна ли анкета',
-        help_text='Если выключить, анкета будет скрыта из поиска'
+        verbose_name=_('Активна ли анкета'),
+        help_text=_('Если выключить, анкета будет скрыта из поиска')
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
-        help_text='Дата создания анкеты'
+        help_text=_('Дата создания анкеты')
     )
 
     def __str__(self):

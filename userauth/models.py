@@ -1,11 +1,11 @@
-from django.conf import settings
 from django.contrib.auth.models import BaseUserManager, AbstractUser
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 class CustomUserManager(BaseUserManager):
     def _create_user(self, email, password, **extra_fields):
         if not email:
-            raise ValueError('Поле Email должно быть установлено.')
+            raise ValueError(_('Поле Email должно быть установлено.'))
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
@@ -23,9 +23,9 @@ class CustomUserManager(BaseUserManager):
         extra_fields.setdefault('is_active', True)
 
         if extra_fields.get('is_staff') is not True:
-            raise ValueError('Суперпользователь должен иметь is_staff=True.')
+            raise ValueError(_('Суперпользователь должен иметь is_staff=True.'))
         if extra_fields.get('is_superuser') is not True:
-            raise ValueError('Суперпользователь должен иметь is_superuser=True.')
+            raise ValueError(_('Суперпользователь должен иметь is_superuser=True.'))
 
         return self._create_user(email, password, **extra_fields)
 
@@ -36,13 +36,13 @@ class CustomUser(AbstractUser):
         unique=False,
         null=True,
         blank=True,
-        verbose_name='Имя пользователя'
+        verbose_name=_('Имя пользователя')
     )
     photo = models.ImageField(upload_to='users/photos/', null=True, blank=True, verbose_name='Фото профиля', )
 
-    email = models.EmailField(unique=True, blank=False, null=False, verbose_name='Электронная почта')
-    first_name = models.CharField(max_length=150, blank=True, verbose_name='Имя')
-    user_r = models.BooleanField(verbose_name="Разрешение на публикацию вакансий", default=False)
+    email = models.EmailField(unique=True, blank=False, null=False, verbose_name=_('Электронная почта'))
+    first_name = models.CharField(max_length=150, blank=True, verbose_name=_('Имя'))
+    user_r = models.BooleanField(verbose_name=_("Разрешение на публикацию вакансий"), default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -50,8 +50,8 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
 
     class Meta(AbstractUser.Meta):
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
+        verbose_name = _('Пользователь')
+        verbose_name_plural = _('Пользователи')
         swappable = 'AUTH_USER_MODEL'
 
     def __str__(self):

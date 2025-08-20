@@ -1,0 +1,947 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-20 20:37+0600\n"
+"PO-Revision-Date: 2025-08-20 19:06+0000\n"
+"Last-Translator:   <admin@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
+"(n%100>=11 && n%100<=14)? 2 : 3);\n"
+"X-Translated-Using: django-rosetta 0.10.2\n"
+
+#: .\api\choices.py:4
+msgid "Ожидание"
+msgstr ""
+
+#: .\api\choices.py:5
+msgid "Принят"
+msgstr ""
+
+#: .\api\choices.py:6
+msgid "Отклонён"
+msgstr ""
+
+#: .\api\choices.py:10
+msgid "Работа"
+msgstr ""
+
+#: .\api\choices.py:11
+msgid "Практика"
+msgstr ""
+
+#: .\api\choices.py:15
+msgid "Гибкий график"
+msgstr ""
+
+#: .\api\choices.py:16
+msgid "Полный рабочий день"
+msgstr ""
+
+#: .\api\choices.py:17
+msgid "По выходным"
+msgstr ""
+
+#: .\api\models.py:13
+msgid "Владелец вакансии"
+msgstr ""
+
+#: .\api\models.py:14
+msgid "Пользователь, разместивший вакансию"
+msgstr ""
+
+#: .\api\models.py:17 .\api\models.py:139
+msgid "Название"
+msgstr ""
+
+#: .\api\models.py:19
+msgid "Название вакансии, например: Python разработчик"
+msgstr ""
+
+#: .\api\models.py:22
+msgid "Описание"
+msgstr ""
+
+#: .\api\models.py:23
+msgid "Краткое описание вакансии"
+msgstr ""
+
+#: .\api\models.py:26
+msgid "О вас или компании"
+msgstr ""
+
+#: .\api\models.py:27
+msgid "Информация о работодателе или команде"
+msgstr ""
+
+#: .\api\models.py:30 .\templates\partials\filter_form.html:20
+msgid "Тип занятости"
+msgstr ""
+
+#: .\api\models.py:33
+msgid "Выберите тип занятости: полная или частичная"
+msgstr ""
+
+#: .\api\models.py:38
+msgid "Выберите время работы: день или ночь"
+msgstr ""
+
+#: .\api\models.py:41
+msgid "Зарплата"
+msgstr ""
+
+#: .\api\models.py:42
+msgid "Укажите зарплату в сомах"
+msgstr ""
+
+#: .\api\models.py:46 .\api\models.py:152
+msgid "Страна"
+msgstr ""
+
+#: .\api\models.py:47
+msgid "Страна, где предлагается вакансия"
+msgstr ""
+
+#: .\api\models.py:51 .\api\models.py:157
+msgid "Город"
+msgstr ""
+
+#: .\api\models.py:52
+msgid "Город, где предлагается вакансия"
+msgstr ""
+
+#: .\api\models.py:55
+msgid "Удаленный"
+msgstr ""
+
+#: .\api\models.py:57
+msgid "Отметьте, если работа удалённая"
+msgstr ""
+
+#: .\api\models.py:60 .\templates\vacancy\vacancy_detail.html:39
+msgid "Требования"
+msgstr ""
+
+#: .\api\models.py:61
+msgid "Требуемые навыки и квалификация"
+msgstr ""
+
+#: .\api\models.py:64 .\templates\vacancy\vacancy_detail.html:42
+msgid "Обязанности"
+msgstr ""
+
+#: .\api\models.py:65
+msgid "Что нужно будет делать на работе"
+msgstr ""
+
+#: .\api\models.py:69
+msgid "Дата последней публикации вакансии"
+msgstr ""
+
+#: .\api\models.py:72
+msgid "Активен"
+msgstr ""
+
+#: .\api\models.py:74
+msgid "Если выключить, вакансия будет скрыта"
+msgstr ""
+
+#: .\api\models.py:96
+msgid "Откликнувшийся воркер"
+msgstr ""
+
+#: .\api\models.py:102 .\templates\userauth\profile.html:90
+msgid "Вакансия"
+msgstr ""
+
+#: .\api\models.py:104
+msgid "Избранное"
+msgstr ""
+
+#: .\api\models.py:109
+msgid "Статус отклика"
+msgstr ""
+
+#: .\api\models.py:117 .\templates\userauth\profile.html:91
+msgid "Анкета"
+msgstr ""
+
+#: .\api\models.py:136
+msgid "Пользователь, к которому привязана анкета"
+msgstr ""
+
+#: .\api\models.py:140
+msgid "Название анкеты, например: Backend разработчик"
+msgstr ""
+
+#: .\api\models.py:143
+msgid "Обо мне"
+msgstr ""
+
+#: .\api\models.py:144
+msgid "Расскажите кратко о себе, навыках и целях"
+msgstr ""
+
+#: .\api\models.py:147
+msgid "Опыт работы"
+msgstr ""
+
+#: .\api\models.py:148
+msgid "Опишите, где и кем вы работали ранее"
+msgstr ""
+
+#: .\api\models.py:153
+msgid "Укажите страну проживания"
+msgstr ""
+
+#: .\api\models.py:158
+msgid "Укажите город проживания"
+msgstr ""
+
+#: .\api\models.py:162
+msgid "Телефон"
+msgstr ""
+
+#: .\api\models.py:163
+msgid "Введите номер телефона в формате +996XXXXXXXXX"
+msgstr ""
+
+#: .\api\models.py:167
+msgid "Активна ли анкета"
+msgstr ""
+
+#: .\api\models.py:168
+msgid "Если выключить, анкета будет скрыта из поиска"
+msgstr ""
+
+#: .\api\models.py:172
+msgid "Дата создания анкеты"
+msgstr ""
+
+#: .\api\views.py:114
+msgid "Только соискатели могут откликаться."
+msgstr ""
+
+#: .\api\views.py:125
+msgid "Вы уже откликались на эту вакансию."
+msgstr ""
+
+#: .\api\views.py:133
+msgid "Отклик отправлен!"
+msgstr ""
+
+#: .\api\views.py:225
+msgid "Вы не можете просматривать чужую анкету."
+msgstr ""
+
+#: .\api\views.py:235
+msgid "У вас нет доступа к этой анкете."
+msgstr ""
+
+#: .\templates\anketa\anketa_detail.html:8
+msgid "Обо мне:"
+msgstr ""
+
+#: .\templates\anketa\anketa_detail.html:9
+msgid "Опыт:"
+msgstr ""
+
+#: .\templates\anketa\anketa_detail.html:10
+msgid "Страна:"
+msgstr ""
+
+#: .\templates\anketa\anketa_detail.html:11
+msgid "Город:"
+msgstr ""
+
+#: .\templates\anketa\anketa_detail.html:12
+msgid "Телефон:"
+msgstr ""
+
+#: .\templates\anketa\anketa_detail.html:13
+msgid "Активна:"
+msgstr ""
+
+#: .\templates\anketa\anketa_detail.html:13
+msgid "Да,Нет"
+msgstr ""
+
+#: .\templates\anketa\anketa_detail.html:14
+msgid "Создана:"
+msgstr ""
+
+#: .\templates\anketa\anketa_detail.html:18
+#: .\templates\userauth\profile.html:127
+msgid "Редактировать"
+msgstr ""
+
+#: .\templates\anketa\anketa_detail.html:20
+#: .\templates\vacancy\respond_to_vacancy.html:16
+#: .\templates\vacancy\vacancy_detail.html:53
+msgid "Назад"
+msgstr ""
+
+#: .\templates\auth\login_register.html:10
+msgid "Вход / Регистрация"
+msgstr ""
+
+#: .\templates\auth\login_register.html:227
+msgid "Вход"
+msgstr ""
+
+#: .\templates\auth\login_register.html:228
+msgid "Регистрация"
+msgstr ""
+
+#: .\templates\auth\login_register.html:234
+msgid "Добро пожаловать"
+msgstr ""
+
+#: .\templates\auth\login_register.html:276
+#: .\templates\auth\login_register.html:307 .\templates\main\applicants.html:18
+#: .\templates\main\employers.html:107 .\templates\partials\menu.html:75
+msgid "Войти"
+msgstr ""
+
+#: .\templates\auth\login_register.html:278
+#: .\templates\auth\login_register.html:299
+msgid "или"
+msgstr ""
+
+#: .\templates\auth\login_register.html:282
+msgid "Войти через Google"
+msgstr ""
+
+#: .\templates\auth\login_register.html:286
+msgid "Нет аккаунта?"
+msgstr ""
+
+#: .\templates\auth\login_register.html:286
+#: .\templates\auth\login_register.html:297
+msgid "Зарегистрироваться"
+msgstr ""
+
+#: .\templates\auth\login_register.html:303
+msgid "Зарегистрироваться через Google"
+msgstr ""
+
+#: .\templates\auth\login_register.html:307
+msgid "Уже есть аккаунт?"
+msgstr ""
+
+#: .\templates\auth\select_role.html:7
+msgid "Выбор роли"
+msgstr ""
+
+#: .\templates\auth\select_role.html:55
+msgid "Выберите свою роль"
+msgstr ""
+
+#: .\templates\auth\select_role.html:63 .\userauth\forms.py:8
+msgid "Я работодатель"
+msgstr ""
+
+#: .\templates\auth\select_role.html:70
+msgid "Я соискатель"
+msgstr ""
+
+#: .\templates\auth\select_role.html:75
+msgid "Продолжить"
+msgstr ""
+
+#: .\templates\form\anketa_form.html:9 .\templates\partials\menu.html:59
+#: .\templates\userauth\profile.html:42
+msgid "Создать анкету"
+msgstr ""
+
+#: .\templates\form\anketa_form.html:29
+msgid "Сохранить"
+msgstr ""
+
+#: .\templates\form\anketa_form.html:30
+#: .\templates\vacancy\vacancy_create.html:37
+#: .\templates\vacancy\vacancy_detail.html:117
+msgid "Отмена"
+msgstr ""
+
+#: .\templates\main\applicants.html:7
+msgid "СЛАДКИЙ МАЛЬЧИК - Для соискателей"
+msgstr ""
+
+#: .\templates\main\applicants.html:15 .\templates\main\employers.html:104
+#: .\templates\main\main.html:9 .\templates\partials\footer.html:16
+#: .\templates\partials\menu.html:6
+msgid "СЛАДКИЙ МАЛЬЧИК"
+msgstr ""
+
+#: .\templates\main\applicants.html:28
+msgid "Найди работу своей мечты"
+msgstr ""
+
+#: .\templates\main\applicants.html:29
+msgid ""
+"Для студентов и молодых специалистов — сотни вакансий от проверенных "
+"работодателей Кыргызстана."
+msgstr ""
+
+#: .\templates\main\applicants.html:30 .\templates\main\employers.html:124
+msgid "Узнать больше"
+msgstr ""
+
+#: .\templates\main\applicants.html:31
+msgid "Посмотреть вакансии"
+msgstr ""
+
+#: .\templates\main\applicants.html:34
+msgid "Соискатели"
+msgstr ""
+
+#: .\templates\main\applicants.html:43
+msgid "Почему студенты выбирают JobPortal"
+msgstr ""
+
+#: .\templates\main\applicants.html:44
+msgid "Инструменты для быстрого поиска и развития карьеры"
+msgstr ""
+
+#: .\templates\main\applicants.html:51
+msgid "Вакансии для студентов"
+msgstr ""
+
+#: .\templates\main\applicants.html:52
+msgid ""
+"Подходящие стажировки и первые рабочие места для начинающих специалистов."
+msgstr ""
+
+#: .\templates\main\applicants.html:58
+msgid "Работодатели из Кыргызстана"
+msgstr ""
+
+#: .\templates\main\applicants.html:59
+msgid "Только проверенные компании, которые заинтересованы в молодых талантах."
+msgstr ""
+
+#: .\templates\main\applicants.html:65
+msgid "Поддержка и советы"
+msgstr ""
+
+#: .\templates\main\applicants.html:66
+msgid "Советы по резюме, подготовке к собеседованиям и развитию навыков."
+msgstr ""
+
+#: .\templates\main\applicants.html:76
+msgid "Готов начать карьеру уже сегодня?"
+msgstr ""
+
+#: .\templates\main\applicants.html:77
+msgid "Создать аккаунт"
+msgstr ""
+
+#: .\templates\main\employers.html:7
+msgid "СЛАДКИЙ МАЛЬЧИК - Для работодателей"
+msgstr ""
+
+#: .\templates\main\employers.html:117
+msgid "Найдите лучших сотрудников"
+msgstr ""
+
+#: .\templates\main\employers.html:118
+msgid ""
+"Размещайте вакансии, находите квалифицированных специалистов и управляйте "
+"откликами в одном месте"
+msgstr ""
+
+#: .\templates\main\employers.html:121
+msgid "Начать сейчас"
+msgstr ""
+
+#: .\templates\main\employers.html:141
+msgid "Активных соискателей"
+msgstr ""
+
+#: .\templates\main\employers.html:148
+msgid "Работодателей находят сотрудников"
+msgstr ""
+
+#: .\templates\main\employers.html:155
+msgid "Среднее время первого отклика"
+msgstr ""
+
+#: .\templates\main\employers.html:167
+msgid "Почему выбирают нас"
+msgstr ""
+
+#: .\templates\main\employers.html:168
+msgid "Все инструменты для эффективного поиска персонала"
+msgstr ""
+
+#: .\templates\main\employers.html:178
+msgid "Таргетированные вакансии"
+msgstr ""
+
+#: .\templates\main\employers.html:179
+msgid "Наши алгоритмы показывают ваши вакансии только релевантным кандидатам"
+msgstr ""
+
+#: .\templates\main\employers.html:190
+msgid "Аналитика и отчеты"
+msgstr ""
+
+#: .\templates\main\employers.html:191
+msgid "Подробная статистика по просмотрам и откликам на ваши вакансии"
+msgstr ""
+
+#: .\templates\main\employers.html:202
+msgid "Подбор кандидатов"
+msgstr ""
+
+#: .\templates\main\employers.html:203
+msgid "Наши HR-специалисты могут помочь с поиском идеального сотрудника"
+msgstr ""
+
+#: .\templates\main\employers.html:215
+msgid "Как это работает"
+msgstr ""
+
+#: .\templates\main\employers.html:216
+msgid "Всего 3 простых шага к найму лучших сотрудников"
+msgstr ""
+
+#: .\templates\main\employers.html:225
+msgid "Создайте вакансию"
+msgstr ""
+
+#: .\templates\main\employers.html:226
+msgid "Заполните простую форму с описанием вакансии и требованиями"
+msgstr ""
+
+#: .\templates\main\employers.html:235
+msgid "Получайте отклики"
+msgstr ""
+
+#: .\templates\main\employers.html:236
+msgid "Кандидаты будут оставлять отклики и прикреплять свои анкеты"
+msgstr ""
+
+#: .\templates\main\employers.html:245
+msgid "Выберите лучших"
+msgstr ""
+
+#: .\templates\main\employers.html:246
+msgid "Сравните кандидатов и пригласите на собеседование"
+msgstr ""
+
+#: .\templates\main\employers.html:257
+msgid "Что говорят работодатели"
+msgstr ""
+
+#: .\templates\main\employers.html:264
+msgid "Айгуль Садыкова"
+msgstr ""
+
+#: .\templates\main\employers.html:265
+msgid "HR-директор, TechSolutions"
+msgstr ""
+
+#: .\templates\main\employers.html:266
+msgid ""
+"Благодаря СЛАДКИЙ МАЛЬЧИК мы сократили время подбора сотрудников в 2 раза. "
+"Отличная платформа!"
+msgstr ""
+
+#: .\templates\main\employers.html:274
+msgid "Марат Ибрагимов"
+msgstr ""
+
+#: .\templates\main\employers.html:275
+msgid "Основатель, StartupKG"
+msgstr ""
+
+#: .\templates\main\employers.html:276
+msgid "Нашли 3 отличных разработчика за неделю. Сервис действительно работает!"
+msgstr ""
+
+#: .\templates\main\employers.html:284
+msgid "Элина Токтосунова"
+msgstr ""
+
+#: .\templates\main\employers.html:285
+msgid "Директор, FinancePro"
+msgstr ""
+
+#: .\templates\main\employers.html:286
+msgid ""
+"Удобный интерфейс и качественные кандидаты. Рекомендую всем HR-специалистам."
+msgstr ""
+
+#: .\templates\main\employers.html:297
+msgid "Готовы найти идеальных сотрудников?"
+msgstr ""
+
+#: .\templates\main\employers.html:298
+msgid "Присоединяйтесь к тысячам компаний, которые уже используют наш сервис"
+msgstr ""
+
+#: .\templates\main\employers.html:299
+msgid "Зарегистрироваться бесплатно"
+msgstr ""
+
+#: .\templates\main\main.html:33
+msgid "Фильтрация"
+msgstr ""
+
+#: .\templates\main\main.html:40 .\templates\partials\search_form.html:5
+msgid "Найти"
+msgstr ""
+
+#: .\templates\main\main.html:49
+msgid "Найдите работу мечты"
+msgstr ""
+
+#: .\templates\main\main.html:50
+msgid "Лучшие вакансии в одном месте"
+msgstr ""
+
+#: .\templates\main\main.html:56
+msgid "Последние вакансии"
+msgstr ""
+
+#: .\templates\partials\filter_form.html:16
+msgid "Должность, город, страна"
+msgstr ""
+
+#: .\templates\partials\filter_form.html:28
+msgid "Время работы"
+msgstr ""
+
+#: .\templates\partials\filter_form.html:36
+msgid "ЗП от"
+msgstr ""
+
+#: .\templates\partials\filter_form.html:41
+msgid "ЗП до"
+msgstr ""
+
+#: .\templates\partials\footer.html:17
+msgid "Лучшая платформа для поиска работы и сотрудников в Кыргызстане."
+msgstr ""
+
+#: .\templates\partials\footer.html:20
+msgid "Контакты"
+msgstr ""
+
+#: .\templates\partials\footer.html:22
+msgid "г. Бишкек, ул. Примерная 123"
+msgstr ""
+
+#: .\templates\partials\footer.html:28
+msgid "Мы в соцсетях"
+msgstr ""
+
+#: .\templates\partials\footer.html:40
+msgid "СЛАДКИЙ МАЛЬЧИК. Все права защищены."
+msgstr ""
+
+#: .\templates\partials\menu.html:18
+msgid "Главная"
+msgstr ""
+
+#: .\templates\partials\menu.html:21
+msgid "Вакансии"
+msgstr ""
+
+#: .\templates\partials\menu.html:25
+msgid "Работодателям"
+msgstr ""
+
+#: .\templates\partials\menu.html:28
+msgid "Соискателям"
+msgstr ""
+
+#: .\templates\partials\menu.html:55 .\templates\userauth\profile.html:40
+msgid "Создать вакансию"
+msgstr ""
+
+#: .\templates\partials\menu.html:65
+msgid "Профиль"
+msgstr ""
+
+#: .\templates\partials\menu.html:71
+msgid "Выйти"
+msgstr ""
+
+#: .\templates\partials\vacancy_list.html:8
+#, python-format
+msgid "До %(salary)s сом "
+msgstr ""
+
+#: .\templates\partials\vacancy_list.html:16
+#: .\templates\userauth\profile.html:156
+#: .\templates\vacancy\vacancy_detail.html:22
+#: .\templates\vacancy\vacancy_detail.html:72
+msgid "Удалённая работа"
+msgstr ""
+
+#: .\templates\partials\vacancy_list.html:19
+#: .\templates\userauth\profile.html:68 .\templates\userauth\profile.html:159
+#: .\templates\vacancy\vacancy_detail.html:75
+msgid "Подробнее"
+msgstr ""
+
+#: .\templates\userauth\profile.html:24
+msgid "Аватар"
+msgstr ""
+
+#: .\templates\userauth\profile.html:37 .\templates\userauth\profile.html:108
+msgid "Мои вакансии"
+msgstr ""
+
+#: .\templates\userauth\profile.html:37
+msgid "Профиль соискателя"
+msgstr ""
+
+#: .\templates\userauth\profile.html:50
+msgid "Мои анкеты"
+msgstr ""
+
+#: .\templates\userauth\profile.html:53
+msgid "Мои отклики"
+msgstr ""
+
+#: .\templates\userauth\profile.html:75
+msgid "У вас ещё нет активных анкет."
+msgstr ""
+
+#: .\templates\userauth\profile.html:88 .\templates\userauth\profile.html:184
+msgid "Анкета:"
+msgstr ""
+
+#: .\templates\userauth\profile.html:89
+msgid "Статус отклика:"
+msgstr ""
+
+#: .\templates\userauth\profile.html:98
+msgid "Вы ещё не отправляли отклики."
+msgstr ""
+
+#: .\templates\userauth\profile.html:111
+msgid "Отклики"
+msgstr ""
+
+#: .\templates\userauth\profile.html:128
+msgid "Статистика"
+msgstr ""
+
+#: .\templates\userauth\profile.html:134
+msgid "Деактивировать"
+msgstr ""
+
+#: .\templates\userauth\profile.html:134
+msgid "Активировать"
+msgstr ""
+
+#: .\templates\userauth\profile.html:140
+msgid "Вы уверены, что хотите удалить эту вакансию?"
+msgstr ""
+
+#: .\templates\userauth\profile.html:142
+msgid "Удалить"
+msgstr ""
+
+#: .\templates\userauth\profile.html:149
+#: .\templates\vacancy\vacancy_detail.html:65
+#, python-format
+msgid "До %(salary)s сом"
+msgstr ""
+
+#: .\templates\userauth\profile.html:172
+msgid "У вас пока нет вакансий."
+msgstr ""
+
+#: .\templates\userauth\profile.html:185
+msgid "Соискатель:"
+msgstr ""
+
+#: .\templates\userauth\profile.html:186
+#: .\templates\vacancy\vacancy_stats.html:12
+msgid "Статус:"
+msgstr ""
+
+#: .\templates\userauth\profile.html:187
+msgid "Отклик:"
+msgstr ""
+
+#: .\templates\userauth\profile.html:195
+msgid "Обновить"
+msgstr ""
+
+#: .\templates\userauth\profile.html:197
+msgid "Посмотреть анкету"
+msgstr ""
+
+#: .\templates\userauth\profile.html:235
+msgid "Нет откликов."
+msgstr ""
+
+#: .\templates\vacancy\respond_to_vacancy.html:3
+#, python-format
+msgid "    Отклик на вакансию: %(name)s "
+msgstr ""
+
+#: .\templates\vacancy\respond_to_vacancy.html:8
+msgid "Выберите анкету:"
+msgstr ""
+
+#: .\templates\vacancy\respond_to_vacancy.html:15
+msgid "Отправить"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_create.html:7
+msgid "Создать вакансиюx"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_create.html:36
+msgid "Создать"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_detail.html:17
+msgid "сом"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_detail.html:30
+msgid "Автор"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_detail.html:33
+msgid "О компании"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_detail.html:36
+msgid "Описание вакансии"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_detail.html:48
+msgid "Вы уже откликнулись"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_detail.html:50
+msgid "Откликнуться"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_detail.html:59
+msgid "Похожие вакансии"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_detail.html:88
+msgid "Нет похожих вакансий."
+msgstr ""
+
+#: .\templates\vacancy\vacancy_detail.html:100
+msgid "Отклик на вакансию"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_detail.html:101
+msgid "Закрыть"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_detail.html:105
+msgid "Выберите анкету"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_detail.html:110
+msgid "Нет активных анкет"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_detail.html:116
+msgid "Отправить отклик"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_stats.html:6
+#, python-format
+msgid "Статистика вакансии: %(name)s "
+msgstr ""
+
+#: .\templates\vacancy\vacancy_stats.html:9
+#, python-format
+msgid "Отклики: %(responses)s"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_stats.html:10
+#, python-format
+msgid "Создана: %(created)s"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_stats.html:14
+msgid "Активна"
+msgstr ""
+
+#: .\templates\vacancy\vacancy_stats.html:16
+msgid "Неактивна"
+msgstr ""
+
+#: .\userauth\forms.py:29
+msgid "Введите пароль"
+msgstr ""
+
+#: .\userauth\forms.py:43
+msgid "Старый пароль"
+msgstr ""
+
+#: .\userauth\forms.py:47
+msgid "Новый пароль"
+msgstr ""
+
+#: .\userauth\forms.py:51
+msgid "Повторите новый пароль"
+msgstr ""
+
+#: .\userauth\models.py:8
+msgid "Поле Email должно быть установлено."
+msgstr ""
+
+#: .\userauth\models.py:26
+msgid "Суперпользователь должен иметь is_staff=True."
+msgstr ""
+
+#: .\userauth\models.py:28
+msgid "Суперпользователь должен иметь is_superuser=True."
+msgstr ""
+
+#: .\userauth\models.py:39
+msgid "Имя пользователя"
+msgstr ""
+
+#: .\userauth\models.py:43
+msgid "Электронная почта"
+msgstr ""
+
+#: .\userauth\models.py:44
+msgid "Имя"
+msgstr ""
+
+#: .\userauth\models.py:45
+msgid "Разрешение на публикацию вакансий"
+msgstr ""
+
+#: .\userauth\models.py:53
+msgid "Пользователь"
+msgstr ""
+
+#: .\userauth\models.py:54
+msgid "Пользователи"
+msgstr ""
+
+#: .\userauth\validation.py:7
+msgid "Неверное имя профиля. Разрешены только буквы, цифры и _ (3-32 символа)."
+msgstr ""

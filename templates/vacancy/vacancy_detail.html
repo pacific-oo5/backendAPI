@@ -1,4 +1,5 @@
 {% extends 'main/main.html' %}
+{% load i18n %}
 {% block content %}
 {% if messages %}
   {% for message in messages %}
@@ -13,12 +14,12 @@
             <div class="card">
                 <div class="card-body">
                     <h1 class="card-title">{{ vacancy.name }}</h1>
-                    <h4 class="text-muted mb-4">{{ vacancy.salary }} сом</h4>
-                    
+                    <h4 class="text-muted mb-4">{{ vacancy.salary }} {% trans "сом" %}</h4>
+
                     <div class="d-flex flex-wrap gap-2 mb-4">
                         <span class="badge bg-primary">{{ vacancy.get_work_type_display }}</span>
                         {% if vacancy.is_remote %}
-                            <span class="badge bg-success">Удалённая работа</span>
+                            <span class="badge bg-success">{% trans "Удалённая работа" %}</span>
                         {% else %}
                             <span class="badge bg-info">
                                 {{ vacancy.city }}{% if vacancy.country %}, {{ vacancy.country }}{% endif %}
@@ -26,52 +27,52 @@
                         {% endif %}
                         <span class="badge bg-secondary">{{ vacancy.get_work_time_display }}</span>
                     </div>
-                    <h4>Автор</h4>
+                    <h4>{% trans "Автор" %}</h4>
                     <p class="md-4">{{ vacancy.user }}</p>
 
-                    <h3>О компании</h3>
+                    <h3>{% trans "О компании" %}</h3>
                     <p class="mb-4">{{ vacancy.about_me }}</p>
 
-                    <h3>Описание вакансии</h3>
+                    <h3>{% trans "Описание вакансии" %}</h3>
                     <p class="mb-4">{{ vacancy.description }}</p>
 
-                    <h3>Требования</h3>
+                    <h3>{% trans "Требования" %}</h3>
                     <p class="mb-4">{{ vacancy.requirements }}</p>
 
-                    <h3>Обязанности</h3>
+                    <h3>{% trans "Обязанности" %}</h3>
                     <p class="mb-4">{{ vacancy.responsibilities }}</p>
 
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
                         {% if not user.user_r %}
                           {% if has_responded %}
-                            <button class="btn btn-secondary me-md-2" disabled>Вы уже откликнулись</button>
+                            <button class="btn btn-secondary me-md-2" disabled>{% trans "Вы уже откликнулись" %}</button>
                           {% else %}
-                            <button class="btn btn-primary me-md-2" data-bs-toggle="modal" data-bs-target="#respondModal">Откликнуться</button>
+                            <button class="btn btn-primary me-md-2" data-bs-toggle="modal" data-bs-target="#respondModal">{% trans "Откликнуться" %}</button>
                           {% endif %}
                         {% endif %}
-                        <a href="/" class="btn btn-outline-secondary">Назад</a>
+                        <a href="/" class="btn btn-outline-secondary">{% trans "Назад" %}</a>
                     </div>
                 </div>
             </div>
         </div>
 
-        <h4>Похожие вакансии</h4>
+        <h4>{% trans "Похожие вакансии" %}</h4>
         {% for related in similar_vacancies %}
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card vacancy-card h-100">
                     <div class="card-body">
                         <h5 class="card-title">{{ related.name }}</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">До {{ related.salary }} сом</h6>
+                        <h6 class="card-subtitle mb-2 text-muted">{% blocktrans with salary=related.salary %}До {{ salary }} сом{% endblocktrans %}</h6>
                         <p class="card-text">{{ related.description|truncatechars:100 }}</p>
                         <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge 
+                            <span class="badge
                                 {% if vacancy.is_remote %}bg-primary
                                 {% elif vacancy.work_time == 'По выходным' %}bg-dark
                                 {% else %}bg-success{% endif %}">
-                                {% if related.is_remote %}Удалённая работа
+                                {% if related.is_remote %}{% trans "Удалённая работа" %}
                                 {% else %}{{ related.work_time }}{% endif %}
                             </span>
-                            <a href="{% url 'api:vacancy_detail' vacancy.id %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
+                            <a href="{% url 'api:vacancy_detail' vacancy.id %}" class="btn btn-sm btn-outline-primary">{% trans "Подробнее" %}</a>
                         </div>
                     </div>
                     <div class="card-footer bg-transparent">
@@ -84,7 +85,7 @@
                 </div>
             </div>
         {% empty %}
-            <li>Нет похожих вакансий.</li>
+            <li>{% trans "Нет похожих вакансий." %}</li>
         {% endfor %}
     </div>
 </div>
@@ -96,24 +97,24 @@
       <form method="post" action="{% url 'api:respond_to_vacancy' vacancy.id %}">
         {% csrf_token %}
         <div class="modal-header">
-          <h5 class="modal-title" id="respondModalLabel">Отклик на вакансию</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+          <h5 class="modal-title" id="respondModalLabel">{% trans "Отклик на вакансию" %}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans "Закрыть" %}"></button>
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label for="anketa" class="form-label">Выберите анкету:</label>
+            <label for="anketa" class="form-label">{% trans "Выберите анкету" %}:</label>
             <select name="anketa" id="anketa" class="form-select" required>
               {% for anketa in ankets %}
                 <option value="{{ anketa.id }}">{{ anketa.name }}</option>
               {% empty %}
-                <option disabled>Нет активных анкет</option>
+                <option disabled>{% trans "Нет активных анкет" %}</option>
               {% endfor %}
             </select>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Отправить отклик</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+          <button type="submit" class="btn btn-primary">{% trans "Отправить отклик" %}</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Отмена" %}</button>
         </div>
       </form>
     </div>

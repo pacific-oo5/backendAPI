@@ -1,69 +1,98 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
-        <div class="container">
-            <a class="navbar-brand">СЛАДКИЙ МАЛЬЧИК</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <!-- <li class=" nav-item"> 
-                        {% if user.is_authenticated %}
-                            <img src="{{ user_avatar_url }}" alt="Avatar" class="rounded-circle" width="40">
-                        {% endif %}
-                    </li> -->
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{% url 'home' %}">Главная</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">Вакансии</a>
-                    </li>
-                    {% if not user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'employers' %}">Работодателям</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'applicants' %}">Соискателям</a>
-                    </li>
-                    {% endif %}
-                </ul>
+{% load i18n %}
 
-                {% if user.is_authenticated %}
-                    <div class="d-flex align-items-center gap-2 mt-2">
-                        {% if not in_profile %}
-                        <a href="{% url 'profile' %}" class="btn btn-primary d-flex align-items-center">
-                            <i class="bi bi-person-fill me-1"></i> Профиль
-                        </a>
-                        {% endif %}
-                        <button type="button" class="btn btn-outline-danger d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#logoutModal">
-                            Выйти
-                        </button>
-                    </div>
-                {% else %}
-                    <div class="d-flex mt-2">
-                        <a href="{% url 'auth' %}" class="btn btn-outline-primary me-2 d-flex align-items-center">
-                            Войти
-                        </a>
-                    </div>
-                {% endif %}
-            </div>
-        </div>
-    </nav>
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top shadow-sm">
+  <div class="container">
+    <!-- Логотип -->
+    <a class="navbar-brand fw-bold">{% trans "СЛАДКИЙ МАЛЬЧИК" %}</a>
 
+    <!-- Бургер -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <!-- Модальное окно -->
+    <!-- Меню -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+             href="{% url 'home' %}">{% trans "Главная" %}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'home' %}">{% trans "Вакансии" %}</a>
+        </li>
+        {% if not user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'employers' %}">{% trans "Работодателям" %}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'applicants' %}">{% trans "Соискателям" %}</a>
+          </li>
+        {% endif %}
+      </ul>
+
+      <!-- Правая часть -->
+      <div class="d-grid gap-2 d-lg-flex align-items-center">
+
+        <!-- Языки -->
+        <form action="{% url 'set_language' %}" method="post" class="d-inline">
+          {% csrf_token %}
+          <select name="language" onchange="this.form.submit()"
+                  class="form-select form-select-sm">
+            {% get_current_language as LANGUAGE_CODE %}
+            {% get_available_languages as LANGUAGES %}
+            {% for lang_code, lang_name in LANGUAGES %}
+              <option value="{{ lang_code }}" {% if lang_code == LANGUAGE_CODE %}selected{% endif %}>
+                {{ lang_name }}
+              </option>
+            {% endfor %}
+          </select>
+        </form>
+
+        <!-- Кнопки -->
+        {% if user.is_authenticated %}
+          {% if user.user_r %}
+            <a href="{% url 'api:vacancy_create' %}" class="btn btn-success btn-sm">
+              + {% trans "Создать вакансию" %}
+            </a>
+          {% else %}
+            <a href="{% url 'api:anketa_create' %}" class="btn btn-success btn-sm">
+              + {% trans "Создать анкету" %}
+            </a>
+          {% endif %}
+
+          {% if not in_profile %}
+            <a href="{% url 'profile' %}" class="btn btn-primary btn-sm">
+              {% trans "Профиль" %}
+            </a>
+          {% endif %}
+
+          <!-- Кнопка выхода -->
+          <button type="button" class="btn btn-outline-danger d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#logoutModal">
+              {% trans "Выйти" %}
+          </button>
+        {% else %}
+          <a href="{% url 'auth' %}" class="btn btn-outline-primary btn-sm">
+            {% trans "Войти" %}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+
 <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="logoutModalLabel">Подтверждение выхода</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        <h5 class="modal-title" id="logoutModalLabel">{% trans "Подтверждение выхода" %}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal">{% trans "Закрыть" %}</button>
       </div>
       <div class="modal-body">
-        Вы уверены, что хотите выйти?
+        {% trans "Вы уверены, что хотите выйти?" %}
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Нет</button>
-        <a href="{% url 'custom_logout' %}" class="btn btn-danger">Да, выйти</a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{% trans "Нет" %}</button>
+        <a href="{% url 'custom_logout' %}" class="btn btn-danger">{% trans "Да, выйти" %}</a>
       </div>
     </div>
   </div>

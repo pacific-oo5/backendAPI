@@ -1,12 +1,13 @@
 {% load static %}
 {% load socialaccount %}
+{% load i18n %}
 
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход / Регистрация</title>
+    <title>{% trans "Вход / Регистрация" %}</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -223,14 +224,14 @@
 <body>
     <div class="container">
         <div class="tabs">
-            <div class="tab active" data-tab="login">Вход</div>
-            <div class="tab" data-tab="register">Регистрация</div>
+            <div class="tab active" data-tab="login">{% trans "Вход" %}</div>
+            <div class="tab" data-tab="register">{% trans "Регистрация" %}</div>
         </div>
 
         <div class="form-container">
             <div class="logo">
                 <i class="bi bi-person fs-3"></i>
-                <h1>Добро пожаловать</h1>
+                <h1>{% trans "Добро пожаловать" %}</h1>
             </div>
 
             {% if messages %}
@@ -272,17 +273,17 @@
                         <a href="#" style="font-size: 13px; color: var(--primary-color); text-decoration: none;">Забыли пароль?</a>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100">Войти</button>
+                    <button type="submit" class="btn btn-primary w-100">{% trans "Войти" %}</button>
 
-                    <div class="divider">или</div>
+                    <div class="divider">{% trans "или" %}</div>
 
                     <a href="{% provider_login_url 'google' method='oauth2' %}" class="btn btn-outline w-100">
                         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="height:18px; margin-right:10px;">
-                        Войти через Google
+                        {% trans "Войти через Google" %}
                     </a>
 
                     <p class="footer-text text-center mt-3">
-                        Нет аккаунта? <a href="#" class="switch-tab" data-tab="register">Зарегистрироваться</a>
+                        {% trans "Нет аккаунта?" %} <a href="#" class="switch-tab" data-tab="register">{% trans "Зарегистрироваться" %}</a>
                     </p>
                 </form>
             </div>
@@ -293,17 +294,17 @@
                     {% csrf_token %}
                     {{ register_form.as_p }}
                     
-                    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                    <button type="submit" class="btn btn-primary">{% trans "Зарегистрироваться" %}</button>
                     
-                    <div class="divider">или</div>
+                    <div class="divider">{% trans "или" %}</div>
                     
                     <a href="{% provider_login_url 'google' method='oauth2' %}" class="btn btn-outline">
                         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" style="height:18px; margin-right:10px;">
-                        Зарегистрироваться через Google
+                        {% trans "Зарегистрироваться через Google" %}
                     </a>
                     
                     <p class="footer-text">
-                        Уже есть аккаунт? <a href="#" class="switch-tab" data-tab="login">Войти</a>
+                        {% trans "Уже есть аккаунт?" %} <a href="#" class="switch-tab" data-tab="login">{% trans "Войти" %}</a>
                     </p>
                 </form>
             </div>

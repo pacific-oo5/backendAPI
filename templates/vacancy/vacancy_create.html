@@ -1,9 +1,10 @@
 {% extends 'main/main.html' %}
+{% load i18n %}
 {% load form_tags %}
 
 {% block content %}
 <div class="container my-5">
-  <h2 class="mb-4">Создать вакансию</h2>
+  <h2 class="mb-4">{% trans "Создать вакансиюx" %}</h2>
   <form method="post" novalidate>
     {% csrf_token %}
 
@@ -32,8 +33,8 @@
     </div>
 
     <div class="mt-4">
-      <button type="submit" class="btn btn-primary me-2">Создать</button>
-      <a href="{% url 'profile' %}" class="btn btn-outline-secondary">Отмена</a>
+      <button type="submit" class="btn btn-primary me-2">{% trans "Создать" %}</button>
+      <a href="{% url 'profile' %}" class="btn btn-outline-secondary">{% trans "Отмена" %}</a>
     </div>
   </form>
 </div>

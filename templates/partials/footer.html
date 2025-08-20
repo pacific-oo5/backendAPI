@@ -1,3 +1,4 @@
+{% load i18n %}
 <style>
         footer {
             background-color: #d2d2d2;
@@ -12,19 +13,19 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4 mb-4">
-                    <h5>СЛАДКИЙ МАЛЬЧИК</h5>
-                    <p>Лучшая платформа для поиска работы и сотрудников в Кыргызстане.</p>
+                    <h5>{% trans "СЛАДКИЙ МАЛЬЧИК" %}</h5>
+                    <p>{% trans "Лучшая платформа для поиска работы и сотрудников в Кыргызстане." %}</p>
                 </div>
                 <div class="col-md-4 mb-4">
-                    <h5>Контакты</h5>
+                    <h5>{% trans "Контакты" %}</h5>
                     <ul class="list-unstyled">
-                        <li><i class="bi bi-geo-alt"></i> г. Бишкек, ул. Примерная 123</li>
+                        <li><i class="bi bi-geo-alt"></i> {% trans "г. Бишкек, ул. Примерная 123" %}</li>
                         <li><i class="bi bi-phone"></i> +996 555 123 456</li>
                         <li><i class="bi bi-envelope"></i> info@sladkiy_malchik.kg</li>
                     </ul>
                 </div>
                 <div class="col-md-4 mb-4">
-                    <h5>Мы в соцсетях</h5>
+                    <h5>{% trans "Мы в соцсетях" %}</h5>
                     <div class="social-links">
                         <a href="#" class="me-2"><i class="bi bi-facebook"></i></a>
                         <a href="#" class="me-2"><i class="bi bi-instagram"></i></a>
@@ -36,7 +37,7 @@
             <hr>
             <div class="row">
                 <div class="col-12 text-center">
-                    <p class="mb-0">&copy; 2025 СЛАДКИЙ МАЛЬЧИК. Все права защищены.</p>
+                    <p class="mb-0">&copy; 2025 {% trans "СЛАДКИЙ МАЛЬЧИК. Все права защищены." %}</p>
                 </div>
             </div>
         </div>

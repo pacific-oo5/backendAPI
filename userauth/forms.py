@@ -2,9 +2,10 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.forms import PasswordChangeForm
 from .models import CustomUser
+from django.utils.translation import gettext_lazy as _
 
 class CustomRegisterForm(UserCreationForm):
-    user_r = forms.BooleanField(required=False, label='Я работодатель')
+    user_r = forms.BooleanField(required=False, label=_('Я работодатель'))
 
     class Meta:
         model = CustomUser
@@ -25,7 +26,7 @@ class CustomLoginForm(AuthenticationForm):
         self.fields['password'].widget.attrs.update({
             'class': 'form-control',
             'id': 'password-input',
-            'placeholder': 'Введите пароль'
+            'placeholder': _('Введите пароль')
         })
         self.fields['username'].widget.attrs.update({
             'class': 'form-control',
@@ -39,13 +40,13 @@ class CustomPasswordChangeForm(PasswordChangeForm):
 
         self.fields['old_password'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Старый пароль',
+            'placeholder': _('Старый пароль'),
         })
         self.fields['new_password1'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Новый пароль',
+            'placeholder': _('Новый пароль'),
         })
         self.fields['new_password2'].widget.attrs.update({
             'class': 'form-control',
-            'placeholder': 'Повторите новый пароль',
+            'placeholder': _('Повторите новый пароль'),
         })

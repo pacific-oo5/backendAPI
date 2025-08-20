@@ -1,6 +1,7 @@
+{% load i18n %}
 <form method="get" class="mb-5 d-none d-md-block">
     {% include 'partials/filter_form.html' %}
     <div class="text-end mt-3">
-        <button type="submit" class="btn btn-primary btn-lg">Найти</button>
+        <button type="submit" class="btn btn-primary btn-lg">{% trans "Найти" %}</button>
     </div>
 </form>

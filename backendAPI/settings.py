@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'dj_rest_auth',
     'rest_framework.authtoken',
+    'rosetta',
     # Ваши приложения
     'api',
     'userauth.apps.UserauthConfig'
@@ -42,6 +43,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -80,6 +82,14 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
+
+LANGUAGES = [
+    ('en', 'English'),
+    ('ru', 'Русский'),
+    ('ky', 'Кыргызча'),
+]
+
+LOCALE_PATHS = [BASE_DIR / "locale"]
 
 LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'UTC'

@@ -1,17 +1,62 @@
 {% extends 'main/main.html' %}
 {% block content %}
+{% load i18n %}
 
 <div class="container py-4">
-  <h4>Статистика вакансии: {{ vacancy.name }}</h4>
+  <h4>
+    {% blocktrans with name=vacancy.name %}Статистика вакансии: {{ name }}{% endblocktrans %}
+  </h4>
+
   <ul class="list-group mt-3">
-    <li class="list-group-item">Отклики: {{ stats.responses }}</li>
-    <li class="list-group-item">Создана: {{ stats.created|date:"d.m.Y H:i" }}</li>
+    <!-- Отклики -->
     <li class="list-group-item">
-      Статус:
+      {% blocktrans with responses=stats.responses %}Отклики: {{ responses }}{% endblocktrans %}
+    </li>
+
+    <!-- Просмотры -->
+    <li class="list-group-item">
+      {% blocktrans with views=stats.views %}Просмотры: {{ views }}{% endblocktrans %}
+    </li>
+
+    <!-- Уникальные пользователи -->
+    <li class="list-group-item">
+      {% blocktrans with uniq=stats.unique_users %}Уникальные пользователи: {{ uniq }}{% endblocktrans %}
+    </li>
+
+    <!-- Уникальные IP -->
+    <li class="list-group-item">
+      {% blocktrans with uniq_ip=stats.unique_ips %}Уникальные IP: {{ uniq_ip }}{% endblocktrans %}
+    </li>
+
+    <!-- Последние просмотры -->
+    <li class="list-group-item">
+      {% trans "Последние просмотры:" %}
+      <ul class="mt-2">
+        {% for view in stats.last_views %}
+          <li>
+            {{ view.viewed_at|date:"d.m.Y H:i" }}
+            {% if view.user %} — {{ view.user.username }}{% endif %}
+            {% if view.ip %} (IP: {{ view.ip }}){% endif %}
+            {% if view.referrer %} → {{ view.referrer }}{% endif %}
+          </li>
+        {% empty %}
+          <li>{% trans "Нет просмотров" %}</li>
+        {% endfor %}
+      </ul>
+    </li>
+
+    <!-- Дата создания -->
+    <li class="list-group-item">
+      {% blocktrans with created=stats.created|date:"d.m.Y H:i" %}Создана: {{ created }}{% endblocktrans %}
+    </li>
+
+    <!-- Статус -->
+    <li class="list-group-item">
+      {% trans "Статус:" %}
       {% if stats.is_active %}
-        <span class="badge bg-success">Активна</span>
+        <span class="badge bg-success">{% trans "Активна" %}</span>
       {% else %}
-        <span class="badge bg-secondary">Неактивна</span>
+        <span class="badge bg-secondary">{% trans "Неактивна" %}</span>
       {% endif %}
     </li>
   </ul>

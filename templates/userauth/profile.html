@@ -1,5 +1,6 @@
 {% extends 'main/main.html' %}
 {% load static %}
+{% load i18n %}
 {% block content %}
 
 {% if messages %}
@@ -19,13 +20,8 @@
 
       <div class="card shadow-sm mb-4">
         <div class="card-body d-flex align-items-center flex-wrap">
-          <img src="{{ user.profile_picture.url|default:'/static/img/default-avatar.png' }}"
-               alt="Аватар"
-               class="rounded-circle me-3"
-               width="70"
-               height="70">
           <div>
-            <h5 class="mb-0">{{ user.get_full_name|default:user.email }}</h5>
+            <h5 class="mb-0">{{ user.username|default:user.email }}</h5>
             <small class="text-muted">{{ user.email }}</small>
           </div>
         </div>
@@ -33,12 +29,12 @@
 
       <div class="d-flex justify-content-between align-items-center mb-3">
         <h5 class="mb-0">
-          {% if user.user_r %}Мои вакансии{% else %}Профиль соискателя{% endif %}
+          {% if user.user_r %}{% trans "Мои вакансии" %}{% else %}{% trans "Профиль соискателя" %}{% endif %}
         </h5>
         {% if user.user_r %}
-          <a href="{% url 'api:vacancy_create' %}" class="btn btn-success btn-sm">+ Создать вакансию</a>
+          <a href="{% url 'api:vacancy_create' %}" class="btn btn-success btn-sm">+ {% trans "Создать вакансию" %}</a>
         {% else %}
-          <a href="{% url 'api:anketa_create' %}" class="btn btn-success btn-sm">+ Создать анкету</a>
+          <a href="{% url 'api:anketa_create' %}" class="btn btn-success btn-sm">+ {% trans "Создать анкету" %}</a>
         {% endif %}
       </div>
 
@@ -46,10 +42,10 @@
       <!-- Вкладки для соискателя -->
       <ul class="nav nav-tabs mb-3" id="profileTabs" role="tablist">
         <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="ankets-tab" data-bs-toggle="tab" data-bs-target="#ankets" type="button" role="tab" aria-controls="ankets" aria-selected="true">Мои анкеты</button>
+          <button class="nav-link active" id="ankets-tab" data-bs-toggle="tab" data-bs-target="#ankets" type="button" role="tab" aria-controls="ankets" aria-selected="true">{% trans "Мои анкеты" %}</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="responses-tab" data-bs-toggle="tab" data-bs-target="#responses" type="button" role="tab" aria-controls="responses" aria-selected="false">Мои отклики</button>
+          <button class="nav-link" id="responses-tab" data-bs-toggle="tab" data-bs-target="#responses" type="button" role="tab" aria-controls="responses" aria-selected="false">{% trans "Мои отклики" %}</button>
         </li>
       </ul>
 
@@ -64,14 +60,14 @@
                     <div class="card-body">
                       <h6 class="card-title">{{ anketa.name }}</h6>
                       <p class="card-text text-muted small">{{ anketa.city }}</p>
-                      <a href="{% url 'api:anketa_detail' anketa.pk %}" class="btn btn-outline-primary btn-sm">Подробнее</a>
+                      <a href="{% url 'api:anketa_detail' anketa.pk %}" class="btn btn-outline-primary btn-sm">{% trans "Подробнее" %}</a>
                     </div>
                   </div>
                 </div>
               {% endfor %}
             </div>
           {% else %}
-            <p>У вас ещё нет активных анкет.</p>
+            <p>{% trans "У вас ещё нет активных анкет." %}</p>
           {% endif %}
         </div>
 
@@ -84,17 +80,17 @@
                   <div class="card shadow-sm">
                     <div class="card-body">
                       <h6 class="card-title">{{ response.vacancy.name }}</h6>
-                      <p class="mb-1"><strong>Анкета:</strong> {{ response.anketa.name }}</p>
-                      <p class="mb-1"><strong>Статус отклика:</strong> {{ response.get_status_display }}</p>
-                      <a href="{% url 'api:vacancy_detail' response.vacancy.pk %}" class="btn btn-outline-primary btn-sm me-2">Вакансия</a>
-                      <a href="{% url 'api:anketa_detail' response.anketa.pk %}" class="btn btn-outline-secondary btn-sm">Анкета</a>
+                      <p class="mb-1"><strong>{% trans "Анкета:" %}</strong> {{ response.anketa.name }}</p>
+                      <p class="mb-1"><strong>{% trans "Статус отклика:" %}</strong> {{ response.get_status_display }}</p>
+                      <a href="{% url 'api:vacancy_detail' response.vacancy.pk %}" class="btn btn-outline-primary btn-sm me-2">{% trans "Вакансия" %}</a>
+                      <a href="{% url 'api:anketa_detail' response.anketa.pk %}" class="btn btn-outline-secondary btn-sm">{% trans "Анкета" %}</a>
                     </div>
                   </div>
                 </div>
               {% endfor %}
             </div>
           {% else %}
-            <p>Вы ещё не отправляли отклики.</p>
+            <p>{% trans "Вы ещё не отправляли отклики." %}</p>
           {% endif %}
         </div>
       </div>
@@ -104,10 +100,10 @@
       <!-- Вкладки для работодателя -->
 <ul class="nav nav-tabs mb-3" id="profileTabs" role="tablist">
   <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="vacancies-tab" data-bs-toggle="tab" data-bs-target="#vacancies" type="button" role="tab" aria-controls="vacancies" aria-selected="true">Мои вакансии</button>
+    <button class="nav-link active" id="vacancies-tab" data-bs-toggle="tab" data-bs-target="#vacancies" type="button" role="tab" aria-controls="vacancies" aria-selected="true">{% trans "Мои вакансии" %}</button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link" id="responses-tab" data-bs-toggle="tab" data-bs-target="#responses" type="button" role="tab" aria-controls="responses" aria-selected="false">Отклики</button>
+    <button class="nav-link" id="responses-tab" data-bs-toggle="tab" data-bs-target="#responses" type="button" role="tab" aria-controls="responses" aria-selected="false">{% trans "Отклики" %}</button>
   </li>
 </ul>
 
@@ -123,40 +119,39 @@
             <i class="bi bi-three-dots"></i>
           </button>
           <ul class="dropdown-menu dropdown-menu-end">
-            <li><a class="dropdown-item" href="{% url 'api:vacancy_update' vacancy.id %}">Редактировать</a></li>
-            <li><a class="dropdown-item" href="{% url 'api:vacancy_stats' vacancy.id %}">Статистика</a></li>
+            <li><a class="dropdown-item" href="{% url 'api:vacancy_update' vacancy.id %}">{% trans "Редактировать" %}</a></li>
+            <li><a class="dropdown-item" href="{% url 'api:vacancy_stats' vacancy.id %}">{% trans "Статистика" %}</a></li>
             <li>
               <form action="{% url 'api:vacancy_toggle' vacancy.id %}" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="{% if vacancy.is_active %}deactivate{% else %}activate{% endif %}">
                 <button type="submit" class="dropdown-item">
-                  {% if vacancy.is_active %}Деактивировать{% else %}Активировать{% endif %}
+                  {% if vacancy.is_active %}{% trans "Деактивировать" %}{% else %}{% trans "Активировать" %}{% endif %}
                 </button>
               </form>
             </li>
             <li><hr class="dropdown-divider"></li>
             <li>
-              <form action="{% url 'api:vacancy_delete' vacancy.id %}" method="post" onsubmit="return confirm('Вы уверены, что хотите удалить эту вакансию?');">
+              <form action="{% url 'api:vacancy_delete' vacancy.id %}" method="post" onsubmit="return confirm('{% trans "Вы уверены, что хотите удалить эту вакансию?" %}');">
                 {% csrf_token %}
-                <button class="dropdown-item text-danger" type="submit">Удалить</button>
+                <button class="dropdown-item text-danger" type="submit">{% trans "Удалить" %}</button>
               </form>
             </li>
           </ul>
         </div>
           <div class="card-body">
-            <!-- Дропдаун и контент вакансии как у тебя -->
             <h5 class="card-title">{{ vacancy.name }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">До {{ vacancy.salary }} сом</h6>
+            <h6 class="card-subtitle mb-2 text-muted">{% blocktrans with salary=vacancy.salary %}До {{ salary }} сом{% endblocktrans %}</h6>
             <p class="card-text">{{ vacancy.description|truncatechars:100 }}</p>
             <div class="d-flex justify-content-between align-items-center">
-              <span class="badge 
+              <span class="badge
                 {% if vacancy.is_remote %}bg-primary
-                {% elif vacancy.work_time == 'По выходным' %}bg-dark
+                {% elif vacancy.work_time == 'weekends' %}bg-dark
                 {% else %}bg-success{% endif %}">
-                {% if vacancy.is_remote %}Удалённая работа
-                {% else %}{{ vacancy.work_time }}{% endif %}
+                {% if vacancy.is_remote %}{% trans "Удалённая работа" %}
+                {% else %}{{ vacancy.get_work_time_display }}{% endif %}
               </span>
-              <a href="{% url 'api:vacancy_detail' vacancy.id %}" class="btn btn-sm btn-outline-primary">Подробнее</a>
+              <a href="{% url 'api:vacancy_detail' vacancy.id %}" class="btn btn-sm btn-outline-primary">{% trans "Подробнее" %}</a>
             </div>
           </div>
           <div class="card-footer bg-transparent">
@@ -169,7 +164,7 @@
         </div>
       </div>
       {% empty %}
-        <p>У вас пока нет вакансий.</p>
+        <p>{% trans "У вас пока нет вакансий." %}</p>
       {% endfor %}
     </div>
   </div>
@@ -181,20 +176,32 @@
         {% for response in responses %}
           <div class="list-group-item mb-3 shadow-sm">
             <h6>{{ response.vacancy.name }}</h6>
-            <p><strong>Анкета:</strong> {{ response.anketa.name }}</p>
-            <p><strong>Соискатель:</strong> {{ response.worker.get_full_name|default:response.worker.email }}</p>
-            <p><strong>Статус:</strong> {{ response.get_status_display }}</p>
-            <p><strong>Отклик:</strong> {{ response.responded_at }}</p>
-            <form method="post" action="{% url 'api:response_update_status' response.id %}" class="d-flex gap-2 align-items-center">
-                {% csrf_token %}
-                <select name="status" class="form-select form-select-sm" style="max-width: 180px;">
-                    {% for key, val in response.status_choices %}
-                        <option value="{{ key }}" {% if response.status == key %}selected{% endif %}>{{ val }}</option>
-                    {% endfor %}
-                </select>
-                <button type="submit" class="btn btn-sm btn-primary">Обновить</button>
-            </form>
-            <a href="{% url 'api:anketa_detail' response.anketa.pk %}" class="btn btn-outline-secondary btn-sm mt-2">Посмотреть анкету</a>
+            <p><strong>{% trans "Анкета:" %}</strong> {{ response.anketa.name }}</p>
+            <p><strong>{% trans "Соискатель:" %}</strong> {{ response.worker.username|default:response.worker.email }}</p>
+            <p><strong>{% trans "Статус:" %}</strong> {{ response.get_status_display }}</p>
+            <p><strong>{% trans "Отклик:" %}</strong> {{ response.responded_at }}</p>
+
+            {% if response.status == 'pending' %}
+              <form method="post" action="{% url 'api:response_update_status' response.id %}" class="d-flex gap-2 align-items-center">
+                  {% csrf_token %}
+                  <select name="status" class="form-select form-select-sm" style="max-width: 180px;">
+                      {% for key, val in response.status_choices %}
+                          {% if key != 'pending' %} {# убираем повтор "Ожидание" #}
+                              <option value="{{ key }}">{{ val }}</option>
+                          {% endif %}
+                      {% endfor %}
+                  </select>
+                  <button type="submit" class="btn btn-sm btn-primary">{% trans "Обновить" %}</button>
+              </form>
+            {% elif response.status == 'accepted' %}
+              <span class="badge bg-success">{% trans "Кандидат принят" %}</span>
+            {% elif response.status == 'rejected' %}
+              <span class="badge bg-danger">{% trans "Кандидат отклонён" %}</span>
+            {% endif %}
+
+            <a href="{% url 'api:anketa_detail' response.anketa.pk %}" class="btn btn-outline-secondary btn-sm mt-2">
+              {% trans "Посмотреть анкету" %}
+            </a>
           </div>
         {% endfor %}
       </div>
@@ -232,9 +239,10 @@
         </ul>
       </nav>
     {% else %}
-      <p>Нет откликов.</p>
+      <p>{% trans "Нет откликов." %}</p>
     {% endif %}
-  </div>
+</div>
+
 </div>
 
         {% endif %}
@@ -243,5 +251,3 @@
 </div>
 
 {% endblock %}
-
-
