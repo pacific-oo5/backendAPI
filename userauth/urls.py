@@ -1,6 +1,5 @@
-from dj_rest_auth.views import LoginView, LogoutView, PasswordResetView, PasswordChangeView
 from django.urls import path
-from .views import CustomRegisterView, ProfileView
+from .views import ProfileView, PublicProfileView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView
@@ -11,8 +10,8 @@ urlpatterns = [
 ]
 
 urlpatterns += [
-    # path('password-reset/', PasswordResetView.as_view(), name='rest_password_reset'),
-    # path('password-change/', PasswordChangeView.as_view(), name='rest_password_change'),
+    # path('password-reset/', PasswordResetView.as_view(), title='rest_password_reset'),
+    # path('password-change/', PasswordChangeView.as_view(), title='rest_password_change'),
 ]
 
 urlpatterns += [

@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.contrib.auth import get_user_model
-from .choices import STATUS_CHOICES, WORK_CHOICES, WORK_TIME_CHOICES
+from .choices import STATUS_CHOICES, WORK_CHOICES, WORK_TIME_CHOICES, ACTION_CHOICES
 from django.utils.translation import gettext_lazy as _
 
 
@@ -13,7 +13,7 @@ class Vacancy(models.Model):
         verbose_name=_('Владелец вакансии'),
         help_text=_('Пользователь, разместивший вакансию')
     )
-    name = models.CharField(
+    title = models.CharField(
         verbose_name=_('Название'),
         max_length=100,
         help_text=_('Название вакансии, например: Python разработчик')
@@ -79,7 +79,7 @@ class Vacancy(models.Model):
         return [resp.worker.id for resp in self.responses.all()] # type: ignore
 
     def __str__(self):
-        return str(self.name)
+        return str(self.title)
 
 
 class VacancyView(models.Model):
@@ -91,10 +91,6 @@ class VacancyView(models.Model):
     country = models.CharField(max_length=50, blank=True, null=True)
     city = models.CharField(max_length=50, blank=True, null=True)
 
-    ACTION_CHOICES = [
-        ("view", "Просмотр"),
-        ("response", "Отклик"),
-    ]
     action = models.CharField(max_length=20, choices=ACTION_CHOICES, default="view")
 
     viewed_at = models.DateTimeField(auto_now_add=True)
@@ -147,7 +143,7 @@ class Anketa(models.Model):
         related_name='ankets',
         help_text=_('Пользователь, к которому привязана анкета')
     )
-    name = models.CharField(
+    title = models.CharField(
         verbose_name=_('Название'),
         help_text=_('Название анкеты, например: Backend разработчик')
     )
@@ -185,4 +181,4 @@ class Anketa(models.Model):
     )
 
     def __str__(self):
-        return f"{self.name} ({self.user.email})"
+        return f"{self.title} ({self.user.email})"

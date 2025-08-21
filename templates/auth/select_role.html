@@ -58,14 +58,14 @@
       <div class="row justify-content-center">
         <div class="col-12 col-sm-6 mb-3">
           <label class="role-option w-100" id="employer-option">
-            <input type="radio" name="user_r" value="employer">
+            <input type="radio" name="user_r" value="employer" {% if current_role == 'employer' %}checked{% endif %}>
             <i class="bi bi-building role-icon"></i>
             <h5>{% trans "Я работодатель" %}</h5>
           </label>
         </div>
         <div class="col-12 col-sm-6 mb-3">
           <label class="role-option w-100" id="seeker-option">
-            <input type="radio" name="user_r" value="seeker">
+            <input type="radio" name="user_r" value="seeker" {% if current_role == 'seeker' %}checked{% endif %}>
             <i class="bi bi-person-badge role-icon"></i>
             <h5>{% trans "Я соискатель" %}</h5>
           </label>

@@ -1,6 +1,6 @@
 {% load i18n %}
 <h2>
-    {% blocktrans with name=vacancy.name %}    Отклик на вакансию: {{ name }} {% endblocktrans %}
+    {% blocktrans with name=vacancy.title %}    Отклик на вакансию: {{ name }} {% endblocktrans %}
 </h2>
 <form method="post">
     {% csrf_token %}
@@ -8,7 +8,7 @@
         <label for="anketa">{% trans "Выберите анкету:" %}</label>
         <select name="anketa" id="anketa" class="form-select" required>
             {% for anketa in ankets %}
-                <option value="{{ anketa.id }}">{{ anketa.name }}</option>
+                <option value="{{ anketa.id }}">{{ anketa.title }}</option>
             {% endfor %}
         </select>
     </div>

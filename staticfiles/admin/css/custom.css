@@ -1,0 +1,10 @@
+/* Стили для бейджей статусов */
+.status-badge {
+    padding: 3px 8px;
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+}
+.status-pending { background-color: orange; }
+.status-accepted { background-color: green; }
+.status-rejected { background-color: red; }

@@ -3,8 +3,9 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
-from userauth.views import AuthView, CustomLoginView, CustomRegisterView, CustomLogoutView, ProfileView, select_role_view
-from api.views import VacancyListView, VacancyDetailView
+from userauth.views import AuthView, CustomLoginView, CustomRegisterView, CustomLogoutView, ProfileView, \
+    select_role_view, PublicProfileView
+from api.views import VacancyListView
 from .views import *
 
 urlpatterns = [
@@ -12,6 +13,7 @@ path('i18n/', include('django.conf.urls.i18n')),
     path('', VacancyListView.as_view(), name='home'),
     path('', include('api.urls'), name='api'),
     path('profile/', ProfileView.as_view(), name='profile'),
+    path('user/<int:id>/', PublicProfileView.as_view(), name='public_profile'),
     path('admin/', admin.site.urls),
     path('employers/', employers, name='employers'),
     path('applicants/', applicants, name='applicants'),

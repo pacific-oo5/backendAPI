@@ -2,6 +2,7 @@ import os
 import warnings
 from pathlib import Path
 from dotenv import load_dotenv
+from .jazzmin import JAZZMIN_SETTINGS, JAZZMIN_UI_TWEAKS
 
 warnings.filterwarnings(
     "ignore",
@@ -18,6 +19,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'quality-herring-fine.ngrok-free.app'
 
 # Application definition
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

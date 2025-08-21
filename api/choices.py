@@ -16,3 +16,8 @@ WORK_TIME_CHOICES = (
     ('full_time', _('Полный рабочий день')),
     ('weekends', _('По выходным'))
 )
+
+ACTION_CHOICES = [
+        ("view", _("Просмотр")),
+        ("response", _("Отклик")),
+    ]

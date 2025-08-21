@@ -1,0 +1,67 @@
+{% extends 'main/main.html' %}
+{% load i18n %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+
+      <!-- Инфо о пользователе -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-body d-flex align-items-center flex-wrap">
+          <div>
+            <h5 class="mb-0">{{ profile_user.username|default:profile_user.email }}</h5>
+            <small class="text-muted">{{ profile_user.email }}</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Секция в зависимости от роли -->
+      {% if profile_user.user_r %}
+        <h5 class="mb-3">{% trans "Вакансии пользователя" %}</h5>
+        <div class="row">
+          {% for vacancy in vacancies %}
+          <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card vacancy-card h-100">
+              <div class="card-body">
+                <h5 class="card-title">{{ vacancy.name }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">{% blocktrans with salary=vacancy.salary %}До {{ salary }} сом{% endblocktrans %}</h6>
+                <p class="card-text">{{ vacancy.description|truncatechars:100 }}</p>
+                <a href="{% url 'api:vacancy_detail' vacancy.id %}" class="btn btn-sm btn-outline-primary">{% trans "Подробнее" %}</a>
+              </div>
+              <div class="card-footer bg-transparent">
+                <small class="text-muted">
+                  {% if vacancy.city %}{{ vacancy.city }}{% endif %}
+                  {% if vacancy.country and vacancy.city %}, {% endif %}
+                  {% if vacancy.country %}{{ vacancy.country }}{% endif %}
+                </small>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+            <p>{% trans "У пользователя пока нет вакансий." %}</p>
+          {% endfor %}
+        </div>
+      {% else %}
+        <h5 class="mb-3">{% trans "Анкеты пользователя" %}</h5>
+        <div class="row">
+          {% for anketa in ankets %}
+          <div class="col-12 col-md-6 mb-3">
+            <div class="card shadow-sm h-100">
+              <div class="card-body">
+                <h6 class="card-title">{{ anketa.name }}</h6>
+                <p class="card-text text-muted small">{{ anketa.city }}</p>
+                <a href="{% url 'api:anketa_detail' anketa.pk %}" class="btn btn-outline-primary btn-sm">{% trans "Подробнее" %}</a>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+            <p>{% trans "У пользователя ещё нет анкет." %}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -10,7 +10,7 @@ class VacancyForm(forms.ModelForm):
     class Meta:
         model = Vacancy
         fields = [
-            'name',
+            'title',
             'description',
             'about_me',
             'work_type',
@@ -36,7 +36,7 @@ class VacancyForm(forms.ModelForm):
 class AnketaForm(forms.ModelForm):
     class Meta:
         model = Anketa
-        fields = ['name', 'about_me', 'experience', 'country', 'city', 'phone_number', 'is_active']
+        fields = ['title', 'about_me', 'experience', 'country', 'city', 'phone_number', 'is_active']
         widgets = {
             'about_me': forms.Textarea(attrs={'rows': 3}),
             'experience': forms.Textarea(attrs={'rows': 3}),

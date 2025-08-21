@@ -11,13 +11,27 @@
 <div class="container my-5">
     <div class="row">
         <div class="col-lg-8 mx-auto">
-            <div class="card">
+            <div class="card position-relative">
+            <!-- Три точки -->
+        <div class="dropdown position-absolute top-0 end-0 m-2">
+            <button class="btn btn-sm btn-light" type="button" id="vacancyMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="vacancyMenuButton">
+                <li><a class="dropdown-item" href="{% url 'public_profile' vacancy.user.id %}">{% trans "Посмотреть профиль" %}</a></li>
+                <li><a class="dropdown-item" href="#">{% trans "Поделиться" %}</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="#">{% trans "Отправить жалобу" %}</a></li>
+            </ul>
+        </div>
+
+
                 <div class="card-body">
-                    <h1 class="card-title">{{ vacancy.name }}</h1>
+                    <h1 class="card-title">{{ vacancy.title }}</h1>
                     <h4 class="text-muted mb-4">{{ vacancy.salary }} {% trans "сом" %}</h4>
 
                     <div class="d-flex flex-wrap gap-2 mb-4">
-                        <span class="badge bg-primary">{{ vacancy.get_work_type_display }}</span>
+                        <span class="badge bg-primary" >{{ vacancy.get_work_type_display }}</span>
                         {% if vacancy.is_remote %}
                             <span class="badge bg-success">{% trans "Удалённая работа" %}</span>
                         {% else %}
@@ -105,7 +119,7 @@
             <label for="anketa" class="form-label">{% trans "Выберите анкету" %}:</label>
             <select name="anketa" id="anketa" class="form-select" required>
               {% for anketa in ankets %}
-                <option value="{{ anketa.id }}">{{ anketa.name }}</option>
+                <option value="{{ anketa.id }}">{{ anketa.title }}</option>
               {% empty %}
                 <option disabled>{% trans "Нет активных анкет" %}</option>
               {% endfor %}

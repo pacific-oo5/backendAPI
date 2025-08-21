@@ -15,10 +15,7 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
-             href="{% url 'home' %}">{% trans "Главная" %}</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'home' %}">{% trans "Вакансии" %}</a>
+             href="{% url 'home' %}">{% trans "Вакансии" %}</a>
         </li>
         {% if not user.is_authenticated %}
           <li class="nav-item">
@@ -50,15 +47,17 @@
 
         <!-- Кнопки -->
         {% if user.is_authenticated %}
-          {% if user.user_r %}
-            <a href="{% url 'api:vacancy_create' %}" class="btn btn-success btn-sm">
-              + {% trans "Создать вакансию" %}
-            </a>
-          {% else %}
-            <a href="{% url 'api:anketa_create' %}" class="btn btn-success btn-sm">
-              + {% trans "Создать анкету" %}
-            </a>
-          {% endif %}
+            {% if not in_profile and not in_create %}
+              {% if user.user_r %}
+                <a href="{% url 'api:vacancy_create' %}" class="btn btn-success btn-sm">
+                  + {% trans "Создать вакансию" %}
+                </a>
+              {% else %}
+                <a href="{% url 'api:anketa_create' %}" class="btn btn-success btn-sm">
+                  + {% trans "Создать анкету" %}
+                </a>
+                {% endif %}
+            {% endif %}
 
           {% if not in_profile %}
             <a href="{% url 'profile' %}" class="btn btn-primary btn-sm">
@@ -85,7 +84,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="logoutModalLabel">{% trans "Подтверждение выхода" %}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal">{% trans "Закрыть" %}</button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         {% trans "Вы уверены, что хотите выйти?" %}

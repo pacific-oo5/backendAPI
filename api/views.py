@@ -1,3 +1,5 @@
+import os
+
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -12,11 +14,11 @@ from django.contrib import messages
 from .choices import STATUS_CHOICES, WORK_CHOICES, WORK_TIME_CHOICES
 from .models import VacancyResponse, Vacancy, Anketa, VacancyView
 from .forms import AnketaForm, VacancyForm
-from .ai_search import get_similar_vacancies
 
 from django.utils.translation import gettext_lazy as _
 
-
+from dotenv import load_dotenv
+load_dotenv()
 
 class MyVacancyListView(generic.ListView):
     model = Vacancy
@@ -100,8 +102,9 @@ class VacancyDetailView(generic.DetailView):
         else:
             context['ankets'] = []
             context['has_responded'] = False
-
-        context['similar_vacancies'] = get_similar_vacancies(self.object, all_vacancies, top_n=6) # type: ignore
+        if os.getenv("AI", "False").lower() in ("true", "1", "yes"):
+            from .ai_search import get_similar_vacancies
+            context['similar_vacancies'] = get_similar_vacancies(self.object, all_vacancies, top_n=6) # type: ignore
         return context
 
 
@@ -199,6 +202,10 @@ class VacancyCreateView(LoginRequiredMixin, generic.CreateView):
         form.instance.user = self.request.user 
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['in_create'] = True  # Устанавливаем False, так как это не страница профиля
+        return context
 
 class AnketaCreateView(LoginRequiredMixin, generic.CreateView):
     model = Anketa
@@ -209,6 +216,11 @@ class AnketaCreateView(LoginRequiredMixin, generic.CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['in_create'] = True  # Устанавливаем False, так как это не страница профиля
+        return context
 
 
 class AnketaDetailView(LoginRequiredMixin, generic.DetailView):

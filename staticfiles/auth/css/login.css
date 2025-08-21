@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+
+body{
+    font-family: 'Poppins', sans-serif;
+}
+
+/*------------ Login container ------------*/
+
+.box-area{
+    width: 930px;
+}
+
+/*------------ Right box ------------*/
+
+.right-box{
+    padding: 40px 30px 40px 40px;
+}
+
+/*------------ Custom Placeholder ------------*/
+
+::placeholder{
+    font-size: 16px;
+}
+
+.rounded-4{
+    border-radius: 20px;
+}
+.rounded-5{
+    border-radius: 30px;
+}
+
+
+/*------------ For small screens------------*/
+
+@media only screen and (max-width: 768px) {
+    .login-card {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 10px;
+      border-radius: 1rem !important;
+    }
+    .login-container {
+      padding: 0 10px !important;
+    }
+    .login-title {
+      font-size: 1.5rem !important;
+    }
+    .login-btn, .google-btn {
+      font-size: 1rem !important;
+      padding: 10px !important;
+    }
+    .login-form input {
+      font-size: 1rem !important;
+      padding: 12px !important;
+    }
+  }

@@ -3,7 +3,7 @@
 <div class="col-md-6 col-lg-4 mb-4">
     <div class="card vacancy-card h-100">
         <div class="card-body">
-            <h5 class="card-title">{{ vacancy.name }}</h5>
+            <h5 class="card-title">{{ vacancy.title }}</h5>
             <h6 class="card-subtitle mb-2 text-muted">
                 {% blocktrans with salary=vacancy.salary %}До {{ salary }} сом {% endblocktrans %}
             </h6>

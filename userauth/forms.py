@@ -11,7 +11,7 @@ class CustomRegisterForm(UserCreationForm):
         model = CustomUser
         fields = ('username', 'email', 'password1', 'password2', 'user_r')
         widjets = {
-            'email': forms.EmailInput(attrs={'placeholder': 'name@example.com'}),
+            'email': forms.EmailInput(attrs={'placeholder': 'title@example.com'}),
         }
 
 class CustomLoginForm(AuthenticationForm):

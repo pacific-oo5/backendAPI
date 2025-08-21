@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required   
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
@@ -76,15 +76,19 @@ class CustomLogoutView(View):
         logout(request)
         return redirect('home')
 
+
 @login_required
 def select_role_view(request):
     if request.method == 'POST':
-        is_employer = request.POST.get('user_r') == 'on'
+        role = request.POST.get('user_r')  # 'employer' или 'seeker'
         user = request.user
-        user.user_r = is_employer
+        user.user_r = (role == 'employer')  # True если работодатель, False если соискатель
         user.save()
         return redirect('home')
-    return render(request, 'auth/select_role.html')
+
+    # для отображения активного состояния в шаблоне
+    current_role = 'employer' if request.user.user_r else 'seeker'
+    return render(request, 'auth/select_role.html', {'current_role': current_role})
 
 @method_decorator(login_required, name='dispatch')
 class ProfileView(View):
@@ -114,11 +118,11 @@ class ProfileView(View):
 
     def post(self, request):
         user = request.user
-        if 'name' in request.POST or 'photo' in request.FILES:
-            name = request.POST.get('name')
+        if 'title' in request.POST or 'photo' in request.FILES:
+            name = request.POST.get('title')
             photo = request.FILES.get('photo')
             if name:
-                user.name = name
+                user.title = name
             if photo:
                 user.photo = photo
             user.save()
@@ -134,3 +138,19 @@ class CustomPasswordChangeView(PasswordChangeView):
     form_class = CustomPasswordChangeForm
     template_name = 'userauth/password_change.html'
     success_url = reverse_lazy('profile')
+
+
+class PublicProfileView(View):
+    template_name = 'userauth/public_profile.html'
+
+    def get(self, request, id):
+        user = get_object_or_404(CustomUser, id=id)
+
+        vacancies = Vacancy.objects.filter(user=user, is_active=True) if user.user_r else None
+        ankets = Anketa.objects.filter(user=user, is_active=True) if not user.user_r else None
+
+        return render(request, self.template_name, {
+            'profile_user': user,  # чтобы не путаться с request.user
+            'vacancies': vacancies,
+            'ankets': ankets,
+        })
