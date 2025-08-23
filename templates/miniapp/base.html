@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вакансии</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Подключаем современные шрифты -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            line-height: 1.6;
+            padding: 16px;
+            padding-bottom: 80px; /* Место для нижнего меню */
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--tg-theme-secondary-bg-color, #f0f0f0);
+        }
+
+        .header h1 {
+            font-weight: 700;
+            font-size: 24px;
+            letter-spacing: -0.5px;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 48px 16px 16px;
+            border: 2px solid var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border-radius: 16px;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--tg-theme-button-color, #40a7e3);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--tg-theme-hint-color, #999999);
+        }
+
+        .vacancy-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .vacancy-card {
+            background-color: var(--tg-theme-secondary-bg-color, #f8f9fa);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .vacancy-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            border-color: var(--tg-theme-button-color, #40a7e3);
+        }
+
+        .vacancy-card:active {
+            transform: scale(0.98);
+        }
+
+        .vacancy-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--tg-theme-text-color, #000000);
+            line-height: 1.4;
+        }
+
+        .vacancy-salary {
+            font-size: 16px;
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 8px;
+        }
+
+        .vacancy-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--tg-theme-hint-color, #666666);
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .vacancy-description {
+            color: var(--tg-theme-text-color, #000000);
+            margin-bottom: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .vacancy-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .meta-tag {
+            background: linear-gradient(135deg, var(--tg-theme-button-color, #40a7e3), #2d8ac7);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--tg-theme-hint-color, #666666);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--tg-theme-hint-color, #666666);
+        }
+
+        .no-results h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        /* Нижнее меню */
+        .bottom-menu {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--tg-theme-bg-color, #ffffff);
+            border-top: 1px solid var(--tg-theme-secondary-bg-color, #f0f0f0);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-around;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 16px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            min-width: 60px;
+        }
+
+        .menu-item.active {
+            background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+        }
+
+        .menu-icon {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+
+        .menu-text {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--tg-theme-text-color, #000000);
+        }
+
+        .menu-item.active .menu-text {
+            color: var(--tg-theme-button-color, #40a7e3);
+            font-weight: 600;
+        }
+
+        /* Модальные окна */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--tg-theme-bg-color, #ffffff);
+            border-radius: 24px 24px 0 0;
+            padding: 24px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .close-modal {
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 16px 0;
+        }
+
+        .filter-tag {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .delete-filter {
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 50%;
+            background: var(--tg-theme-hint-color, #999999);
+            color: white;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--tg-theme-button-color, #40a7e3), #2d8ac7);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .vacancy-card {
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔍 Доступные вакансии</h1>
+    </div>
+
+    <div class="search-container">
+        <input
+            type="text"
+            id="search-input"
+            class="search-input"
+            placeholder="Поиск вакансий..."
+            oninput="debouncedSearch()"
+        >
+        <div class="search-icon">🔍</div>
+    </div>
+
+    <div id="vacancy-container">
+        {% include "miniapp/partials/vacancy_list.html" %}
+    </div>
+
+    <div id="loading" class="loading" style="display: none;">
+        Загрузка...
+    </div>
+
+    <!-- Нижнее меню -->
+    <div class="bottom-menu">
+        <div class="menu-item active" onclick="showTab('main')">
+            <div class="menu-icon">🏠</div>
+            <div class="menu-text">Главная</div>
+        </div>
+        <div class="menu-item" onclick="showTab('filters')">
+            <div class="menu-icon">🔧</div>
+            <div class="menu-text">Фильтры</div>
+        </div>
+        <div class="menu-item" onclick="showTab('favorites')">
+            <div class="menu-icon">❤️</div>
+            <div class="menu-text">Избранное</div>
+        </div>
+        <div class="menu-item" onclick="showTab('profile')">
+            <div class="menu-icon">👤</div>
+            <div class="menu-text">Профиль</div>
+        </div>
+    </div>
+
+    <!-- Модальное окно фильтров -->
+    <div id="filters-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">🔧 Мои фильтры</h2>
+                <div class="close-modal" onclick="closeModal('filters-modal')">×</div>
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="new-filter-input" placeholder="Добавить ключевое слово...">
+            </div>
+            <button class="btn" onclick="addFilter()">Добавить фильтр</button>
+
+            <div id="filters-list" class="filter-tags">
+                <!-- Фильтры будут загружены здесь -->
+            </div>
+        </div>
+    </div>
+
+<script>
+    let tg = window.Telegram.WebApp;
+    tg.expand();
+    tg.enableClosingConfirmation();
+
+    let currentPage = 1;
+    let isLoading = false;
+    let searchQuery = '';
+    let debounceTimer;
+    let currentTab = 'main';
+
+    // CSRF токен для Django
+    function getCSRFToken() {
+        const cookieValue = document.cookie.match('(^|;)\\s*csrftoken\\s*=\\s*([^;]+)');
+        return cookieValue ? cookieValue.pop() : '';
+    }
+
+    // Показ/скрытие табов
+    function showTab(tabName) {
+        currentTab = tabName;
+
+        // Обновляем активное состояние меню
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        event.currentTarget.classList.add('active');
+
+        // Обработка разных табов
+        switch(tabName) {
+            case 'filters':
+                openFiltersModal();
+                break;
+            case 'favorites':
+                loadFavorites();
+                break;
+            case 'profile':
+                showProfile();
+                break;
+            default:
+                // Главная таб - ничего не делаем
+                break;
+        }
+    }
+
+    // Работа с фильтрами
+    async function loadFilters() {
+        try {
+            const response = await fetch('/api/user/filters/', {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': getCSRFToken()
+                }
+            });
+
+            if (response.ok) {
+                const filters = await response.json();
+                displayFilters(filters);
+            }
+        } catch (error) {
+            console.error('Error loading filters:', error);
+            // Покажем тестовые данные для демонстрации
+            displayFilters(['python', 'django', 'javascript']);
+        }
+    }
+
+    function displayFilters(filters) {
+        const filtersContainer = document.getElementById('filters-list');
+        filtersContainer.innerHTML = '';
+
+        if (filters.length === 0) {
+            filtersContainer.innerHTML = '<p>Нет фильтров</p>';
+            return;
+        }
+
+        filters.forEach(filter => {
+            const filterTag = document.createElement('div');
+            filterTag.className = 'filter-tag';
+            filterTag.innerHTML = `
+                ${filter}
+                <span class="delete-filter" onclick="deleteFilter('${filter}')">×</span>
+            `;
+            filtersContainer.appendChild(filterTag);
+        });
+    }
+
+    async function addFilter() {
+        const input = document.getElementById('new-filter-input');
+        const keyword = input.value.trim();
+
+        if (!keyword) return;
+
+        try {
+            const response = await fetch('/api/user/filters/add/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify({ keyword })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                input.value = '';
+                if (result.status === 'success') {
+                    displayFilters(result.filters);
+                }
+            }
+        } catch (error) {
+            console.error('Error adding filter:', error);
+            // Для демо добавим локально
+            const filtersContainer = document.getElementById('filters-list');
+            const filterTag = document.createElement('div');
+            filterTag.className = 'filter-tag';
+            filterTag.innerHTML = `
+                ${keyword}
+                <span class="delete-filter" onclick="deleteFilter('${keyword}')">×</span>
+            `;
+            filtersContainer.appendChild(filterTag);
+        }
+    }
+
+    async function deleteFilter(keyword) {
+        try {
+            const response = await fetch('/api/user/filters/delete/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': getCSRFToken()
+                },
+                body: JSON.stringify({ keyword })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.status === 'success') {
+                    loadFilters();
+                }
+            }
+        } catch (error) {
+            console.error('Error deleting filter:', error);
+            // Для демо удалим локально
+            loadFilters();
+        }
+    }
+
+    function openFiltersModal() {
+        document.getElementById('filters-modal').style.display = 'block';
+        loadFilters();
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+        // Возвращаем активность главной таб
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.classList.remove('active');
+        });
+        document.querySelector('.menu-item:nth-child(1)').classList.add('active');
+    }
+
+    function loadFavorites() {
+        document.getElementById('vacancy-container').innerHTML = `
+            <div class="no-results">
+                <h3>❤️ Избранные вакансии</h3>
+                <p>Здесь будут ваши сохраненные вакансии</p>
+            </div>
+        `;
+    }
+
+    function showProfile() {
+        document.getElementById('vacancy-container').innerHTML = `
+            <div class="no-results">
+                <h3>👤 Профиль</h3>
+                <p>Информация о вашем профиле</p>
+            </div>
+        `;
+    }
+
+    // Поиск и загрузка вакансий
+    function debouncedSearch() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            searchQuery = document.getElementById('search-input').value;
+            currentPage = 1;
+            loadVacancies();
+        }, 500);
+    }
+
+    async function loadVacancies() {
+        if (isLoading) return;
+
+        isLoading = true;
+        document.getElementById('loading').style.display = 'block';
+
+        const params = new URLSearchParams({
+            page: currentPage,
+            q: searchQuery
+        });
+
+        try {
+            const response = await fetch(`?${params}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+
+                if (currentPage === 1) {
+                    document.getElementById('vacancy-container').innerHTML = data.html;
+                } else {
+                    document.getElementById('vacancy-container').innerHTML += data.html;
+                }
+
+                if (data.has_next) {
+                    currentPage++;
+                }
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('vacancy-container').innerHTML = `
+                <div class="no-results">
+                    <h3>😕 Ошибка загрузки</h3>
+                    <p>Попробуйте обновить страницу</p>
+                </div>
+            `;
+        } finally {
+            isLoading = false;
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+
+    // Инициализация
+    document.addEventListener('DOMContentLoaded', () => {
+        loadVacancies();
+
+        // Закрытие модальных окон по клику вне области
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+
+        // Enter для добавления фильтра
+        document.getElementById('new-filter-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                addFilter();
+            }
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !isLoading) {
+            loadVacancies();
+        }
+    });
+</script>
+</body>
+</html>
