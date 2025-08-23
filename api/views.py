@@ -1,5 +1,6 @@
 import os
 
+from django.conf import settings
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -10,6 +11,9 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
+from rest_framework import status, permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .choices import STATUS_CHOICES, WORK_CHOICES, WORK_TIME_CHOICES
 from .models import VacancyResponse, Vacancy, Anketa, VacancyView
@@ -18,6 +22,11 @@ from .forms import AnketaForm, VacancyForm
 from django.utils.translation import gettext_lazy as _
 
 from dotenv import load_dotenv
+
+from .permissions import IsFromBot
+from .serializers import AttachTokenBotSerializer, AttachTokenMiniAppSerializer
+from .services import attach_token_to_telegram
+
 load_dotenv()
 
 class MyVacancyListView(generic.ListView):
@@ -44,7 +53,7 @@ class VacancyListView(generic.ListView):
 
         if query:
             queryset = queryset.filter(
-                Q(name__icontains=query) |
+                Q(title__icontains=query) |
                 Q(description__icontains=query) |
                 Q(city__icontains=query) |
                 Q(country__icontains=query)
@@ -197,9 +206,9 @@ class VacancyCreateView(LoginRequiredMixin, generic.CreateView):
         kwargs = super().get_form_kwargs()
         kwargs['request'] = self.request
         return kwargs
-    
+
     def form_valid(self, form):
-        form.instance.user = self.request.user 
+        form.instance.user = self.request.user
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):

@@ -1,3 +1,7 @@
+import secrets
+import uuid
+
+from django.conf import settings
 from django.contrib.auth.models import BaseUserManager, AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -42,6 +46,8 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True, blank=False, null=False, verbose_name=_('Электронная почта'))
     first_name = models.CharField(max_length=150, blank=True, verbose_name=_('Имя'))
     user_r = models.BooleanField(verbose_name=_("Разрешение на публикацию вакансий"), default=False)
+    telegram_id = models.BigIntegerField(unique=True, null=True, blank=True, verbose_name="Telegram ID")
+    telegram_token = models.CharField(max_length=255, blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -65,9 +71,8 @@ class CustomUser(AbstractUser):
 
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='avatars/', null=True, blank=True)
     displayname = models.CharField(max_length=20, null=True, blank=True)
-    info = models.TextField(null=True, blank=True) 
+    info = models.TextField(null=True, blank=True)
     
     def __str__(self):
         return str(self.user)
@@ -77,5 +82,60 @@ class Profile(models.Model):
         if self.displayname:
             return self.displayname
         return self.user.username 
-    
-    
+
+def generate_unique_token():
+    while True:
+        token = uuid.uuid4().hex
+        if not TelegramProfile.objects.filter(token=token).exists():
+            return token
+
+
+class ProfileToken(models.Model):
+    """
+    Уникальный токен пользователя для линковки сайта ↔ Telegram (бот/miniapp).
+    Меняется ротацией, не истекает автоматически.
+    """
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="profile_token",
+    )
+    value = models.CharField(max_length=64, unique=True, db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    rotated_at = models.DateTimeField(null=True, blank=True)
+
+
+    @staticmethod
+    def generate() -> str:
+        # 32 байта → 64 hex-символа
+        return secrets.token_hex(32)
+
+
+    @classmethod
+    def ensure_for_user(cls, user):
+        obj, created = cls.objects.get_or_create(
+        user=user,
+        defaults={"value": cls.generate()},
+        )
+        return obj
+
+
+class TelegramProfile(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True, blank=True, related_name='telegram')
+    telegram_id = models.BigIntegerField(blank=True, null=True)
+    token = models.CharField(max_length=32, unique=True, default=generate_unique_token)
+    filters = models.JSONField(default=list) # список ключевых слов
+    language = models.CharField(max_length=10, default='ru', choices=[
+        ('kg', 'Кыргызча'),
+        ('ru', 'Русский'),
+        ('en', 'English')
+    ])
+
+    def generate_new_token(self):
+        import uuid
+
+        self.token = uuid.uuid4().hex
+        self.save()
+
+    def __str__(self):
+        return f"tg:{self.telegram_id} → user:{self.user_id}"

@@ -1,14 +1,19 @@
+import json
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required   
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
-from django.contrib.auth import login, logout, update_session_auth_hash
+from django.contrib.auth import logout, update_session_auth_hash, login
 from django.contrib.auth.views import LoginView
 from django.views import View
 from django.contrib.auth.views import PasswordChangeView
 from django.core.paginator import Paginator
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from .forms import *
+from .models import TelegramProfile, CustomUser
 from api.models import Vacancy, Anketa, VacancyResponse
 
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
@@ -97,6 +102,8 @@ class ProfileView(View):
         vacancies = Vacancy.objects.filter(user=user) if user.user_r else None
         ankets = Anketa.objects.filter(user=user, is_active=True) if not user.user_r else None
         responses = None
+        profile, created = TelegramProfile.objects.get_or_create(user=request.user)
+        token = profile.token
         if not user.user_r:
             responses = VacancyResponse.objects.filter(worker=user).select_related('vacancy', 'anketa').order_by('-responded_at')
         if user.user_r:
@@ -113,6 +120,7 @@ class ProfileView(View):
             'ankets': ankets,
             'responses': responses,
             'password_form': password_form,
+            'token': token,
             'in_profile': True,
         })
 

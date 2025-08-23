@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.urls import reverse
+
 from .choices import STATUS_CHOICES, WORK_CHOICES, WORK_TIME_CHOICES, ACTION_CHOICES
 from django.utils.translation import gettext_lazy as _
 
@@ -74,6 +76,8 @@ class Vacancy(models.Model):
         help_text=_('Если выключить, вакансия будет скрыта')
     )
 
+    def get_absolute_url(self):
+        return reverse('api:vacancy_detail', kwargs={'pk': self.pk})
 
     def get_responded_workers(self):
         return [resp.worker.id for resp in self.responses.all()] # type: ignore

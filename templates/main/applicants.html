@@ -1,3 +1,4 @@
+{% load static %}
 {% load i18n %}
 <!DOCTYPE html>
 <html lang="ru">
@@ -5,6 +6,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{% trans "СЛАДКИЙ МАЛЬЧИК - Для соискателей" %}</title>
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'main/logo/logo.png' %}">
     ...
 </head>
 <body>
@@ -31,7 +33,7 @@
                     <a href="{% url 'home' %}" class="btn btn-primary btn-lg">{% trans "Посмотреть вакансии" %}</a>
                 </div>
                 <div class="col-lg-6 d-none d-lg-block">
-                    <img src="/media/jobseekers/hero-image.png" alt="{% trans "Соискатели" %}" class="img-fluid" />
+                    <img src="/main/img/hero-image.png" alt="{% trans "Соискатели" %}" class="img-fluid" />
                 </div>
             </div>
         </div>

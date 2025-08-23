@@ -29,6 +29,9 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     # Сторонние приложения
+    'rest_framework',
+    'corsheaders',
+    'django_telegram_login',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -38,10 +41,11 @@ INSTALLED_APPS = [
     'rosetta',
     # Ваши приложения
     'api',
-    'userauth.apps.UserauthConfig'
+    'userauth'
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -69,6 +73,12 @@ TEMPLATES = [
             ],
         },
     },
+]
+
+
+CORS_ALLOWED_ORIGINS = [
+    "https://web.telegram.org",
+    "https://t.me",
 ]
 
 DATABASES = {
@@ -148,19 +158,26 @@ SOCIALACCOUNT_PROVIDERS = {
             'secret': os.getenv('GOOGLE_CLIENT_SECRET'),
             'key': ''
         }
+    },
+    'telegram': {
+        'APP': {
+            'client_id': os.getenv('ID_BOT'),
+            'secret': os.getenv('BOT_TOKEN'),
+        },
+        'AUTH_PARAMS': {'auth_date_validity': 30},
     }
 }
 
 # REST Framework settings
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': (
-#         'rest_framework.authentication.SessionAuthentication',
-#         'rest_framework.authentication.TokenAuthentication',
-#     ),
-#     'DEFAULT_PERMISSION_CLASSES': [
-#         'rest_framework.permissions.IsAuthenticated',
-#     ]
-# }
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ]
+}
 
 
 
@@ -180,3 +197,5 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 LOGIN_URL = '/auth/'
+
+BOT_API_KEY = os.getenv('BOT_TOKEN')

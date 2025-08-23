@@ -1,9 +1,7 @@
 from django.urls import path
-
 from .views import AnketaCreateView, VacancyCreateView, VacancyListView, vacancy_delete, vacancy_toggle, \
     VacancyUpdateView, VacancyDetailView, vacancy_stats, respond_to_vacancy, \
-        AnketaDetailView, AnketaUpdateView, response_update_status
-
+    AnketaDetailView, AnketaUpdateView, response_update_status
 
 app_name = 'api'
 urlpatterns = [

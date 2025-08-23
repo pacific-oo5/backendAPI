@@ -12,6 +12,7 @@ urlpatterns = [
 path('i18n/', include('django.conf.urls.i18n')),
     path('', VacancyListView.as_view(), name='home'),
     path('', include('api.urls'), name='api'),
+    path('miniapp/', include('miniapp.urls'), name='miniapp'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('user/<int:id>/', PublicProfileView.as_view(), name='public_profile'),
     path('admin/', admin.site.urls),
