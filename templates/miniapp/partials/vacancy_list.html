@@ -1,0 +1,39 @@
+<div class="vacancy-list">
+    {% for vacancy in vacancies %}
+        <div class="vacancy-card" data-vacancy-id="{{ vacancy.id }}">
+            <h3 class="vacancy-title">{{ vacancy.title }}</h3>
+            
+            <div class="vacancy-salary">
+                💰 {{ vacancy.salary }} сом
+            </div>
+            
+            <div class="vacancy-location">
+                📍 
+                {% if vacancy.is_remote %}
+                    Удаленная работа
+                {% else %}
+                    {% if vacancy.city %}{{ vacancy.city }}{% endif %}
+                    {% if vacancy.country and vacancy.city %}, {% endif %}
+                    {% if vacancy.country %}{{ vacancy.country }}{% endif %}
+                {% endif %}
+            </div>
+            
+            <div class="vacancy-description">
+                {{ vacancy.description|truncatewords:30 }}
+            </div>
+            
+            <div class="vacancy-meta">
+                <span class="meta-tag">{{ vacancy.get_work_type_display }}</span>
+                <span class="meta-tag">{{ vacancy.get_work_time_display }}</span>
+                {% if vacancy.is_remote %}
+                    <span class="meta-tag">🌐 Удаленно</span>
+                {% endif %}
+            </div>
+        </div>
+    {% empty %}
+        <div class="no-results">
+            <h3>😕 Вакансии не найдены</h3>
+            <p>Попробуйте изменить параметры поиска</p>
+        </div>
+    {% endfor %}
+</div>
