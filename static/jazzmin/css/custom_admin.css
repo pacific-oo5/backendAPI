@@ -1,208 +1,61 @@
-/* === АДАПТИВНЫЕ СТИЛИ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ === */
-
-/* Полное скрытие логотипа и бренда */
-.navbar-brand, .brand-link, .site-logo {
-    display: none !important;
+.mb-3
+{
+    color: black;
 }
 
-/* Адаптивный навбар */
-.main-header .navbar {
-    padding: 0.25rem 0.5rem !important;
+.h4 {
+    color: black;
 }
 
-.navbar-nav {
-    flex-wrap: nowrap !important;
+.breadcrumb-item {
+    a {
+        color: black;
+    }
 }
 
-/* Адаптивный сайдбар */
-.sidebar {
-    min-width: 250px !important;
+.dropdown-header {
+    color: white;
 }
 
-/* Адаптивная таблица */
-.table-responsive {
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-}
+.card-header {
+    background-color: whitesmoke;
 
-.table th, .table td {
-    white-space: nowrap !important;
-    padding: 0.5rem !important;
-    font-size: 0.875rem !important;
-}
-
-/* Адаптивные формы */
-.form-group {
-    margin-bottom: 0.75rem !important;
-}
-
-.form-control {
-    padding: 0.375rem 0.75rem !important;
-    font-size: 0.875rem !important;
-}
-
-/* Адаптивные кнопки */
-.btn {
-    padding: 0.25rem 0.5rem !important;
-    font-size: 0.875rem !important;
-    margin: 0.125rem !important;
-}
-
-/* Адаптивный поиск */
-#search-form {
-    margin-bottom: 0.5rem !important;
-}
-
-#searchbar {
-    padding: 0.375rem 0.75rem !important;
-    font-size: 0.875rem !important;
-    height: calc(1.5em + 0.75rem + 2px) !important;
-}
-
-/* Адаптивные карточки */
-.card {
-    margin-bottom: 0.75rem !important;
+    h5 {
+        color: black;
+        font-weight: bolder;
+    }
 }
 
 .card-body {
-    padding: 0.75rem !important;
+    background-color: whitesmoke;
 }
 
-/* Адаптивные заголовки */
-h1, h2, h3, h4, h5, h6 {
-    margin-bottom: 0.5rem !important;
+.addlink {
+    background: green;
+    color: white;
 }
 
-/* Адаптивные отступы */
-.content-wrapper {
-    padding: 0.5rem !important;
+.changelink {
+    background: rgba(0, 128, 0, 0.43);
+    color: black;
 }
 
-/* Мобильное меню */
-@media (max-width: 768px) {
-    .main-sidebar {
-        transform: translateX(-100%) !important;
-    }
+td>a{
+    color: black;
+}
 
-    .main-sidebar.sidebar-open {
-        transform: translateX(0) !important;
-    }
+.nav-pills .nav-link, .nav-tabs .nav-link {
+        color: black;
 
-    .content-wrapper {
-        margin-left: 0 !important;
-        padding: 0.25rem !important;
-    }
-
-    .table th, .table td {
-        padding: 0.25rem !important;
-        font-size: 0.75rem !important;
-    }
-
-    .btn {
-        padding: 0.2rem 0.4rem !important;
-        font-size: 0.75rem !important;
-    }
-
-    /* Улучшенный поиск для мобильных */
-    .search-form {
-        width: 100% !important;
-        margin: 0.5rem 0 !important;
-    }
-
-    .search-form .input-group {
-        width: 100% !important;
-    }
-
-    .search-form .form-control {
-        width: 70% !important;
-    }
-
-    .search-form .btn {
-        width: 30% !important;
+    &:hover {
+        color: white;
     }
 }
 
-/* Улучшения для планшетов */
-@media (max-width: 1024px) and (min-width: 769px) {
-    .sidebar {
-        width: 200px !important;
-    }
-
-    .content-wrapper {
-        margin-left: 200px !important;
-    }
-
-    .table th, .table td {
-        padding: 0.375rem !important;
-        font-size: 0.8125rem !important;
-    }
-}
-
-/* Улучшения для десктопа */
-@media (min-width: 1025px) {
-    .sidebar {
-        width: 250px !important;
-    }
-
-    .content-wrapper {
-        margin-left: 250px !important;
-    }
-}
-
-/* Стили для улучшения UX поиска */
-.search-container {
-    position: relative !important;
-    margin-bottom: 1rem !important;
-}
-
-.search-input {
-    border-radius: 25px !important;
-    padding-left: 2.5rem !important;
-}
-
-.search-icon {
-    position: absolute !important;
-    left: 1rem !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    z-index: 10 !important;
-}
-
-/* Анимации для улучшения UX */
-.sidebar-menu {
-    transition: all 0.3s ease !important;
-}
-
-.btn {
-    transition: all 0.2s ease !important;
-}
-
-/* Улучшенная читаемость */
-body {
-    font-family: 'Roboto', 'Arial', sans-serif !important;
-    line-height: 1.4 !important;
-}
-
-/* Кастомные стили для действий */
-.object-tools {
-    margin-bottom: 0.5rem !important;
-}
-
-.object-tools a {
-    margin: 0.125rem !important;
-}
-
-/* Скрываем логотип */
-.brand-link {
-    display: none !important;
-}
-
-/* Скрываем текстовый бренд */
 .brand-text {
-    display: none !important;
+    color: black;
 }
 
-/* Скрываем иконку в title */
-.link-ico {
-    display: none !important;
+.main-sidebar {
+    background-color: #ffffff;
 }

@@ -1,24 +1,21 @@
-import os
-
+import hashlib, hmac
 from django.contrib.auth import get_user_model
 from django.core.paginator import PageNotAnInteger, EmptyPage
 from django.shortcuts import render
+
 from django.views import generic
 from django.template.loader import render_to_string
 from django.db.models import Q
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-from rest_framework.response import Response
+
 
 from api.choices import WORK_CHOICES, WORK_TIME_CHOICES
 from api.models import Vacancy, Anketa, VacancyResponse
 
-from django.http import JsonResponse, HttpResponseForbidden
+from django.http import JsonResponse
 
 from dotenv import load_dotenv
 
-from miniapp.utils import check_telegram_auth
+from userauth.models import TelegramProfile
 
 load_dotenv()
 
@@ -143,3 +140,44 @@ class MiniAppFilterView(generic.ListView):
                 "has_next": vacancies.has_next()
             })
         return super().get(request, *args, **kwargs)
+
+
+def verify_telegram_webapp(data: dict, bot_token: str):
+    """
+    Проверяем подпись Telegram WebApp.
+    """
+    check_string = '\n'.join(f"{k}={v}" for k, v in sorted(data.items()) if k != 'hash')
+    secret_key = hashlib.sha256(bot_token.encode()).digest()
+    hmac_hash = hmac.new(secret_key, check_string.encode(), hashlib.sha256).hexdigest()
+    return hmac.compare_digest(hmac_hash, data.get('hash', ''))
+
+def profile(request):
+    return render(request, "miniapp/profile.html")
+
+
+def profile_data(request):
+    tg_id = request.GET.get("tg_id")
+
+    if not tg_id:
+        return JsonResponse({"status": "error", "message": "tg_id не передан"})
+
+    try:
+        profile = TelegramProfile.objects.select_related("user").get(telegram_id=tg_id)
+    except TelegramProfile.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Профиль не найден"})
+
+    user = profile.user
+    return JsonResponse({
+        "status": "ok",
+        "connected": True,
+        "site_user": {
+            "username": user.username,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "email": user.email,
+        },
+        "telegram": {
+            "id": profile.telegram_id,
+            "username": profile.username,
+        }
+    })

@@ -1,6 +1,8 @@
 import logging
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
+from userauth.models import TelegramProfile
 from .models import Vacancy, VacancyResponse
 from userauth.telegram_utils import notify_users, notify_vacancy_author
 import asyncio
@@ -35,5 +37,8 @@ def vacancy_created(sender, instance, created, **kwargs):
 @receiver(post_save, sender=VacancyResponse)
 def vacancy_response_created(sender, instance, created, **kwargs):
     if created:
-        logger.info(f"Новый отклик на вакансию: {instance.vacancy.title}, уведомляю автора...")
-        run_async_in_thread(notify_vacancy_author(instance))
+        profile = TelegramProfile.objects.filter(user=instance.vacancy.user).first()
+        if profile and profile.telegram_id:
+            run_async_in_thread(notify_vacancy_author(profile.telegram_id, instance))
+        else:
+            logger.info(f"Автор вакансии {instance.vacancy.user.id} не подключил Telegram")

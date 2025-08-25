@@ -67,21 +67,21 @@ class CustomUser(AbstractUser):
     #     if self.photo:
     #         return self.photo.url
     #     return f'{settings.STATIC_URL}images/avatar.svg'
-    
+
 
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
     displayname = models.CharField(max_length=20, null=True, blank=True)
     info = models.TextField(null=True, blank=True)
-    
+
     def __str__(self):
         return str(self.user)
-    
+
     @property
     def name(self):
         if self.displayname:
             return self.displayname
-        return self.user.username 
+        return self.user.username
 
 def generate_unique_token():
     while True:
@@ -91,10 +91,6 @@ def generate_unique_token():
 
 
 class ProfileToken(models.Model):
-    """
-    Уникальный токен пользователя для линковки сайта ↔ Telegram (бот/miniapp).
-    Меняется ротацией, не истекает автоматически.
-    """
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -121,9 +117,20 @@ class ProfileToken(models.Model):
 
 
 class TelegramProfile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, null=True, blank=True, related_name='telegram')
+    user = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='telegram_profiles'
+    )
     telegram_id = models.BigIntegerField(blank=True, null=True)
+    avatar_url = models.CharField(blank=True, null=True)
     token = models.CharField(max_length=32, unique=True, default=generate_unique_token)
+    username = models.CharField(max_length=255, null=True, blank=True)
+    first_name = models.CharField(max_length=64, null=True, blank=True)
+    last_name = models.CharField(max_length=64, null=True, blank=True)
+    is_connected = models.BooleanField(default=False)
     filters = models.JSONField(default=list) # список ключевых слов
     language = models.CharField(max_length=10, default='ru', choices=[
         ('kg', 'Кыргызча'),

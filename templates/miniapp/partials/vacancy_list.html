@@ -1,3 +1,80 @@
+<style>
+    .vacancy-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .vacancy-card {
+        background-color: var(--tg-theme-secondary-bg-color, #f8f9fa);
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        cursor: pointer;
+    }
+
+    .vacancy-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        border-color: var(--tg-theme-button-color, #40a7e3);
+    }
+
+    .vacancy-title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: var(--tg-theme-text-color, #000000);
+        line-height: 1.4;
+    }
+
+    .vacancy-salary {
+        font-size: 16px;
+        font-weight: 700;
+        color: #10b981;
+        margin-bottom: 8px;
+    }
+
+    .vacancy-location {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--tg-theme-hint-color, #666666);
+        margin-bottom: 12px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .vacancy-description {
+        color: var(--tg-theme-text-color, #000000);
+        margin-bottom: 16px;
+        font-size: 14px;
+        line-height: 1.5;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .vacancy-meta {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 16px;
+    }
+
+    .meta-tag {
+        background: linear-gradient(135deg, var(--tg-theme-button-color, #40a7e3), #2d8ac7);
+        color: var(--tg-theme-button-text-color, #ffffff);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: -0.2px;
+    }
+</style>
+
 <div class="vacancy-list">
     {% for vacancy in vacancies %}
         <div class="vacancy-card" data-vacancy-id="{{ vacancy.id }}">

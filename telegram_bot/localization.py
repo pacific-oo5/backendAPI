@@ -173,8 +173,8 @@ TEXTS = {
 }
 
 async def get_user_language(telegram_id):
-    try:
-        profile = await sync_to_async(TelegramProfile.objects.get)(telegram_id=telegram_id)
-        return profile.language if profile.language in LANGUAGES else 'ru'
-    except TelegramProfile.DoesNotExist:
-        return 'ru'
+    """Получаем язык пользователя асинхронно"""
+    profile = await sync_to_async(lambda: TelegramProfile.objects.filter(telegram_id=telegram_id).first())()
+    if profile and profile.language in LANGUAGES:
+        return profile.language
+    return 'ru'

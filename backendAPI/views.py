@@ -12,3 +12,10 @@ def employers(request):
 
 def applicants(request):
     return render(request, 'main/applicants.html')
+
+
+def privacy_policy(request):
+    return render(request, 'privacy/privacy.html')
+
+def terms_of_service(request):
+    return render(request, 'privacy/terms.html')

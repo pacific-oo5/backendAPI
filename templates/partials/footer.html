@@ -1,44 +1,57 @@
 {% load i18n %}
 <style>
-        footer {
-            background-color: #d2d2d2;
-            padding: 40px 0;
-            margin: 20px auto;
-            border-radius: 20px;
-            max-width: 1140px; /* или 100%, если хочешь на всю ширину */
-        }
+    footer {
+        background-color: #d2d2d2;
+        padding: 40px 0;
+        margin: 20px auto;
+        border-radius: 20px;
+        max-width: 1140px;
+    }
+    .footer-links a {
+        color: #111;
+        text-decoration: none;
+        margin-right: 15px;
+        transition: 0.3s;
+    }
+    .footer-links a:hover {
+        text-decoration: underline;
+    }
 </style>
 
 <footer>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h5>{% trans "СЛАДКИЙ МАЛЬЧИК" %}</h5>
-                    <p>{% trans "Лучшая платформа для поиска работы и сотрудников в Кыргызстане." %}</p>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <h5>{% trans "Контакты" %}</h5>
-                    <ul class="list-unstyled">
-                        <li><i class="bi bi-geo-alt"></i> {% trans "г. Бишкек, ул. Примерная 123" %}</li>
-                        <li><i class="bi bi-phone"></i> +996 555 123 456</li>
-                        <li><i class="bi bi-envelope"></i> info@sladkiy_malchik.kg</li>
-                    </ul>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <h5>{% trans "Мы в соцсетях" %}</h5>
-                    <div class="social-links">
-                        <a href="#" class="me-2"><i class="bi bi-facebook"></i></a>
-                        <a href="#" class="me-2"><i class="bi bi-instagram"></i></a>
-                        <a href="#" class="me-2"><i class="bi bi-telegram"></i></a>
-                        <a href="#" class="me-2"><i class="bi bi-linkedin"></i></a>
-                    </div>
-                </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h5>{% trans "СЛАДКИЙ МАЛЬЧИК" %}</h5>
+                <p>{% trans "Лучшая платформа для поиска работы и сотрудников в Кыргызстане." %}</p>
             </div>
-            <hr>
-            <div class="row">
-                <div class="col-12 text-center">
-                    <p class="mb-0">&copy; 2025 {% trans "СЛАДКИЙ МАЛЬЧИК. Все права защищены." %}</p>
+            <div class="col-md-4 mb-4">
+                <h5>{% trans "Контакты" %}</h5>
+                <ul class="list-unstyled">
+                    <li><i class="bi bi-geo-alt"></i> {% trans "г. Бишкек, ул. Примерная 123" %}</li>
+                    <li><i class="bi bi-phone"></i> +996 555 123 456</li>
+                    <li><i class="bi bi-envelope"></i> info@sladkiy_malchik.kg</li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h5>{% trans "Мы в соцсетях" %}</h5>
+                <div class="social-links mb-2">
+                    <a href="#" class="me-2"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="me-2"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="me-2"><i class="bi bi-telegram"></i></a>
+                    <a href="#" class="me-2"><i class="bi bi-linkedin"></i></a>
+                </div>
+                <div class="footer-links">
+                    <a href="{% url 'privacy_policy' %}" target="_blank">{% trans "Политика конфиденциальности" %}</a> <br>
+                    <a href="{% url 'terms_of_service' %}" target="_blank">{% trans "Условия обслуживания" %}</a>
                 </div>
             </div>
         </div>
-    </footer>
+        <hr>
+        <div class="row">
+            <div class="col-12 text-center">
+                <p class="mb-0">&copy; 2025 {% trans "СЛАДКИЙ МАЛЬЧИК. Все права защищены." %}</p>
+            </div>
+        </div>
+    </div>
+</footer>

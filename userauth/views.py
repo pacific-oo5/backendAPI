@@ -1,4 +1,5 @@
 import json
+import os
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required   
@@ -103,7 +104,6 @@ class ProfileView(View):
         ankets = Anketa.objects.filter(user=user, is_active=True) if not user.user_r else None
         responses = None
         profile, created = TelegramProfile.objects.get_or_create(user=request.user)
-        token = profile.token
         if not user.user_r:
             responses = VacancyResponse.objects.filter(worker=user).select_related('vacancy', 'anketa').order_by('-responded_at')
         if user.user_r:
@@ -112,17 +112,23 @@ class ProfileView(View):
             paginator = Paginator(responses_qs, 10)  # 10 на страницу
             page_number = request.GET.get('page')
             responses = paginator.get_page(page_number)
-            
-        password_form = PasswordChangeForm(user)
-        return render(request, 'userauth/profile.html', {
+
+        context = {
             'user': user,
             'vacancies': vacancies,
             'ankets': ankets,
             'responses': responses,
-            'password_form': password_form,
-            'token': token,
             'in_profile': True,
-        })
+
+            "tg_connected": profile.is_connected,
+            "tg_token": str(profile.token),
+            "tg_name": f"{profile.first_name or ''} {profile.last_name or ''}".strip() or profile.username or "Без имени",
+            "tg_username": f"@{profile.username}" if profile.username else "",
+            "tg_avatar": profile.avatar_url if hasattr(profile, "avatar_url") and profile.avatar_url else "/static/img/telegram_default.png"
+        }
+
+        password_form = PasswordChangeForm(user)
+        return render(request, 'userauth/profile.html', context)
 
     def post(self, request):
         user = request.user

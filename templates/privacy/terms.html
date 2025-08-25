@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Условия обслуживания - Sweet Boy</title>
+<link rel="shortcut icon" type="image/x-icon" href="{% static 'main/logo/logo.png' %}">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f5f5f5;
+        color: #111;
+        scroll-behavior: smooth;
+    }
+    .container {
+        max-width: 900px;
+        margin: auto;
+        padding: 2rem;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+        opacity: 0;
+        transform: translateY(30px);
+        animation: fadeIn 1s forwards;
+    }
+    h1, h2 {
+        color: #222;
+    }
+    p {
+        line-height: 1.7;
+        margin-bottom: 1rem;
+    }
+    .back-to-top {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        background: #111;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 50px;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: 0.3s;
+        display: none;
+        font-weight: 600;
+    }
+    .back-to-top:hover { opacity: 1; }
+    @media (max-width: 600px) { .container { padding: 1rem; } }
+    @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Условия обслуживания</h1>
+    <p>Добро пожаловать на Sweet Boy! Пожалуйста, внимательно прочитайте наши условия обслуживания перед использованием сайта.</p>
+
+    <h2>Использование сайта</h2>
+    <p>Вы соглашаетесь использовать сайт только для законных целей и не размещать запрещенный контент.</p>
+
+    <h2>Регистрация</h2>
+    <p>При регистрации вы обязаны предоставлять достоверную информацию. Аккаунты с недостоверными данными могут быть удалены.</p>
+
+    <h2>Ответственность</h2>
+    <p>Мы не несем ответственность за действия пользователей и публикуемый ими контент. Все объявления публикуются на ваш страх и риск.</p>
+
+    <h2>Изменения условий</h2>
+    <p>Мы оставляем за собой право изменять условия обслуживания в любое время. Продолжая использовать сайт, вы соглашаетесь с обновленными условиями.</p>
+</div>
+
+<div class="back-to-top" onclick="window.scrollTo({top:0, behavior:'smooth'});">Наверх</div>
+
+<script>
+    const btn = document.querySelector('.back-to-top');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) btn.style.display = 'block';
+        else btn.style.display = 'none';
+    });
+</script>
+</body>
+</html>

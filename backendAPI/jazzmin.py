@@ -7,11 +7,11 @@ JAZZMIN_SETTINGS = {
     "site_brand": _("СЛАДКИЙ МАЛЬЧИК"),
 
     # Полностью убираем логотип
-    "site_logo": None,
+    "site_logo": 'main/logo/logo.png',
     "site_logo_classes": None,
-    "site_icon": None,
+    "site_icon": 'main/logo/logo.png',
 
-    "navigation_expanded": False,
+    "navigation_expanded": True,
     "hide_navbar": True,
     # Тексты
     "welcome_sign": _("Добро пожаловать в административную панель"),
@@ -95,7 +95,7 @@ JAZZMIN_SETTINGS = {
     #############
     # UI Tweaks #
     #############
-    "custom_css": "jazzmin/css/admin_custom.css",
+    "custom_css": "jazzmin/css/custom_admin.css",
     "custom_js": "jazzmin/js/admin_custom.js",  # Добавляем кастомный JS
     "use_google_fonts_cdn": True,
 
@@ -114,7 +114,7 @@ JAZZMIN_SETTINGS = {
     "show_footer": False,
 
     # Дополнительные настройки
-    "show_ui_builder": False,
+    "show_ui_builder": True,
     "show_version": None,
 }
 
@@ -123,23 +123,23 @@ JAZZMIN_UI_TWEAKS = {
     "footer_small_text": False,
     "body_small_text": True,
     "brand_small_text": False,
-    "brand_colour": "navbar-navy",
-    "accent": "accent-primary",
-    "navbar": "navbar-dark",
+    "brand_colour": False,
+    "accent": None,
+    "navbar": "navbar-light navbar-white",
     "no_navbar_border": True,
-    "navbar_fixed": False,
+    "navbar_fixed": True,
     "layout_boxed": False,
     "footer_fixed": False,
-    "sidebar_fixed": False,
-    "sidebar": "sidebar-light-navy",
+    "sidebar_fixed": True,
+    "sidebar": "sidebar-dark",
     "sidebar_nav_small_text": False,
     "sidebar_disable_expand": False,
-    "sidebar_nav_child_indent": True,
-    "sidebar_nav_compact_style": True,
+    "sidebar_nav_child_indent": False,
+    "sidebar_nav_compact_style": False,
     "sidebar_nav_legacy_style": False,
     "sidebar_nav_flat_style": False,
-    "theme": "darkly",
-    "dark_mode_theme": "superhero",
+    "theme": "journal",
+    "dark_mode_theme": "cyborg",
     "button_classes": {
         "primary": "btn-primary",
         "secondary": "btn-secondary",
@@ -148,5 +148,6 @@ JAZZMIN_UI_TWEAKS = {
         "danger": "btn-danger",
         "success": "btn-success"
     },
-    "actions_sticky_top": False
+    "sidebar_brand": None,
+    "actions_sticky_top": True
 }

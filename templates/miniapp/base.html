@@ -8,6 +8,9 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -104,7 +107,7 @@
         }
     </style>
 </head>
-<body>
+<body id="main-header">
     {% block content %}
         <div class="header">
     <h1>🔍 Доступные вакансии</h1>
@@ -117,6 +120,7 @@
         class="search-input"
         placeholder="Поиск вакансий..."
         oninput="debouncedSearch()"
+        onkeydown="if(event.key==='Enter'){this.blur(); debouncedSearch();}"
     >
     <div class="search-icon">🔍</div>
 </div>
@@ -125,9 +129,7 @@
     {% include "miniapp/partials/vacancy_list.html" %}
 </div>
 
-<div id="loading" class="loading" style="display: none;">
-    Загрузка...
-</div>
+<div id="loading" style="display:none; text-align:center; margin:20px;">Загрузка...</div>
 
         <style>
     .search-container {
@@ -160,179 +162,131 @@
         color: var(--tg-theme-hint-color, #999999);
     }
 
-    .vacancy-list {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
 
-    .vacancy-card {
-        background-color: var(--tg-theme-secondary-bg-color, #f8f9fa);
-        border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s ease;
-        border: 1px solid transparent;
-        cursor: pointer;
-    }
-
-    .vacancy-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-        border-color: var(--tg-theme-button-color, #40a7e3);
-    }
-
-    .vacancy-title {
-        font-size: 18px;
-        font-weight: 600;
-        margin-bottom: 12px;
-        color: var(--tg-theme-text-color, #000000);
-        line-height: 1.4;
-    }
-
-    .vacancy-salary {
-        font-size: 16px;
-        font-weight: 700;
-        color: #10b981;
-        margin-bottom: 8px;
-    }
-
-    .vacancy-location {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--tg-theme-hint-color, #666666);
-        margin-bottom: 12px;
-        font-size: 14px;
-        font-weight: 500;
-    }
-
-    .vacancy-description {
-        color: var(--tg-theme-text-color, #000000);
-        margin-bottom: 16px;
-        font-size: 14px;
-        line-height: 1.5;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .vacancy-meta {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin-top: 16px;
-    }
-
-    .meta-tag {
-        background: linear-gradient(135deg, var(--tg-theme-button-color, #40a7e3), #2d8ac7);
-        color: var(--tg-theme-button-text-color, #ffffff);
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        letter-spacing: -0.2px;
-    }
 </style>
 
+<div id="vacancy-container"></div>
+<div id="loading" style="display:none; text-align:center; margin:20px;">Загрузка...</div>
+
 <script>
-    let currentPage = 1;
-    let isLoading = false;
-    let searchQuery = '';
-    let debounceTimer;
+let currentPage = 1;
+let isLoading = false;
+let searchQuery = '';
+let debounceTimer;
 
-    function debouncedSearch() {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            searchQuery = document.getElementById('search-input').value;
-            currentPage = 1;
-            loadVacancies();
-        }, 500);
-    }
+// Функция поиска с дебаунсом
+function debouncedSearch() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        searchQuery = document.getElementById('search-input')?.value || '';
+        currentPage = 1;
+        document.getElementById('vacancy-container').innerHTML = ''; // очищаем контейнер
+        loadVacancies(); // загружаем первую страницу поиска
+    }, 500);
+}
 
-    async function loadVacancies() {
-        if (isLoading) return;
+// Основная функция загрузки вакансий
+async function loadVacancies() {
+    if (isLoading) return;
+    isLoading = true;
+    document.getElementById('loading').style.display = 'block';
 
-        isLoading = true;
-        document.getElementById('loading').style.display = 'block';
+    const params = new URLSearchParams({ page: currentPage });
+    if (searchQuery) params.set('q', searchQuery);
 
-        const params = new URLSearchParams({
-            page: currentPage,
-            q: searchQuery
+    try {
+        const response = await fetch(`?${params}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         });
+        if (!response.ok) throw new Error('Ошибка загрузки');
 
-        try {
-            const response = await fetch(`?${params}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
+        const data = await response.json();
+        const container = document.getElementById('vacancy-container');
+
+        // Ищем flex-контейнер .vacancy-list
+        let vacancyList = container.querySelector('.vacancy-list');
+
+        if (!vacancyList) {
+            // Первая загрузка или новый поиск — вставляем HTML полностью
+            container.innerHTML = data.html;
+        } else {
+            // Остальные страницы — добавляем только новые карточки
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = data.html;
+            const newCards = tempDiv.querySelectorAll('.vacancy-card');
+
+            // Проверяем ID карточек, чтобы избежать дубликатов
+            const existingIds = new Set(
+                Array.from(vacancyList.querySelectorAll('.vacancy-card')).map(c => c.dataset.vacancyId)
+            );
+
+            newCards.forEach(card => {
+                if (!existingIds.has(card.dataset.vacancyId)) {
+                    vacancyList.appendChild(card);
                 }
             });
-
-            if (response.ok) {
-                const data = await response.json();
-
-                if (currentPage === 1) {
-                    document.getElementById('vacancy-container').innerHTML = data.html;
-                } else {
-                    document.getElementById('vacancy-container').innerHTML += data.html;
-                }
-
-                if (data.has_next) {
-                    currentPage++;
-                }
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        } finally {
-            isLoading = false;
-            document.getElementById('loading').style.display = 'none';
         }
+
+        if (data.has_next) {
+            currentPage++;
+        }
+    } catch (err) {
+        console.error('Error:', err);
+    } finally {
+        isLoading = false;
+        document.getElementById('loading').style.display = 'none';
     }
+}
 
-    // Обработчик клика по вакансии
-    document.addEventListener('click', (e) => {
-        const vacancyCard = e.target.closest('.vacancy-card');
-        if (vacancyCard) {
-            const vacancyId = vacancyCard.dataset.vacancyId;
-            tg.showPopup({
-                title: 'Перейти к вакансии',
-                message: 'Хотите посмотреть подробности вакансии?',
-                buttons: [
-                    {id: 'view', type: 'default', text: 'Посмотреть'},
-                    {id: 'cancel', type: 'cancel', text: 'Отмена'}
-                ]
-            }, (buttonId) => {
-                if (buttonId === 'view') {
-                    window.open(`/vacancies/${vacancyId}/`, '_blank');
-                }
-            });
-        }
+// Клик по карточке вакансии
+document.addEventListener('click', (e) => {
+    const card = e.target.closest('.vacancy-card');
+    if (!card) return;
+    const vacancyId = card.dataset.vacancyId;
+
+    tg.showPopup({
+        title: 'Перейти к вакансии',
+        message: 'Хотите посмотреть подробности вакансии?',
+        buttons: [
+            {id: 'view', type: 'default', text: 'Посмотреть'},
+            {id: 'cancel', type: 'cancel', text: 'Отмена'}
+        ]
+    }, (buttonId) => {
+        if (buttonId === 'view') window.open(`/vacancies/${vacancyId}/`, '_blank');
     });
+});
 
-    document.addEventListener('DOMContentLoaded', loadVacancies);
+// Автозагрузка при скролле
+window.addEventListener('scroll', () => {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100) {
+        loadVacancies();
+    }
+});
 
-    window.addEventListener('scroll', () => {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !isLoading) {
-            loadVacancies();
-        }
-    });
+// Запуск при загрузке страницы
+document.addEventListener('DOMContentLoaded', loadVacancies);
 </script>
+
+
     {% endblock %}
 
-    {% url 'miniapp_main' as main_url %}
-    {% url 'miniapp_filter' as filter_url %}
-    {% url 'miniapp_profile' as profile_url %}
+    {% url 'miniapp:main' as main_url %}
+    {% url 'miniapp:filter' as filter_url %}
+    {% url 'miniapp:profile' as profile_url %}
 
     <!-- Нижнее меню -->
     <div class="bottom-menu">
-        <a href="{{ main_url }}" class="menu-item {% if request.path == main_url %}active{% endif %}">
+        <a href="{% if request.path == main_url %}#main-header{% else %}{{ main_url }}{% endif %}" class="menu-item {% if request.path == main_url %}active{% endif %}">
             <div class="menu-icon">🏠</div>
             <div class="menu-text">Главная</div>
         </a>
         <a href="{{ filter_url }}" class="menu-item {% if request.path == filter_url %}active{% endif %}">
             <div class="menu-icon">🔧</div>
             <div class="menu-text">Фильтр</div>
+        </a>
+        <a href="{{ profile_url }}" class="menu-item {% if request.path == profile_url %}active{% endif %}">
+            <div class="menu-icon">👤</div>
+            <div class="menu-text">Профиль</div>
         </a>
     </div>
 

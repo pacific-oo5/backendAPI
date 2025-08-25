@@ -57,6 +57,7 @@
                     <p class="mb-4">{{ vacancy.responsibilities }}</p>
 
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    {% if user.is_authenticated %}
                         {% if not user.user_r %}
                           {% if has_responded %}
                             <button class="btn btn-secondary me-md-2" disabled>{% trans "Вы уже откликнулись" %}</button>
@@ -64,6 +65,11 @@
                             <button class="btn btn-primary me-md-2" data-bs-toggle="modal" data-bs-target="#respondModal">{% trans "Откликнуться" %}</button>
                           {% endif %}
                         {% endif %}
+                    {% else %}
+                        <a href="{% url 'auth' %}?next={{ request.path }}" class="btn btn-secondary me-md-2">
+        {% trans "Сперва войди в аккаунт" %}
+    </a>
+                    {% endif %}
                         <a href="/" class="btn btn-outline-secondary">{% trans "Назад" %}</a>
                     </div>
                 </div>

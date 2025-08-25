@@ -15,7 +15,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 # --- Aiogram ---
-from telegram_bot.localization import LANGUAGES, get_user_language
+from telegram_bot.localization import LANGUAGES
 from telegram_bot.utils import get_text
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup, KeyboardButton, WebAppInfo
@@ -29,7 +29,7 @@ from api.models import Vacancy
 from asgiref.sync import sync_to_async
 
 # --- Модели ---
-from userauth.models import TelegramProfile
+from userauth.models import TelegramProfile, CustomUser
 
 # --- Загрузка токена ---
 load_dotenv()
@@ -43,18 +43,17 @@ class Form(StatesGroup):
     waiting_for_del_filter = State()
 
 
-async def get_user_language(telegram_id):
+async def get_user_language_bot(telegram_id):
     """Получаем язык пользователя асинхронно"""
-    try:
-        profile = await sync_to_async(TelegramProfile.objects.get)(telegram_id=telegram_id)
-        return profile.language if profile.language in LANGUAGES else 'ru'
-    except TelegramProfile.DoesNotExist:
-        return 'ru'
+    profile = await sync_to_async(lambda: TelegramProfile.objects.filter(telegram_id=telegram_id).first())()
+    if profile and profile.language in LANGUAGES:
+        return profile.language
+    return 'ru'
 
 
 async def get_main_keyboard(telegram_id):
     """Основная клавиатура с кнопками"""
-    lang = await get_user_language(telegram_id)
+    lang = await get_user_language_bot(telegram_id)
     return ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text="➕ Добавить фильтр" if lang == 'ru' else
@@ -78,30 +77,62 @@ async def get_main_keyboard(telegram_id):
 @dp.message(Command("start"))
 async def start(message: types.Message, state: FSMContext):
     await state.clear()
-    await message.delete()  # Удаляем команду /start
+    await message.delete()
 
-    profile = await sync_to_async(TelegramProfile.objects.filter(telegram_id=message.from_user.id).first)()
+    args = message.text.split(maxsplit=1)
+    token_arg = args[1] if len(args) > 1 else None
 
+    # --- Пришёл с токеном ---
+    if token_arg:
+        profile = await sync_to_async(lambda: TelegramProfile.objects.filter(token=token_arg).first())()
+
+        if not profile:
+            await message.answer("❌ Неверный или устаревший токен.")
+            return
+
+        # Если токен уже привязан к другому телеграм аккаунту
+        if profile.telegram_id and profile.telegram_id != message.from_user.id:
+            old_id = profile.telegram_id
+            profile.telegram_id = message.from_user.id
+            profile.is_connected = True
+            # Можно уведомить старого юзера через бота, если нужно
+        else:
+            profile.telegram_id = message.from_user.id
+            profile.is_connected = True
+
+        # Обновляем имя, username
+        profile.first_name = message.from_user.first_name
+        profile.last_name = message.from_user.last_name
+        profile.username = message.from_user.username
+
+        # Получаем фото
+        photos = await bot.get_user_profile_photos(message.from_user.id, limit=1)
+        if photos.total_count > 0:
+            file_id = photos.photos[0][0].file_id
+            file = await bot.get_file(file_id)
+            profile.avatar_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file.file_path}"
+        else:
+            profile.avatar_url = None
+
+        await sync_to_async(profile.save)()
+        await message.answer(f"✅ Telegram аккаунт успешно подключён, {profile.username}!")
+        return
+
+    # --- Просто старт ---
+    profile = await sync_to_async(lambda: TelegramProfile.objects.filter(telegram_id=message.from_user.id).first())()
     if profile:
-        # Скрываем часть токена (показываем только первые и последние 4 символа)
-        hidden_token = f"{profile.token[:4]}...{profile.token[-4:]}" if len(profile.token) > 8 else profile.token
-
+        hidden_token = f"{str(profile.token)[:4]}...{str(profile.token)[-4:]}" if profile.token else "нет"
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="✅ Оставить токен", callback_data="keep_token")],
                 [InlineKeyboardButton(text="🔄 Сменить токен", callback_data="change_token")]
             ]
         )
-
-        # Сохраняем сообщение чтобы потом можно было его удалить
         sent_message = await message.answer(
             await get_text(message.from_user.id, 'already_linked', token=hidden_token),
             reply_markup=keyboard
         )
-
-        # Сохраняем ID сообщения в state для возможного удаления
         await state.update_data(message_id=sent_message.message_id)
-
     else:
         sent_message = await message.answer(
             await get_text(message.from_user.id, 'start'),
@@ -110,6 +141,46 @@ async def start(message: types.Message, state: FSMContext):
         await state.set_state(Form.waiting_for_token)
         await state.update_data(message_id=sent_message.message_id)
 
+
+@dp.callback_query(lambda c: c.data == "unlink_token")
+async def unlink_token(callback: types.CallbackQuery):
+    profile = await sync_to_async(lambda: TelegramProfile.objects.filter(telegram_id=callback.from_user.id).first())()
+    if profile:
+        profile.telegram_id = None
+        profile.is_connected = False
+        await sync_to_async(profile.save)()
+        await callback.message.edit_text("❌ Токен успешно отвязан.")
+    else:
+        await callback.message.edit_text("⚠️ У вас нет подключенного токена.")
+
+
+@dp.callback_query(lambda c: c.data == "keep_token")
+async def keep_token(callback: types.CallbackQuery, state: FSMContext):
+    # Получаем TelegramProfile текущего пользователя
+    profile = await sync_to_async(lambda: TelegramProfile.objects.filter(telegram_id=callback.from_user.id).first())()
+
+    if profile:
+        profile.first_name = callback.from_user.first_name
+        profile.last_name = callback.from_user.last_name
+        profile.username = callback.from_user.username
+        profile.is_connected = True
+
+        # Получаем ссылку на фото профиля через Telegram API
+        photos = await bot.get_user_profile_photos(callback.from_user.id, limit=1)
+        if photos.total_count > 0:
+            file_id = photos.photos[0][0].file_id  # берем первую фотографию первого размера
+            file = await bot.get_file(file_id)
+            profile.avatar_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file.file_path}"
+        else:
+            profile.avatar_url = None  # фото нет
+
+        await sync_to_async(profile.save)()
+
+        await callback.message.edit_text("✅ Профиль обновлён!")
+    else:
+        await callback.message.edit_text("⚠️ У вас нет подключённого токена.")
+
+    await state.clear()
 
 # --- /help ---
 @dp.message(Command("help"))
