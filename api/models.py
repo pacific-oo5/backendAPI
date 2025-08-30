@@ -186,3 +186,28 @@ class Anketa(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.user.email})"
+
+
+class VacancyComplaint(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name='vacancy_complaints'
+    )
+    vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE, related_name='complaints')
+    reason = models.TextField()  # причина жалобы
+    anon_name = models.CharField(max_length=100, blank=True, null=True)  # имя анонима
+    anon_email = models.EmailField(blank=True, null=True)  # email анонима
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Жалоба на вакансию")
+        verbose_name_plural = _("Жалобы на вакансии")
+        ordering = ['-created_at']
+
+    def __str__(self):
+        if self.user:
+            return f"{self.user} пожаловался на {self.vacancy}"
+        return str(_("Аноним пожаловался на ")) + str(self.vacancy)
