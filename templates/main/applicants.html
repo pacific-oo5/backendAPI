@@ -3,84 +3,184 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% trans "СЛАДКИЙ МАЛЬЧИК - Для соискателей" %}</title>
-    <link rel="shortcut icon" type="image/x-icon" href="{% static 'main/logo/logo.png' %}">
-    ...
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% trans "СЛАДКИЙ МАЛЬЧИК - Соискатели" %}</title>
+<link rel="shortcut icon" href="{% static 'main/logo/logo.png' %}">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'userauth/public_profile.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
-    <!-- Навигация -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-briefcase me-2"></i>{% trans "СЛАДКИЙ МАЛЬЧИК" %}
-            </a>
-            <div class="ms-auto">
-                <a href="{% url 'auth' %}" class="btn btn-outline-light me-2">{% trans "Войти" %}</a>
-            </div>
-        </div>
-    </nav>
+<!-- Навигация -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="/">
+      <img src="{% static 'main/logo/logo.png' %}" width="40" class="me-2">СЛАДКИЙ МАЛЬЧИК
+    </a>
+    <div class="ms-auto">
+      <a href="{% url 'auth' %}" class="btn btn-outline-light">Войти</a>
+    </div>
+  </div>
+</nav>
 
-    <!-- Герой секция -->
-    <section class="hero-section d-flex align-items-center">
-        <div class="container hero-content">
-            <div class="row align-items-center">
-                <div class="col-lg-6">
-                    <h1 class="display-4 fw-bold mb-4">{% trans "Найди работу своей мечты" %}</h1>
-                    <p class="lead mb-4">{% trans "Для студентов и молодых специалистов — сотни вакансий от проверенных работодателей Кыргызстана." %}</p>
-                    <a href="#features" class="btn btn-light btn-lg me-3">{% trans "Узнать больше" %}</a>
-                    <a href="{% url 'home' %}" class="btn btn-primary btn-lg">{% trans "Посмотреть вакансии" %}</a>
-                </div>
-                <div class="col-lg-6 d-none d-lg-block">
-                    <img src="/main/img/hero-image.png" alt="{% trans "Соискатели" %}" class="img-fluid" />
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- Hero -->
+<section class="hero-section d-flex align-items-center">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-lg-6 hero-text">
+        <h1 class="display-4 fw-bold mb-3">{% trans "Найди работу своей мечты" %}</h1>
+        <p class="lead mb-4">{% trans "Сотни вакансий для студентов и начинающих специалистов Кыргызстана." %}</p>
+        <a href="#features" class="btn btn-light btn-lg me-3">Узнать больше</a>
+        <a href="{% url 'home' %}" class="btn btn-primary btn-lg">Посмотреть вакансии</a>
+      </div>
+      <div class="col-lg-6 d-none d-lg-block text-center">
+        <img src="{% static 'main/img/hero-image.png' %}" alt="Соискатели" class="img-fluid hero-image">
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- Особенности -->
-    <section id="features" class="py-5">
-        <div class="container text-center mb-5">
-            <h2 class="fw-bold">{% trans "Почему студенты выбирают JobPortal" %}</h2>
-            <p class="text-muted">{% trans "Инструменты для быстрого поиска и развития карьеры" %}</p>
+<!-- Особенности -->
+<section id="features" class="py-5">
+  <div class="container text-center mb-5">
+    <h2 class="fw-bold">{% trans "Почему выбирают нас" %}</h2>
+    <p class="text-muted">{% trans "Инструменты для быстрого поиска и развития карьеры" %}</p>
+  </div>
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="feature-card p-4 shadow-sm rounded-4">
+          <i class="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
+          <h4>Вакансии для студентов</h4>
+          <p>Стажировки и первые рабочие места для начинающих специалистов.</p>
         </div>
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="feature-card p-4">
-                        <i class="fas fa-graduation-cap fa-3x text-primary mb-3"></i>
-                        <h4>{% trans "Вакансии для студентов" %}</h4>
-                        <p>{% trans "Подходящие стажировки и первые рабочие места для начинающих специалистов." %}</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-card p-4">
-                        <i class="fas fa-briefcase fa-3x text-primary mb-3"></i>
-                        <h4>{% trans "Работодатели из Кыргызстана" %}</h4>
-                        <p>{% trans "Только проверенные компании, которые заинтересованы в молодых талантах." %}</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-card p-4">
-                        <i class="fas fa-chalkboard-teacher fa-3x text-primary mb-3"></i>
-                        <h4>{% trans "Поддержка и советы" %}</h4>
-                        <p>{% trans "Советы по резюме, подготовке к собеседованиям и развитию навыков." %}</p>
-                    </div>
-                </div>
-            </div>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card p-4 shadow-sm rounded-4">
+          <i class="fas fa-briefcase fa-3x text-primary mb-3"></i>
+          <h4>Работодатели Кыргызстана</h4>
+          <p>Проверенные компании, заинтересованные в молодых талантах.</p>
         </div>
-    </section>
+      </div>
+      <div class="col-md-4">
+        <div class="feature-card p-4 shadow-sm rounded-4">
+          <i class="fas fa-chalkboard-teacher fa-3x text-primary mb-3"></i>
+          <h4>Поддержка и советы</h4>
+          <p>Советы по резюме, собеседованиям и развитию навыков.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <!-- CTA -->
-    <section class="py-5 bg-primary text-white text-center">
-        <div class="container">
-            <h2 class="fw-bold mb-4">{% trans "Готов начать карьеру уже сегодня?" %}</h2>
-            <a href="{% url 'auth' %}" class="btn btn-light btn-lg px-5 py-3 fw-bold">{% trans "Создать аккаунт" %}</a>
-        </div>
-    </section>
+<!-- CTA -->
+<section class="py-5 bg-primary text-white text-center">
+  <div class="container">
+    <h2 class="fw-bold mb-4">Готов начать карьеру уже сегодня?</h2>
+    <a href="{% url 'auth' %}" class="btn btn-light btn-lg px-5 py-3 fw-bold">Создать аккаунт</a>
+  </div>
+</section>
 
-    <!-- Футер -->
-    {% include 'partials/footer.html' %}
+<!-- Footer -->
+{% include 'partials/footer.html' %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'userauth/public_profile.js' %}"></script>
 </body>
+
+<style>
+    .hero-section {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 1s ease forwards;
+}
+
+.hero-text h1 {
+  animation: slideInLeft 1s ease forwards;
+}
+
+.hero-text p {
+  animation: slideInLeft 1.2s ease forwards;
+}
+
+.hero-image {
+  max-width: 100%;
+  height: auto;
+  animation: fadeInUp 1.3s ease forwards;
+}
+
+/* Features */
+.feature-card {
+  background: #fff;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+/* CTA */
+section.bg-primary .btn-light:hover,
+section.bg-primary .btn-primary:hover {
+  transform: scale(1.05);
+  transition: 0.3s;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {opacity:0;} to {opacity:1;}
+}
+
+@keyframes fadeInUp {
+  from {opacity:0; transform: translateY(20px);}
+  to {opacity:1; transform: translateY(0);}
+}
+
+@keyframes slideInLeft {
+  from {opacity:0; transform: translateX(-50px);}
+  to {opacity:1; transform: translateX(0);}
+}
+
+/* Responsive */
+@media (max-width: 992px){
+  .hero-section { text-align:center; padding: 4rem 1rem; }
+  .hero-text h1 { font-size:2rem; }
+}
+</style>
+
+<script>
+    // Плавный переход при клике на ссылки с якорем
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e){
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if(target){
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// Анимация появления элементов при скролле
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('fade-in-visible');
+    }
+  });
+},{threshold:0.2});
+
+document.querySelectorAll('.feature-card').forEach(card => {
+  card.classList.add('fade-in-hidden');
+  observer.observe(card);
+});
+
+</script>
+
 </html>

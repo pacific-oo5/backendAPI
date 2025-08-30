@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container my-5">
-  <h2 class="mb-4">{% trans "Создать вакансиюx" %}</h2>
+  <h2 class="mb-4">{% trans "Создать вакансию" %}</h2>
   <form method="post" novalidate>
     {% csrf_token %}
 
@@ -33,9 +33,33 @@
     </div>
 
     <div class="mt-4">
-      <button type="submit" class="btn btn-primary me-2">{% trans "Создать" %}</button>
-      <a href="{% url 'profile' %}" class="btn btn-outline-secondary">{% trans "Отмена" %}</a>
-    </div>
+  <button type="submit" class="btn btn-primary me-2">{% trans "Создать" %}</button>
+  <a href="{% url 'profile' %}" class="btn btn-outline-secondary me-2">{% trans "Отмена" %}</a>
+  <a href="{% url 'api:vacancy_delete' pk=vacancy.id %}"
+     class="btn btn-danger"
+     onclick="return confirm('{% trans "Вы уверены, что хотите удалить вакансию?" %}')">
+     {% trans "Удалить" %}
+  </a>
+</div>
+  <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const workTypeField = document.getElementById("id_work_type");
+    const salaryFieldWrapper = document.getElementById("id_salary").closest(".col-12");
+
+    function toggleSalary() {
+        if (workTypeField.value === "practice") {  // ключ Практика
+            salaryFieldWrapper.style.display = "none";
+            document.getElementById("id_salary").value = "";
+        } else {
+            salaryFieldWrapper.style.display = "block";
+        }
+    }
+
+    toggleSalary(); // начальная проверка
+    workTypeField.addEventListener("change", toggleSalary);
+});
+</script>
+
   </form>
 </div>
 {% endblock %}

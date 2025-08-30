@@ -3,353 +3,236 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% trans "СЛАДКИЙ МАЛЬЧИК - Для работодателей" %}</title>
-    <link rel="shortcut icon" type="image/x-icon" href="{% static 'main/logo/logo.png' %}">
-    <!-- Bootstrap 5 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Animate.css -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-color: #4e73df;
-            --secondary-color: #f8f9fc;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% trans "СЛАДКИЙ МАЛЬЧИК - Для работодателей" %}</title>
+<link rel="shortcut icon" href="{% static 'main/logo/logo.png' %}">
+<!-- Bootstrap 5 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Animate.css -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+    --primary-color: #4e73df;
+    --secondary-color: #f8f9fc;
+}
 
-        .hero-section {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
-            color: white;
-            padding: 5rem 0;
-            position: relative;
-            overflow: hidden;
-        }
+/* Hero */
+.hero-section {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #224abe 100%);
+    color: white;
+    padding: 5rem 0;
+    position: relative;
+    overflow: hidden;
+}
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top:0; left:0;
+    width:100%; height:100%;
+    background: url('/media/employers/hero-bg.jpg') no-repeat center center;
+    background-size: cover;
+    opacity:0.1;
+}
+.hero-section h1, .hero-section p, .hero-section .btn {
+    z-index: 1;
+    position: relative;
+}
 
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('/media/employers/hero-bg.jpg') no-repeat center center;
-            background-size: cover;
-            opacity: 0.1;
-        }
+/* Features */
+.feature-card {
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    height: 100%;
+    background: white;
+}
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
 
-        .feature-card {
-            transition: all 0.3s ease;
-            border: none;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            height: 100%;
-        }
+/* Statistics */
+.stats-card {
+    background:white;
+    border-radius:10px;
+    padding:2rem;
+    text-align:center;
+    box-shadow:0 4px 6px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+.stats-card:hover {
+    transform: scale(1.05);
+}
 
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-        }
+/* Buttons */
+.btn-primary { background-color: var(--primary-color); border-color: var(--primary-color); }
+.auth-buttons .btn { min-width: 100px; }
+.nav-pills .nav-link.active { background-color: var(--primary-color); }
 
-        .stats-card {
-            background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: all 0.3s ease;
-        }
+/* Floating animation */
+.floating {
+    animation: floating 3s ease-in-out infinite;
+}
+@keyframes floating {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+    100% { transform: translateY(0px); }
+}
 
-        .stats-card:hover {
-            transform: scale(1.05);
-        }
+/* Steps */
+.step-number { font-size:1.25rem; font-weight:bold; }
 
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .testimonial-img {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: 50%;
-            border: 3px solid var(--primary-color);
-        }
-
-        .auth-buttons .btn {
-            min-width: 100px;
-        }
-
-        .nav-pills .nav-link.active {
-            background-color: var(--primary-color);
-        }
-
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-
-        @keyframes floating {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
-        }
-    </style>
+/* Responsive */
+@media (max-width:992px){
+    .hero-section { text-align:center; padding:4rem 1rem; }
+}
+</style>
 </head>
 <body>
-    <!-- Навигация с кнопками входа -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="fas fa-briefcase me-2"></i>{% trans "СЛАДКИЙ МАЛЬЧИК" %}
-            </a>
-            <div class="auth-buttons ms-auto">
-                <a href="{% url 'auth' %}" class="btn btn-outline-light me-2 animate__animated animate__fadeIn">{% trans "Войти" %}</a>
-            </div>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/"><i class="fas fa-briefcase me-2"></i>{% trans "СЛАДКИЙ МАЛЬЧИК" %}</a>
+        <div class="auth-buttons ms-auto">
+            <a href="{% url 'auth' %}" class="btn btn-outline-light animate__animated animate__fadeIn">{% trans "Войти" %}</a>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <!-- Герой секция -->
-    <section class="hero-section">
-        <div class="container position-relative">
-            <div class="row align-items-center">
-                <div class="col-lg-6 animate__animated animate__fadeInLeft">
-                    <h1 class="display-4 fw-bold mb-4">{% trans "Найдите лучших сотрудников" %}</h1>
-                    <p class="lead mb-4">{% trans "Размещайте вакансии, находите квалифицированных специалистов и управляйте откликами в одном месте" %}</p>
-                    <div class="d-flex gap-3">
-                        <a href="#pricing" class="btn btn-light btn-lg px-4 py-2 animate__animated animate__pulse animate__infinite">
-                            <i class="fas fa-rocket me-2"></i>{% trans "Начать сейчас" %}
-                        </a>
-                        <a href="#features" class="btn btn-outline-light btn-lg px-4 py-2">
-                            <i class="fas fa-info-circle me-2"></i>{% trans "Узнать больше" %}
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-6 d-none d-lg-block animate__animated animate__fadeInRight">
+<!-- Hero -->
+<section class="hero-section">
+    <div class="container position-relative">
+        <div class="row align-items-center">
+            <div class="col-lg-6 animate__animated animate__fadeInLeft">
+                <h1 class="display-4 fw-bold mb-4">{% trans "Найдите лучших сотрудников" %}</h1>
+                <p class="lead mb-4">{% trans "Размещайте вакансии, находите квалифицированных специалистов и управляйте откликами в одном месте" %}</p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="#pricing" class="btn btn-light btn-lg px-4 py-2 animate__animated animate__pulse animate__infinite">
+                        <i class="fas fa-rocket me-2"></i>{% trans "Начать сейчас" %}
+                    </a>
+                    <a href="#features" class="btn btn-outline-light btn-lg px-4 py-2">
+                        <i class="fas fa-info-circle me-2"></i>{% trans "Узнать больше" %}
+                    </a>
                 </div>
             </div>
+            <div class="col-lg-6 d-none d-lg-block animate__animated animate__fadeInRight"></div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Статистика -->
-    <section class="py-5 bg-light">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-md-4">
-                    <div class="stats-card animate__animated animate__fadeInUp">
-                        <h3 class="text-primary">10,000+</h3>
-                        <p class="text-muted">{% trans "Активных соискателей" %}</p>
-                        <i class="fas fa-users fa-2x text-primary"></i>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="stats-card animate__animated animate__fadeInUp animate__delay-1s">
-                        <h3 class="text-primary">95%</h3>
-                        <p class="text-muted">{% trans "Работодателей находят сотрудников" %}</p>
-                        <i class="fas fa-check-circle fa-2x text-primary"></i>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="stats-card animate__animated animate__fadeInUp animate__delay-2s">
-                        <h3 class="text-primary">24ч</h3>
-                        <p class="text-muted">{% trans "Среднее время первого отклика" %}</p>
-                        <i class="fas fa-clock fa-2x text-primary"></i>
-                    </div>
-                </div>
-            </div>
+<!-- Statistics -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-4"><div class="stats-card animate__animated animate__fadeInUp"><h3 class="text-primary">10,000+</h3><p class="text-muted">{% trans "Активных соискателей" %}</p><i class="fas fa-users fa-2x text-primary"></i></div></div>
+            <div class="col-md-4"><div class="stats-card animate__animated animate__fadeInUp animate__delay-1s"><h3 class="text-primary">95%</h3><p class="text-muted">{% trans "Работодателей находят сотрудников" %}</p><i class="fas fa-check-circle fa-2x text-primary"></i></div></div>
+            <div class="col-md-4"><div class="stats-card animate__animated animate__fadeInUp animate__delay-2s"><h3 class="text-primary">24ч</h3><p class="text-muted">{% trans "Среднее время первого отклика" %}</p><i class="fas fa-clock fa-2x text-primary"></i></div></div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Особенности -->
-    <section id="features" class="py-5">
-        <div class="container">
-            <div class="text-center mb-5 animate__animated animate__fadeIn">
-                <h2 class="fw-bold">{% trans "Почему выбирают нас" %}</h2>
-                <p class="lead text-muted">{% trans "Все инструменты для эффективного поиска персонала" %}</p>
+<!-- Features -->
+<section id="features" class="py-5">
+    <div class="container">
+        <div class="text-center mb-5 animate__animated animate__fadeIn">
+            <h2 class="fw-bold">{% trans "Почему выбирают нас" %}</h2>
+            <p class="lead text-muted">{% trans "Все инструменты для эффективного поиска персонала" %}</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card animate__animated animate__fadeInLeft p-4">
+                    <div class="feature-icon mb-4"><i class="fas fa-search-dollar fa-3x text-primary"></i></div>
+                    <h4>{% trans "Таргетированные вакансии" %}</h4>
+                    <p class="text-muted">{% trans "Наши алгоритмы показывают ваши вакансии только релевантным кандидатам" %}</p>
+                </div>
             </div>
-
-            <div class="row g-4">
-                <div class="col-lg-4 col-md-6">
-                    <div class="feature-card animate__animated animate__fadeInLeft">
-                        <div class="card-body p-4">
-                            <div class="feature-icon mb-4">
-                                <i class="fas fa-search-dollar fa-3x text-primary"></i>
-                            </div>
-                            <h4>{% trans "Таргетированные вакансии" %}</h4>
-                            <p class="text-muted">{% trans "Наши алгоритмы показывают ваши вакансии только релевантным кандидатам" %}</p>
-                        </div>
-                    </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card animate__animated animate__fadeInUp p-4">
+                    <div class="feature-icon mb-4"><i class="fas fa-chart-line fa-3x text-primary"></i></div>
+                    <h4>{% trans "Аналитика и отчеты" %}</h4>
+                    <p class="text-muted">{% trans "Подробная статистика по просмотрам и откликам на ваши вакансии" %}</p>
                 </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="feature-card animate__animated animate__fadeInUp">
-                        <div class="card-body p-4">
-                            <div class="feature-icon mb-4">
-                                <i class="fas fa-chart-line fa-3x text-primary"></i>
-                            </div>
-                            <h4>{% trans "Аналитика и отчеты" %}</h4>
-                            <p class="text-muted">{% trans "Подробная статистика по просмотрам и откликам на ваши вакансии" %}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="feature-card animate__animated animate__fadeInRight">
-                        <div class="card-body p-4">
-                            <div class="feature-icon mb-4">
-                                <i class="fas fa-user-tie fa-3x text-primary"></i>
-                            </div>
-                            <h4>{% trans "Подбор кандидатов" %}</h4>
-                            <p class="text-muted">{% trans "Наши HR-специалисты могут помочь с поиском идеального сотрудника" %}</p>
-                        </div>
-                    </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="feature-card animate__animated animate__fadeInRight p-4">
+                    <div class="feature-icon mb-4"><i class="fas fa-user-tie fa-3x text-primary"></i></div>
+                    <h4>{% trans "Подбор кандидатов" %}</h4>
+                    <p class="text-muted">{% trans "Наши HR-специалисты помогут найти идеального сотрудника" %}</p>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Как это работает -->
-    <section class="py-5 bg-light">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="fw-bold animate__animated animate__fadeIn">{% trans "Как это работает" %}</h2>
-                <p class="lead text-muted animate__animated animate__fadeIn animate__delay-1s">{% trans "Всего 3 простых шага к найму лучших сотрудников" %}</p>
+<!-- Steps -->
+<section class="py-5 bg-light">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-4 animate__animated animate__fadeIn">{% trans "Как это работает" %}</h2>
+        <div class="row g-4">
+            <div class="col-lg-4">
+                <div class="animate__animated animate__fadeInLeft p-4">
+                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:60px;height:60px;">1</div>
+                    <h4>{% trans "Создайте вакансию" %}</h4>
+                    <p>{% trans "Заполните простую форму с описанием вакансии и требованиями" %}</p>
+                </div>
             </div>
-
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <div class="text-center p-4 animate__animated animate__fadeInLeft">
-                        <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                            <h3 class="mb-0">1</h3>
-                        </div>
-                        <h4>{% trans "Создайте вакансию" %}</h4>
-                        <p>{% trans "Заполните простую форму с описанием вакансии и требованиями" %}</p>
-                    </div>
+            <div class="col-lg-4">
+                <div class="animate__animated animate__fadeInUp p-4">
+                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:60px;height:60px;">2</div>
+                    <h4>{% trans "Получайте отклики" %}</h4>
+                    <p>{% trans "Кандидаты будут оставлять отклики и прикреплять свои анкеты" %}</p>
                 </div>
-
-                <div class="col-lg-4">
-                    <div class="text-center p-4 animate__animated animate__fadeInUp">
-                        <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                            <h3 class="mb-0">2</h3>
-                        </div>
-                        <h4>{% trans "Получайте отклики" %}</h4>
-                        <p>{% trans "Кандидаты будут оставлять отклики и прикреплять свои анкеты" %}</p>
-                    </div>
-                </div>
-
-                <div class="col-lg-4">
-                    <div class="text-center p-4 animate__animated animate__fadeInRight">
-                        <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                            <h3 class="mb-0">3</h3>
-                        </div>
-                        <h4>{% trans "Выберите лучших" %}</h4>
-                        <p>{% trans "Сравните кандидатов и пригласите на собеседование" %}</p>
-                    </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="animate__animated animate__fadeInRight p-4">
+                    <div class="step-number bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width:60px;height:60px;">3</div>
+                    <h4>{% trans "Выберите лучших" %}</h4>
+                    <p>{% trans "Сравните кандидатов и пригласите на собеседование" %}</p>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- Отзывы -->
-    <section class="py-5">
-        <div class="container">
-            <div class="text-center mb-5">
-                <h2 class="fw-bold animate__animated animate__fadeIn">{% trans "Что говорят работодатели" %}</h2>
-            </div>
+<!-- CTA -->
+<section class="py-5 bg-primary text-white text-center">
+    <div class="container animate__animated animate__zoomIn">
+        <h2 class="fw-bold mb-4">{% trans "Готовы найти идеальных сотрудников?" %}</h2>
+        <p class="lead mb-5">{% trans "Присоединяйтесь к тысячам компаний, которые уже используют наш сервис" %}</p>
+        <a href="{% url 'auth' %}" class="btn btn-light btn-lg px-5 py-3 fw-bold">{% trans "Зарегистрироваться бесплатно" %}</a>
+    </div>
+</section>
 
-            <div class="row g-4">
-                <div class="col-lg-4">
-                    <div class="card h-100 animate__animated animate__fadeInLeft">
-                        <div class="card-body text-center p-4">
-                            <h5>{% trans "Айгуль Садыкова" %}</h5>
-                            <p class="text-muted">{% trans "HR-директор, TechSolutions" %}</p>
-                            <p class="mb-0">{% trans "Благодаря СЛАДКИЙ МАЛЬЧИК мы сократили время подбора сотрудников в 2 раза. Отличная платформа!" %}</p>
-                        </div>
-                    </div>
-                </div>
+<!-- Footer -->
+{% include 'partials/footer.html' %}
 
-                <div class="col-lg-4">
-                    <div class="card h-100 animate__animated animate__fadeInUp">
-                        <div class="card-body text-center p-4">
-                            <h5>{% trans "Марат Ибрагимов" %}</h5>
-                            <p class="text-muted">{% trans "Основатель, StartupKG" %}</p>
-                            <p class="mb-0">{% trans "Нашли 3 отличных разработчика за неделю. Сервис действительно работает!" %}</p>
-                        </div>
-                    </div>
-                </div>
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Анимация статистики
+    gsap.from('.stats-card', {duration:1, y:50, opacity:0, stagger:0.2, ease:"power2.out"});
+    // Пульсация кнопок CTA
+    gsap.to('.btn-light', {duration:2, yoyo:true, repeat:-1, ease:"power1.inOut", boxShadow:"0 0 20px rgba(255,255,255,0.5)"});
+});
 
-                <div class="col-lg-4">
-                    <div class="card h-100 animate__animated animate__fadeInRight">
-                        <div class="card-body text-center p-4">
-                            <h5>{% trans "Элина Токтосунова" %}</h5>
-                            <p class="text-muted">{% trans "Директор, FinancePro" %}</p>
-                            <p class="mb-0">{% trans "Удобный интерфейс и качественные кандидаты. Рекомендую всем HR-специалистам." %}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA -->
-    <section class="py-5 bg-primary text-white">
-        <div class="container text-center animate__animated animate__zoomIn">
-            <h2 class="fw-bold mb-4">{% trans "Готовы найти идеальных сотрудников?" %}</h2>
-            <p class="lead mb-5">{% trans "Присоединяйтесь к тысячам компаний, которые уже используют наш сервис" %}</p>
-            <a href="{% url 'auth' %}" class="btn btn-light btn-lg px-5 py-3 fw-bold">{% trans "Зарегистрироваться бесплатно" %}</a>
-        </div>
-    </section>
-
-    <!-- Футер -->
-    {% include 'partials/footer.html' %}
-
-    <!-- Bootstrap JS + Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- GSAP для анимаций -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
-    <!-- ICONS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <script>
-        // Анимация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Анимация для статистики
-            gsap.from('.stats-card', {
-                duration: 1,
-                y: 50,
-                opacity: 0,
-                stagger: 0.2,
-                ease: "power2.out"
-            });
-            
-            // Анимация для кнопки CTA
-            gsap.to('.btn-light', {
-                duration: 2,
-                yoyo: true,
-                repeat: -1,
-                ease: "power1.inOut",
-                boxShadow: "0 0 20px rgba(255,255,255,0.5)"
-            });
-        });
-        
-        // Анимация при скролле
-        const animateOnScroll = function() {
-            const elements = document.querySelectorAll('.animate__animated');
-            
-            elements.forEach(element => {
-                const elementPosition = element.getBoundingClientRect().top;
-                const screenPosition = window.innerHeight / 1.3;
-                
-                if(elementPosition < screenPosition) {
-                    const animationClass = element.classList[1];
-                    element.classList.add(animationClass);
-                }
-            });
-        };
-        
-        window.addEventListener('scroll', animateOnScroll);
-        window.addEventListener('load', animateOnScroll);
-    </script>
+// Анимация при скролле
+const animateOnScroll = function() {
+    const elements = document.querySelectorAll('.animate__animated');
+    elements.forEach(el => {
+        const elPos = el.getBoundingClientRect().top;
+        const screenPos = window.innerHeight / 1.3;
+        if(elPos < screenPos) el.classList.add('animate__fadeIn');
+    });
+};
+window.addEventListener('scroll', animateOnScroll);
+window.addEventListener('load', animateOnScroll);
+</script>
 </body>
 </html>

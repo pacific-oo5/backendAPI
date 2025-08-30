@@ -3,383 +3,414 @@
 {% load i18n %}
 {% block content %}
 
-    <style>
-.profile-header-card {
-  border: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.profile-header-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
-}
-
-.bg-gradient-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  transition: background 0.3s ease;
-}
-
-.avatar-circle {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  font-size: 2rem;
-  transition: transform 0.3s ease;
-}
-
-.avatar-circle:hover {
-  transform: scale(1.05);
-}
-
-.telegram-card {
-  border-left: 4px solid #0088cc;
-  transition: all 0.3s ease;
-}
-
-.telegram-card:hover {
-  border-left-width: 6px;
-  box-shadow: 0 4px 15px rgba(0, 136, 204, 0.2);
-}
-
-.icon-wrapper {
-  width: 50px;
-  height: 50px;
-  transition: transform 0.3s ease;
-}
-
-.icon-wrapper:hover {
-  transform: rotate(10deg);
-}
-
-.copy-btn {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-}
-
-.copy-btn:hover {
-  background-color: #0088cc !important;
-  color: white !important;
-  transform: scale(1.1);
-}
-
-.telegram-connected {
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-  padding: 12px 16px;
-  border-radius: 12px;
-  border: 1px solid #90caf9;
-  transition: all 0.3s ease;
-}
-
-.telegram-connected:hover {
-  box-shadow: 0 4px 12px rgba(144, 202, 249, 0.4);
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, #0088cc 0%, #006da3 100%);
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-  background: linear-gradient(135deg, #006da3 0%, #005685 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
-}
-
-/* Анимация для уведомления о копировании */
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-.copy-notification {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  z-index: 1060;
-  animation: slideInRight 0.5s ease forwards;
-  border-radius: 12px;
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
-  border: none;
-  backdrop-filter: blur(10px);
-  background: rgba(25, 135, 84, 0.95);
-  color: white;
-  padding: 15px 20px;
-  min-width: 300px;
-  border-left: 4px solid #20c997;
-}
-
-.copy-notification.fade-out {
-  animation: fadeOut 0.5s ease forwards;
-}
-
-.copy-notification .btn-close {
-  filter: invert(1);
-  opacity: 0.8;
-  transition: opacity 0.3s ease;
-}
-
-.copy-notification .btn-close:hover {
-  opacity: 1;
-}
-
-.copy-notification i {
-  animation: pulse 1s ease-in-out;
-}
-
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.2);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* Анимация для элементов при загрузке */
-.card {
-  animation: fadeInUp 0.6s ease;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Анимация для текста */
-.profile-info h3 {
-  animation: slideInLeft 0.8s ease;
-}
-
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@media (max-width: 768px) {
-  .avatar-circle {
-    width: 60px;
-    height: 60px;
-    font-size: 1.5rem;
-  }
-
-  .profile-info h3 {
-    font-size: 1.5rem;
-  }
-
-  .telegram-card .row {
-    flex-direction: column;
-    text-align: center;
-  }
-
-  .telegram-card .col-md-4 {
-    margin-top: 1rem;
-  }
-
-  .copy-notification {
-    min-width: 250px;
-    left: 20px;
-    right: 20px;
-    margin: 0 auto;
-  }
-}
-</style>
-
-
 {% if messages %}
-  <div class="mt-3">
+<div class="container mt-4">
     {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert" data-aos="fade-down">
         {{ message }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
+    </div>
     {% endfor %}
-  </div>
+</div>
 {% endif %}
 
-<div class="container py-4">
-  <div class="row justify-content-center">
-    <div class="col-lg-8 col-md-10">
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-md-12">
 
-      <!-- НОВЫЙ ДИЗАЙН ВЕРХНЕЙ ЧАСТИ ПРОФИЛЯ -->
-      <div class="card profile-header-card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
-        <div class="card-header bg-gradient-primary text-white py-4">
-          <div class="d-flex align-items-center">
-            <div class="profile-avatar me-3">
-              <div class="avatar-circle bg-white text-primary d-flex align-items-center justify-content-center">
-                <span class="fw-bold fs-4">
-            {% if user and user.username %}
-              {{ user.username|first|upper }}
-            {% elif user and user.email %}
-              {{ user.email|first|upper }}
-            {% else %}
-              U
-            {% endif %}
-          </span>
-              </div>
-            </div>
-            <div class="profile-info">
-              <h3 class="mb-1">{{ user.username|default:user.email }}</h3>
-              <p class="mb-0 opacity-75">{{ user.email }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="card-body py-3">
-          <div class="row align-items-center">
-            <div class="col-md-6">
-              <div class="d-flex align-items-center">
-                <i class="bi bi-person-check-fill text-primary me-2 fs-5"></i>
-                <span class="text-muted">{% trans "Статус аккаунта:" %}</span>
-                <span class="ms-2 badge bg-success">{% trans "Активен" %}</span>
-              </div>
-            </div>
-            <div class="col-md-6 text-md-end mt-2 mt-md-0">
-              <div class="d-flex align-items-center justify-content-md-end">
-                <i class="bi bi-telegram text-primary me-2 fs-5"></i>
-                <span class="text-muted">{% trans "Telegram:" %}</span>
-                {% if tg_connected %}
-                  <span class="ms-2 badge bg-success">{% trans "Подключен" %}</span>
-                {% else %}
-                  <span class="ms-2 badge bg-secondary">{% trans "Не подключен" %}</span>
-                {% endif %}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- БЛОК TELEGRAM -->
-      <div class="card telegram-card shadow-sm border-0 rounded-4 mb-4">
-        <div class="card-body p-4">
-          <div class="row align-items-center">
-            <div class="col-md-8">
-              <div class="d-flex align-items-center">
-                <div class="telegram-icon me-3">
-                  <div class="icon-wrapper bg-primary rounded-circle d-flex align-items-center justify-content-center">
-                    <i class="bi bi-telegram text-white fs-4"></i>
-                  </div>
-                </div>
-                <div>
-                  <h5 class="mb-1">{% trans "Telegram уведомления" %}</h5>
-                  <p class="text-muted mb-0 small">
-                    {% trans "Получайте уведомления о новых откликах и сообщениях" %}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-md-4">
-              <div class="d-flex align-items-center justify-content-end">
-                {% if tg_connected %}
-                  <div class="telegram-connected text-end">
-                    <div class="d-flex align-items-center justify-content-end">
-                      <div class="user-info me-3">
-                        <h6 class="mb-0 text-dark">{{ tg_name }}</h6>
-                        <small class="text-muted">{{ tg_username }}</small>
-                      </div>
-                      <div class="telegram-actions">
-                        <button class="btn btn-outline-primary btn-sm copy-btn"
-                                onclick="copyToken('{{ tg_token }}')"
-                                title="{% trans 'Скопировать токен' %}">
-                          <i class="bi bi-clipboard"></i>
-                        </button>
-                      </div>
+            <!-- Profile Header Card -->
+            <div class="card profile-header-card shadow border-0 rounded-4 overflow-hidden mb-4" data-aos="fade-up">
+                <div class="card-header bg-gradient-primary text-white py-4">
+                    <div class="d-flex align-items-center">
+                        <div class="profile-avatar me-3">
+                            <div class="avatar-circle d-flex align-items-center justify-content-center">
+                                <span class="fw-bold fs-4">
+                                    {% if user and user.username %}
+                                        {{ user.username|first|upper }}
+                                    {% elif user and user.email %}
+                                        {{ user.email|first|upper }}
+                                    {% else %}
+                                        U
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="profile-info">
+                            <h3 class="mb-1 text-white">{{ user.username|default:user.email }}</h3>
+                            <p class="mb-0 opacity-75">{{ user.email }}</p>
+                        </div>
                     </div>
-                  </div>
-                {% else %}
-                  <div class="telegram-connect">
-                    <a href="https://t.me/sweet_boyKGS_bot?start={{ tg_token }}"
-                       target="_blank"
-                       class="btn btn-primary d-flex align-items-center">
-                      <i class="bi bi-telegram me-2"></i>
-                      {% trans "Подключить" %}
-                    </a>
-                  </div>
-                {% endif %}
-              </div>
+                </div>
+
+                <div class="card-body py-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                        </div>
+                        <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                            <div class="d-flex align-items-center justify-content-md-end">
+                                <i class="bi bi-telegram text-primary me-2 fs-5"></i>
+                                <span class="text-muted">{% trans "Telegram:" %}</span>
+                                {% if tg_connected %}
+                                    <span class="ms-2 badge bg-success">{% trans "Подключен" %}</span>
+                                {% else %}
+                                    <span class="ms-2 badge bg-secondary">{% trans "Не подключен" %}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
+
+            <!-- Telegram Block -->
+            <div class="card telegram-card shadow border-0 rounded-4 mb-4" data-aos="fade-up" data-aos-delay="100">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-center">
+                                <div class="telegram-icon me-3">
+                                    <div class="icon-wrapper d-flex align-items-center justify-content-center">
+                                        <i class="bi bi-telegram text-white fs-4"></i>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h5 class="mb-1">{% trans "Telegram уведомления" %}</h5>
+                                    <p class="text-muted mb-0 small">
+                                        {% trans "Получайте уведомления о новых откликах и сообщениях" %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center justify-content-end">
+                                {% if tg_connected %}
+                                    <div class="telegram-connected text-end">
+                                        <div class="d-flex align-items-center justify-content-end">
+                                            <div class="user-info me-3">
+                                                <h6 class="mb-0 text-dark">{{ tg_name }}</h6>
+                                                <small class="text-muted">{{ tg_username }}</small>
+                                            </div>
+                                            <div class="telegram-actions">
+                                                <button class="btn btn-outline-primary btn-sm copy-btn"
+                                                        onclick="copyToken('{{ tg_token }}')"
+                                                        title="{% trans 'Скопировать токен' %}">
+                                                    <i class="bi bi-clipboard"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                    <div class="telegram-connect">
+                                        <a href="https://t.me/sweet_boyKGS_bot?start={{ tg_token }}"
+                                           target="_blank"
+                                           class="btn btn-primary d-flex align-items-center">
+                                            <i class="bi bi-telegram me-2"></i>
+                                            {% trans "Подключить" %}
+                                        </a>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vacancies/Resume Section -->
+            <div class="d-flex justify-content-between align-items-center mb-4" data-aos="fade-up" data-aos-delay="200">
+                <h4 class="mb-0">
+                    {% if user.user_r %}{% trans "Мои вакансии" %}{% else %}{% trans "Профиль соискателя" %}{% endif %}
+                </h4>
+                {% if user.user_r %}
+                    <a href="{% url 'api:vacancy_create' %}" class="btn btn-success">
+                        <i class="bi bi-plus-circle me-2"></i>{% trans "Создать вакансию" %}
+                    </a>
+                {% else %}
+                    <a href="{% url 'api:anketa_create' %}" class="btn btn-success">
+                        <i class="bi bi-plus-circle me-2"></i>{% trans "Создать анкету" %}
+                    </a>
+                {% endif %}
+            </div>
+
+            <!-- Tabs Navigation -->
+            <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist" data-aos="fade-up" data-aos-delay="250">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="vacancies-tab" data-bs-toggle="tab" data-bs-target="#vacancies" type="button" role="tab" aria-controls="vacancies" aria-selected="true">
+                        {% if user.user_r %}{% trans "Мои вакансии" %}{% else %}{% trans "Мои анкеты" %}{% endif %}
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="responses-tab" data-bs-toggle="tab" data-bs-target="#responses" type="button" role="tab" aria-controls="responses" aria-selected="false">
+                        {% trans "Мои отклики" %}
+                    </button>
+                </li>
+            </ul>
+
+            <!-- Tabs Content -->
+            <div class="tab-content" id="profileTabsContent" data-aos="fade-up" data-aos-delay="300">
+                <!-- Vacancies/Ankety Tab -->
+                <div class="tab-pane fade show active" id="vacancies" role="tabpanel" aria-labelledby="vacancies-tab">
+                    {% if user.user_r and vacancies or not user.user_r and ankets %}
+                        <div class="row">
+                            {% if user.user_r %}
+                                <!-- Employer - Show Vacancies -->
+                                {% for vacancy in vacancies %}
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100 vacancy-card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ vacancy.title }}</h5>
+                                            <p class="card-text text-muted">{{ vacancy.company_name }}</p>
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <span class="badge bg-primary">{{ vacancy.salary }} СОМ</span>
+                                                <span class="badge bg-secondary">{{ vacancy.get_employment_type_display }}</span>
+                                            </div>
+                                            <p class="card-text">{{ vacancy.description|truncatewords:20 }}</p>
+                                        </div>
+                                        <div class="card-footer bg-transparent">
+                                            <div class="d-flex justify-content-between">
+                                                <a href="{% url 'api:vacancy_update' vacancy.id %}" class="btn btn-sm btn-outline-primary">{% trans "Редактировать" %}</a>
+                                                <a href="{% url 'api:vacancy_detail' vacancy.id %}" class="btn btn-sm btn-primary">{% trans "Посмотреть" %}</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <!-- Job Seeker - Show Ankety -->
+                                {% for anketa in ankets %}
+                                <div class="col-md-6 mb-4">
+                                    <div class="card h-100 anketa-card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ anketa.title }}</h5>
+                                            <p class="card-text text-muted">{{ anketa.created_at }}</p>
+                                            <p class="card-text">{{ anketa.about_me|truncatewords:20 }}</p>
+                                        </div>
+                                        <div class="card-footer bg-transparent">
+                                            <div class="d-flex justify-content-between">
+                                                <a href="{% url 'api:anketa_edit' anketa.id %}" class="btn btn-sm btn-outline-primary">{% trans "Редактировать" %}</a>
+                                                <a href="{% url 'api:anketa_detail' anketa.id %}" class="btn btn-sm btn-primary">{% trans "Посмотреть" %}</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <!-- Empty State -->
+                        <div class="card p-5 text-center">
+                            <i class="bi bi-inbox display-4 text-muted mb-3"></i>
+                            <h5 class="text-muted">
+                                {% if user.user_r %}
+                                    {% trans "У вас пока нет вакансий" %}
+                                {% else %}
+                                    {% trans "У вас пока нет анкет" %}
+                                {% endif %}
+                            </h5>
+                            <p class="text-muted mb-4">
+                                {% if user.user_r %}
+                                    {% trans "Создайте свою первую вакансию, чтобы начать получать отклики" %}
+                                {% else %}
+                                    {% trans "Создайте свою первую анкету, чтобы начать откликаться на вакансии" %}
+                                {% endif %}
+                            </p>
+                            {% if user.user_r %}
+                                <a href="{% url 'api:vacancy_create' %}" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle me-2"></i>{% trans "Создать вакансию" %}
+                                </a>
+                            {% else %}
+                                <a href="{% url 'api:anketa_create' %}" class="btn btn-primary">
+                                    <i class="bi bi-plus-circle me-2"></i>{% trans "Создать анкету" %}
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Responses Tab -->
+                <div class="tab-pane fade" id="responses" role="tabpanel" aria-labelledby="responses-tab">
+                    {% if responses %}
+                        <div class="list-group">
+                            {% for response in responses %}
+                            <div class="list-group-item list-group-item-action mb-3 rounded-3 response-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">
+                                        {% if user.user_r %}
+                                            {{ response.anketa.desired_position }}
+                                        {% else %}
+                                            {{ response.vacancy.title }}
+                                        {% endif %}
+                                    </h5>
+                                    <small class="text-muted">{{ response.responded_at|date:"d.m.Y H:i" }}</small>
+                                </div>
+                                <p class="mb-1">
+                                    {% if user.user_r %}
+                                        {% trans "Отклик от" %} {{ response.anketa.first_name }} {{ response.anketa.last_name }}
+                                    {% else %}
+                                        {% trans "Отклик на вакансию" %} "{{ response.vacancy.title }}"
+                                    {% endif %}
+                                </p>
+                                <div class="d-flex justify-content-between align-items-center mt-2">
+                                    <small class="text-muted">
+                                        {% if response.status == 'new' %}
+                                            <span class="badge bg-info">{% trans "Новый" %}</span>
+                                        {% elif response.status == 'viewed' %}
+                                            <span class="badge bg-primary">{% trans "Просмотрено" %}</span>
+                                        {% elif response.status == 'accepted' %}
+                                            <span class="badge bg-success">{% trans "Принято" %}</span>
+                                        {% elif response.status == 'rejected' %}
+                                            <span class="badge bg-danger">{% trans "Отклонено" %}</span>
+                                        {% endif %}
+                                    </small>
+                                    <div>
+                                        <a href="{% url 'api:vacancy_detail' response.vacancy.id %}" class="btn btn-sm btn-outline-primary">{% trans "Подробнее" %}</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Пагинация для работодателей -->
+                        {% if user.user_r and responses.has_other_pages %}
+                        <nav aria-label="Page navigation" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                {% if responses.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ responses.previous_page_number }}#responses" tabindex="-1">{% trans "Предыдущая" %}</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">{% trans "Предыдущая" %}</span>
+                                </li>
+                                {% endif %}
+
+                                {% for i in responses.paginator.page_range %}
+                                <li class="page-item {% if responses.number == i %}active{% endif %}">
+                                    <a class="page-link" href="?page={{ i }}#responses">{{ i }}</a>
+                                </li>
+                                {% endfor %}
+
+                                {% if responses.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ responses.next_page_number }}#responses">{% trans "Следующая" %}</a>
+                                </li>
+                                {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">{% trans "Следующая" %}</span>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    {% else %}
+                        <!-- Empty State -->
+                        <div class="card p-5 text-center">
+                            <i class="bi bi-chat-dots display-4 text-muted mb-3"></i>
+                            <h5 class="text-muted">{% trans "У вас пока нет откликов" %}</h5>
+                            <p class="text-muted">
+                                {% if user.user_r %}
+                                    {% trans "Когда кандидаты будут откликаться на ваши вакансии, они появятся здесь" %}
+                                {% else %}
+                                    {% trans "Когда вы будете откликаться на вакансии, они появятся здесь" %}
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
         </div>
-      </div>
+    </div>
+</div>
 
-      <!-- ОСТАЛЬНАЯ ЧАСТЬ КОДА ОСТАЁТСЯ БЕЗ ИЗМЕНЕНИЙ -->
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h5 class="mb-0">
-          {% if user.user_r %}{% trans "Мои вакансии" %}{% else %}{% trans "Профиль соискателя" %}{% endif %}
-        </h5>
-        {% if user.user_r %}
-          <a href="{% url 'api:vacancy_create' %}" class="btn btn-success btn-sm">+ {% trans "Создать вакансию" %}</a>
-        {% else %}
-          <a href="{% url 'api:anketa_create' %}" class="btn btn-success btn-sm">+ {% trans "Создать анкету" %}</a>
-        {% endif %}
-      </div>
+<!-- Стили для улучшения внешнего вида -->
+<style>
+    .nav-tabs .nav-link {
+        border: none;
+        border-bottom: 3px solid transparent;
+        color: #6c757d;
+        font-weight: 500;
+        padding: 0.75rem 1.25rem;
+        transition: all 0.3s ease;
+    }
 
-      <!-- ... остальной код без изменений ... -->
+    .nav-tabs .nav-link:hover {
+        border-color: #dee2e6;
+        color: #495057;
+    }
+
+    .nav-tabs .nav-link.active {
+        color: #6366f1;
+        border-bottom-color: #6366f1;
+        background-color: transparent;
+    }
+
+    .vacancy-card, .anketa-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .vacancy-card:hover, .anketa-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .response-item {
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .response-item:hover {
+        background-color: #f8f9fa;
+        border-color: #6366f1;
+    }
+</style>
 
 <script>
-function copyToken(token) {
-  navigator.clipboard.writeText(token).then(() => {
-    // Показываем уведомление о копировании
-    const alert = document.createElement('div');
-    alert.className = 'alert alert-success alert-dismissible fade show position-fixed';
-    alert.style.top = '20px';
-    alert.style.right = '20px';
-    alert.style.zIndex = '1060';
-    alert.innerHTML = `
-      <i class="bi bi-check-circle-fill me-2"></i>
-      {% trans "Токен скопирован в буфер обмена" %}
-      <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    `;
-    document.body.appendChild(alert);
+    function copyToken(token) {
+        navigator.clipboard.writeText(token).then(() => {
+            // Создаем и показываем уведомление
+            const notification = document.createElement('div');
+            notification.className = 'alert alert-success position-fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.zIndex = '1060';
+            notification.style.minWidth = '300px';
+            notification.innerHTML = `
+                <i class="bi bi-check-circle-fill me-2"></i>
+                {% trans "Токен скопирован в буфер обмена" %}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
 
-    // Автоматически скрываем через 3 секунды
-    setTimeout(() => {
-      if (alert.parentNode) {
-        alert.parentNode.removeChild(alert);
-      }
-    }, 3000);
-  }).catch(err => {
-    console.error('Ошибка копирования: ', err);
-  });
-}
+            document.body.appendChild(notification);
+
+            // Автоматически скрываем через 3 секунды
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }).catch(err => {
+            console.error('Ошибка копирования: ', err);
+        });
+    }
+
+    // Активация вкладок при загрузке, если есть hash в URL
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.location.hash) {
+            const hash = window.location.hash.substring(1);
+            const tabTrigger = document.querySelector(`[data-bs-target="#${hash}"]`);
+            if (tabTrigger) {
+                new bootstrap.Tab(tabTrigger).show();
+            }
+        }
+
+        // Сохраняем активную вкладку в URL
+        const tabEls = document.querySelectorAll('button[data-bs-toggle="tab"]');
+        tabEls.forEach(tabEl => {
+            tabEl.addEventListener('shown.bs.tab', function (e) {
+                const target = e.target.getAttribute('data-bs-target');
+                window.location.hash = target.substring(1);
+            });
+        });
+    });
 </script>
-
 {% endblock %}

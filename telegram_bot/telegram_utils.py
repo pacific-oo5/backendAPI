@@ -66,9 +66,6 @@ async def notify_users(vacancy: Vacancy, user_id):
         await bot.session.close()
 
 
-# --- Уведомление автору вакансии о новом отклике ---
-from asgiref.sync import sync_to_async
-
 async def notify_vacancy_author(telegram_id, response):
     bot = get_bot()
     try:

@@ -1,23 +1,85 @@
 {% load i18n %}
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <!-- Bootstrap JS + Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 <style>
     footer {
-        background-color: #d2d2d2;
-        padding: 40px 0;
-        margin: 20px auto;
-        border-radius: 20px;
-        max-width: 1140px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 50px 0 20px;
+        margin-top: 60px;
+        border-radius: 30px 30px 0 0;
     }
+
+    footer h5 {
+        font-weight: 600;
+        margin-bottom: 20px;
+        position: relative;
+        display: inline-block;
+    }
+
+    footer h5:after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 40px;
+        height: 3px;
+        background: #fff;
+        border-radius: 2px;
+    }
+
+    footer ul li {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+    }
+
+    footer ul li i {
+        margin-right: 10px;
+        font-size: 1.1rem;
+    }
+
+    .social-links a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        color: white;
+        margin-right: 10px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    .social-links a:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-3px);
+    }
+
     .footer-links a {
-        color: #111;
+        color: rgba(255, 255, 255, 0.8);
         text-decoration: none;
         margin-right: 15px;
-        transition: 0.3s;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
     }
+
     .footer-links a:hover {
+        color: white;
         text-decoration: underline;
     }
-</style>
 
+    hr {
+        border-color: rgba(255, 255, 255, 0.2);
+        margin: 30px 0;
+    }
+</style>
 <footer>
     <div class="container">
         <div class="row">
@@ -35,14 +97,14 @@
             </div>
             <div class="col-md-4 mb-4">
                 <h5>{% trans "Мы в соцсетях" %}</h5>
-                <div class="social-links mb-2">
-                    <a href="#" class="me-2"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="me-2"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="me-2"><i class="bi bi-telegram"></i></a>
-                    <a href="#" class="me-2"><i class="bi bi-linkedin"></i></a>
+                <div class="social-links mb-3">
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-telegram"></i></a>
+                    <a href="#"><i class="bi bi-linkedin"></i></a>
                 </div>
                 <div class="footer-links">
-                    <a href="{% url 'privacy_policy' %}" target="_blank">{% trans "Политика конфиденциальности" %}</a> <br>
+                    <a href="{% url 'privacy_policy' %}" target="_blank">{% trans "Политика конфиденциальности" %}</a>
                     <a href="{% url 'terms_of_service' %}" target="_blank">{% trans "Условия обслуживания" %}</a>
                 </div>
             </div>
