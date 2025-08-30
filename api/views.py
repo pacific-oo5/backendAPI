@@ -286,3 +286,34 @@ def response_update_status(request, pk):
         response.save()
 
     return redirect('profile')
+
+
+@require_POST
+def vacancy_complaint(request, vacancy_id):
+    vacancy = get_object_or_404(Vacancy, id=vacancy_id)
+    reason = request.POST.get('reason', '').strip()
+
+    if not reason:
+        messages.error(request, _("Укажите причину жалобы."))
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+
+    if request.user.is_authenticated:
+        # авторизованный пользователь
+        VacancyComplaint.objects.create(
+            user=request.user,
+            vacancy=vacancy,
+            reason=reason
+        )
+    else:
+        # анонимный пользователь
+        anon_name = request.POST.get('anon_name', '').strip()
+        anon_email = request.POST.get('anon_email', '').strip()
+        VacancyComplaint.objects.create(
+            vacancy=vacancy,
+            reason=reason,
+            anon_name=anon_name or "Аноним",
+            anon_email=anon_email or None
+        )
+
+    messages.success(request, _("Жалоба отправлена."))
+    return redirect(request.META.get('HTTP_REFERER', '/'))
