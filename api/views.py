@@ -1,6 +1,4 @@
 import os
-
-from django.conf import settings
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -11,21 +9,14 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-from rest_framework import status, permissions
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from .choices import STATUS_CHOICES, WORK_CHOICES, WORK_TIME_CHOICES
-from .models import VacancyResponse, Vacancy, Anketa, VacancyView
+from .models import VacancyResponse, Vacancy, Anketa, VacancyView, VacancyComplaint
 from .forms import AnketaForm, VacancyForm
 
 from django.utils.translation import gettext_lazy as _
 
 from dotenv import load_dotenv
-
-from .permissions import IsFromBot
-from .serializers import AttachTokenBotSerializer, AttachTokenMiniAppSerializer
-from .services import attach_token_to_telegram
 
 load_dotenv()
 
@@ -103,7 +94,6 @@ class VacancyDetailView(generic.DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         all_vacancies = Vacancy.objects.filter(is_active=True).order_by('-published_at')
-
         user = self.request.user
         if user.is_authenticated and not user.user_r:  # type: ignore # только соискатель
             context['ankets'] = Anketa.objects.filter(user=user, is_active=True)
@@ -184,16 +174,22 @@ def vacancy_delete(request, pk):
     vacancy.delete()
     return redirect('profile')
 
+
 class VacancyUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Vacancy
     form_class = VacancyForm
-    template_name = 'vacancy/vacancy_create.html'
+    template_name = 'vacancy/edit_vacancy.html'
 
     def get_queryset(self):
         return Vacancy.objects.filter(user=self.request.user)
 
     def get_success_url(self):
         return reverse('profile')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['vacancy'] = self.object   # передаём vacancy.id в шаблон
+        return context
 #! FORMS    
 
 class VacancyCreateView(LoginRequiredMixin, generic.CreateView):
@@ -253,8 +249,7 @@ class AnketaDetailView(LoginRequiredMixin, generic.DetailView):
                 vacancy__user=request.user
             ).exists()
             if not has_access:
-                messages.error(request, _("У вас нет доступа к этой анкете."))
-                return redirect("profile")
+                return redirect("home")
 
         return super().get(request, *args, **kwargs)
 
@@ -265,7 +260,7 @@ class AnketaUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateVi
     template_name = 'form/anketa_form.html'
 
     def get_success_url(self):
-        return reverse_lazy('anketa_detail', kwargs={'pk': self.object.pk}) # type: ignore
+        return reverse_lazy('api:anketa_detail', kwargs={'pk': self.object.pk}) # type: ignore
 
     def test_func(self):
         # Только владелец анкеты может её редактировать

@@ -5,13 +5,10 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView
 )
 
+app_name='userauth'
 urlpatterns = [
     path('profile/', ProfileView.as_view(), name='profile'),
-]
-
-urlpatterns += [
-    # path('password-reset/', PasswordResetView.as_view(), title='rest_password_reset'),
-    # path('password-change/', PasswordChangeView.as_view(), title='rest_password_change'),
+    path('profile/<slug:slug>/', PublicProfileView.as_view(), name='public_profile'),
 ]
 
 urlpatterns += [

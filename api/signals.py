@@ -4,7 +4,7 @@ from django.dispatch import receiver
 
 from userauth.models import TelegramProfile
 from .models import Vacancy, VacancyResponse
-from userauth.telegram_utils import notify_users, notify_vacancy_author
+from telegram_bot.telegram_utils import notify_users, notify_vacancy_author
 import asyncio
 import threading
 

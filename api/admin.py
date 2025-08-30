@@ -1,24 +1,26 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Vacancy, VacancyResponse, Anketa
+from .models import Vacancy, VacancyResponse, Anketa, VacancyComplaint
+from django.utils.translation import gettext_lazy as _
 
+@admin.register(Vacancy)
 class VacancyAdmin(admin.ModelAdmin):
     list_display = ('title', 'user_email', 'work_type', 'salary', 'country_city', 'is_active', 'published_at')
     list_filter = ('work_type', 'work_time', 'is_active', 'is_remote', 'published_at')
     search_fields = ('title', 'description', 'user__email')
     readonly_fields = ('published_at',)
     fieldsets = (
-        ('Основная информация', {
+        (_('Основная информация'), {
             'fields': ('user', 'title', 'description', 'about_me', 'salary')
         }),
-        ('Детали вакансии', {
+        (_('Детали вакансии'), {
             'fields': ('work_type', 'work_time', 'country', 'city', 'is_remote')
         }),
-        ('Требования', {
+        (_('Требования'), {
             'fields': ('requirements', 'responsibilities'),
             'classes': ('collapse',)
         }),
-        ('Статус', {
+        (_('Статус'), {
             'fields': ('is_active', 'published_at')
         }),
     )
@@ -40,19 +42,21 @@ class VacancyAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return True  # разрешить только удаление
 
+
+@admin.register(VacancyResponse)
 class VacancyResponseAdmin(admin.ModelAdmin):
     list_display = ('vacancy_name', 'worker_email', 'status_badge', 'is_favorite', 'responded_at')
     list_filter = ('status', 'is_favorite', 'responded_at')
-    search_fields = ('vacancy__name', 'worker__email')
+    search_fields = ('vacancy__title',)
     readonly_fields = ('responded_at',)
     
     def vacancy_name(self, obj):
         return obj.vacancy.title
-    vacancy_name.short_description = 'Вакансия'
+    vacancy_name.short_description = _('Вакансия')
     
     def worker_email(self, obj):
         return obj.worker.email
-    worker_email.short_description = 'Соискатель'
+    worker_email.short_description = _('Соискатель')
     
     def status_badge(self, obj):
         colors = {
@@ -65,7 +69,7 @@ class VacancyResponseAdmin(admin.ModelAdmin):
             colors.get(obj.status, 'gray'),
             obj.get_status_display()
         )
-    status_badge.short_description = 'Статус'
+    status_badge.short_description = _('Статус')
     status_badge.admin_order_field = 'status'
 
     def has_add_permission(self, request):
@@ -78,23 +82,24 @@ class VacancyResponseAdmin(admin.ModelAdmin):
         return True  # разрешить только удаление
 
 
+@admin.register(Anketa)
 class AnketaAdmin(admin.ModelAdmin):
     list_display = ('title', 'user_email', 'country_city', 'phone_number', 'is_active', 'created_at')
     list_filter = ('is_active', 'created_at')
     search_fields = ('title', 'about_me', 'user__email')
     readonly_fields = ('created_at', 'user_profile_link')
     fieldsets = (
-        ('Основная информация', {
-            'fields': ('user', 'user_profile_link', 'title', 'about_me')
+        (_('Основная информация'), {
+            'fields': ('user', 'title', 'about_me')
         }),
-        ('Опыт работы', {
+        (_('Опыт работы'), {
             'fields': ('experience',),
             'classes': ('collapse',)
         }),
-        ('Контактные данные', {
+        (_('Контактные данные'), {
             'fields': ('country', 'city', 'phone_number')
         }),
-        ('Статус', {
+        (_('Статус'), {
             'fields': ('is_active', 'created_at')
         }),
     )

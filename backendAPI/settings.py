@@ -69,7 +69,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'userauth.context_processors.add_user_avatar'
             ],
         },
     },
@@ -129,22 +128,12 @@ AUTHENTICATION_BACKENDS = [
 # Allauth settings
 
 
-ACCOUNT_SIGNUP_FIELDS = {
-    'email': {
-        'required': True,
-        'label': 'Email',
-    },
-    'username': {
-        'required': False,  # Если не используете username
-        'label': 'Username',
-    }
-}
+
 
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_LOGIN_METHODS = ['email']  # Разрешить вход только по email
+ACCOUNT_LOGIN_METHODS = ["email"]
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # 'mandatory' или 'optional' если нужно подтверждение
 ACCOUNT_UNIQUE_EMAIL = True
 
@@ -199,3 +188,5 @@ CSRF_TRUSTED_ORIGINS = [
 LOGIN_URL = '/auth/'
 
 BOT_API_KEY = os.getenv('BOT_TOKEN')
+
+NOTIFY_ENABLED = False

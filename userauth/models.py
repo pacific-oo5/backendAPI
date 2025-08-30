@@ -1,9 +1,10 @@
 import secrets
 import uuid
-
+from autoslug import AutoSlugField
 from django.conf import settings
 from django.contrib.auth.models import BaseUserManager, AbstractUser
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 class CustomUserManager(BaseUserManager):
@@ -47,7 +48,6 @@ class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=150, blank=True, verbose_name=_('Имя'))
     user_r = models.BooleanField(verbose_name=_("Разрешение на публикацию вакансий"), default=False)
     telegram_id = models.BigIntegerField(unique=True, null=True, blank=True, verbose_name="Telegram ID")
-    telegram_token = models.CharField(max_length=255, blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -61,27 +61,19 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
-    
-    # @property
-    # def avatar(self):
-    #     if self.photo:
-    #         return self.photo.url
-    #     return f'{settings.STATIC_URL}images/avatar.svg'
+
 
 
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    displayname = models.CharField(max_length=20, null=True, blank=True)
-    info = models.TextField(null=True, blank=True)
+    slug = AutoSlugField(unique=True, populate_from='user__username', blank=True)
 
     def __str__(self):
         return str(self.user)
 
-    @property
-    def name(self):
-        if self.displayname:
-            return self.displayname
-        return self.user.username
+    def get_absolute_url(self):
+        return reverse('public_profile', kwargs={'slug': self.slug})
+
 
 def generate_unique_token():
     while True:
@@ -125,7 +117,6 @@ class TelegramProfile(models.Model):
         related_name='telegram_profiles'
     )
     telegram_id = models.BigIntegerField(blank=True, null=True)
-    avatar_url = models.CharField(blank=True, null=True)
     token = models.CharField(max_length=32, unique=True, default=generate_unique_token)
     username = models.CharField(max_length=255, null=True, blank=True)
     first_name = models.CharField(max_length=64, null=True, blank=True)

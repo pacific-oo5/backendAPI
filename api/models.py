@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 
+from userauth.models import CustomUser
 from .choices import STATUS_CHOICES, WORK_CHOICES, WORK_TIME_CHOICES, ACTION_CHOICES
 from django.utils.translation import gettext_lazy as _
 
@@ -41,7 +42,9 @@ class Vacancy(models.Model):
     )
     salary = models.IntegerField(
         verbose_name=_('Зарплата'),
-        help_text=_('Укажите зарплату в сомах')
+        help_text=_('Укажите зарплату в сомах'),
+        blank=True,
+        null=True
     )
     country = models.CharField(
         null=True,
@@ -74,6 +77,10 @@ class Vacancy(models.Model):
         verbose_name=_('Активен'),
         default=True,
         help_text=_('Если выключить, вакансия будет скрыта')
+    )
+
+    favorite_by = models.ManyToManyField(
+        CustomUser, related_name='favorite_vacancies', blank=True
     )
 
     def get_absolute_url(self):

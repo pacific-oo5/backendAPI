@@ -15,11 +15,13 @@ path('i18n/', include('django.conf.urls.i18n')),
     path('privacy/', privacy_policy, name='privacy_policy'),
     path('terms/', terms_of_service, name='terms_of_service'),
     path('miniapp/', include('miniapp.urls'), name='miniapp'),
-    path('profile/', ProfileView.as_view(), name='profile'),
-    path('user/<int:id>/', PublicProfileView.as_view(), name='public_profile'),
     path('admin/', admin.site.urls),
     path('employers/', employers, name='employers'),
     path('applicants/', applicants, name='applicants'),
+]
+
+urlpatterns += [
+    path('', include('userauth.urls'), name='userauth'),
 ]
 
 urlpatterns += [

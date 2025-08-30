@@ -1,17 +1,10 @@
-import json
-import os
-
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required   
-from django.urls import reverse_lazy
+from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.contrib.auth import logout, update_session_auth_hash, login
 from django.contrib.auth.views import LoginView
 from django.views import View
-from django.contrib.auth.views import PasswordChangeView
 from django.core.paginator import Paginator
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
 
 from .forms import *
 from .models import TelegramProfile, CustomUser
@@ -124,7 +117,6 @@ class ProfileView(View):
             "tg_token": str(profile.token),
             "tg_name": f"{profile.first_name or ''} {profile.last_name or ''}".strip() or profile.username or "Без имени",
             "tg_username": f"@{profile.username}" if profile.username else "",
-            "tg_avatar": profile.avatar_url if hasattr(profile, "avatar_url") and profile.avatar_url else "/static/img/telegram_default.png"
         }
 
         password_form = PasswordChangeForm(user)
@@ -148,17 +140,11 @@ class ProfileView(View):
         return redirect('profile')
 
 
-class CustomPasswordChangeView(PasswordChangeView):
-    form_class = CustomPasswordChangeForm
-    template_name = 'userauth/password_change.html'
-    success_url = reverse_lazy('profile')
-
-
 class PublicProfileView(View):
     template_name = 'userauth/public_profile.html'
 
-    def get(self, request, id):
-        user = get_object_or_404(CustomUser, id=id)
+    def get(self, request, slug):
+        user = get_object_or_404(CustomUser, profile__slug=slug)
 
         vacancies = Vacancy.objects.filter(user=user, is_active=True) if user.user_r else None
         ankets = Anketa.objects.filter(user=user, is_active=True) if not user.user_r else None
