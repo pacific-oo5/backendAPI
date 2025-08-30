@@ -122,7 +122,29 @@ class AnketaAdmin(admin.ModelAdmin):
         return True  # разрешить только удаление
 
 
-# Регистрация моделей
-admin.site.register(Vacancy, VacancyAdmin)
-admin.site.register(VacancyResponse, VacancyResponseAdmin)
-admin.site.register(Anketa, AnketaAdmin)
+@admin.register(VacancyComplaint)
+class VacancyComplaintAdmin(admin.ModelAdmin):
+    list_display = ('id', 'vacancy', 'user_display', 'anon_name', 'created_at', 'short_reason')
+    list_filter = ('created_at', 'vacancy')
+    search_fields = ('vacancy__title', 'user__username', 'anon_name', 'anon_email', 'reason')
+    readonly_fields = ('created_at',)
+    ordering = ('-created_at',)
+    list_select_related = ('vacancy', 'user')
+
+    def user_display(self, obj):
+        return obj.user.username if obj.user else "Аноним"
+    user_display.short_description = "Пользователь"
+
+    def short_reason(self, obj):
+        return obj.reason[:50] + ("..." if len(obj.reason) > 50 else "")
+    short_reason.short_description = "Причина"
+
+
+    def has_add_permission(self, request):
+        return False  # запрет на добавление
+
+    def has_change_permission(self, request, obj=None):
+        return False  # запрет на редактирование
+
+    def has_delete_permission(self, request, obj=None):
+        return True  # разрешить только удаление
