@@ -105,15 +105,6 @@ async def start(message: types.Message, state: FSMContext):
         profile.last_name = message.from_user.last_name
         profile.username = message.from_user.username
 
-        # Получаем фото
-        photos = await bot.get_user_profile_photos(message.from_user.id, limit=1)
-        if photos.total_count > 0:
-            file_id = photos.photos[0][0].file_id
-            file = await bot.get_file(file_id)
-            profile.avatar_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file.file_path}"
-        else:
-            profile.avatar_url = None
-
         await sync_to_async(profile.save)()
         await message.answer(f"✅ Telegram аккаунт успешно подключён, {profile.username}!")
         return
@@ -125,7 +116,8 @@ async def start(message: types.Message, state: FSMContext):
         keyboard = InlineKeyboardMarkup(
             inline_keyboard=[
                 [InlineKeyboardButton(text="✅ Оставить токен", callback_data="keep_token")],
-                [InlineKeyboardButton(text="🔄 Сменить токен", callback_data="change_token")]
+                [InlineKeyboardButton(text="🔄 Сменить токен", callback_data="change_token")],
+                [InlineKeyboardButton(text="❌ Отвязать токен", callback_data="unlink_token")],
             ]
         )
         sent_message = await message.answer(
@@ -142,18 +134,6 @@ async def start(message: types.Message, state: FSMContext):
         await state.update_data(message_id=sent_message.message_id)
 
 
-@dp.callback_query(lambda c: c.data == "unlink_token")
-async def unlink_token(callback: types.CallbackQuery):
-    profile = await sync_to_async(lambda: TelegramProfile.objects.filter(telegram_id=callback.from_user.id).first())()
-    if profile:
-        profile.telegram_id = None
-        profile.is_connected = False
-        await sync_to_async(profile.save)()
-        await callback.message.edit_text("❌ Токен успешно отвязан.")
-    else:
-        await callback.message.edit_text("⚠️ У вас нет подключенного токена.")
-
-
 @dp.callback_query(lambda c: c.data == "keep_token")
 async def keep_token(callback: types.CallbackQuery, state: FSMContext):
     # Получаем TelegramProfile текущего пользователя
@@ -165,15 +145,6 @@ async def keep_token(callback: types.CallbackQuery, state: FSMContext):
         profile.username = callback.from_user.username
         profile.is_connected = True
 
-        # Получаем ссылку на фото профиля через Telegram API
-        photos = await bot.get_user_profile_photos(callback.from_user.id, limit=1)
-        if photos.total_count > 0:
-            file_id = photos.photos[0][0].file_id  # берем первую фотографию первого размера
-            file = await bot.get_file(file_id)
-            profile.avatar_url = f"https://api.telegram.org/file/bot{BOT_TOKEN}/{file.file_path}"
-        else:
-            profile.avatar_url = None  # фото нет
-
         await sync_to_async(profile.save)()
 
         await callback.message.edit_text("✅ Профиль обновлён!")
@@ -181,6 +152,22 @@ async def keep_token(callback: types.CallbackQuery, state: FSMContext):
         await callback.message.edit_text("⚠️ У вас нет подключённого токена.")
 
     await state.clear()
+
+
+@dp.callback_query(lambda c: c.data == "unlink_token")
+async def unlink_token(callback: types.CallbackQuery):
+    profile = await sync_to_async(lambda: TelegramProfile.objects.filter(telegram_id=callback.from_user.id).first())()
+    if profile:
+        profile.telegram_id = None
+        profile.first_name = ""
+        profile.last_name = ""
+        profile.username = ""
+        profile.is_connected = False
+        await sync_to_async(profile.save)()
+        await callback.message.edit_text("❌ Токен успешно отвязан.")
+    else:
+        await callback.message.edit_text("⚠️ У вас нет подключенного токена.")
+
 
 # --- /help ---
 @dp.message(Command("help"))
@@ -278,7 +265,7 @@ async def add_filter(message: types.Message, state: FSMContext):
 async def handle_add_filter(message: types.Message, state: FSMContext):
     text = message.text.strip()
     try:
-        profile = await sync_to_async(TelegramProfile.objects.get)(telegram_id=message.from_user.id)
+        profile = await sync_to_async(lambda: TelegramProfile.objects.filter(telegram_id=message.from_user.id).first())()
 
         # Обрабатываем несколько слов через запятую
         keywords = [kw.strip() for kw in text.split(',') if kw.strip()]
@@ -324,7 +311,7 @@ async def del_filter(message: types.Message, state: FSMContext):
 async def handle_del_filter(message: types.Message, state: FSMContext):
     text = message.text.strip()
     try:
-        profile = await sync_to_async(TelegramProfile.objects.get)(telegram_id=message.from_user.id)
+        profile = await sync_to_async(lambda: TelegramProfile.objects.filter(telegram_id=message.from_user.id).first())()
 
         # Обрабатываем несколько слов через запятую
         keywords = [kw.strip() for kw in text.split(',') if kw.strip()]
@@ -363,7 +350,7 @@ async def handle_del_filter(message: types.Message, state: FSMContext):
 async def list_filters(message: types.Message):
     await message.delete()
     try:
-        profile = await sync_to_async(TelegramProfile.objects.get)(telegram_id=message.from_user.id)
+        profile = await sync_to_async(lambda: TelegramProfile.objects.filter(telegram_id=message.from_user.id).first())()
         if profile.filters:
             await message.answer(
                 await get_text(message.from_user.id, 'filters_list') + ", ".join(profile.filters)
