@@ -1,9 +1,9 @@
 import hashlib, hmac
 from django.contrib.auth import get_user_model
-from django.core.paginator import PageNotAnInteger, EmptyPage
+from django.core.paginator import PageNotAnInteger, EmptyPage, Paginator
 from django.shortcuts import render
 
-from django.views import generic
+from django.views import generic, View
 from django.template.loader import render_to_string
 from django.db.models import Q
 
@@ -151,33 +151,90 @@ def verify_telegram_webapp(data: dict, bot_token: str):
     hmac_hash = hmac.new(secret_key, check_string.encode(), hashlib.sha256).hexdigest()
     return hmac.compare_digest(hmac_hash, data.get('hash', ''))
 
-def profile(request):
-    return render(request, "miniapp/profile.html")
+
+class ProfilePageView(View):
+    template_name = "miniapp/profile.html"
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
 
 
-def profile_data(request):
-    tg_id = request.GET.get("tg_id")
+class MiniAppProfileDataView(View):
+    def get(self, request, *args, **kwargs):
+        tg_id = request.GET.get("tg_id")
+        page = int(request.GET.get("page", 1))
+        items_per_page = 10  # Добавляем пагинацию
 
-    if not tg_id:
-        return JsonResponse({"status": "error", "message": "tg_id не передан"})
+        if not tg_id:
+            return JsonResponse({"status": "error", "message": "tg_id не передан"})
 
-    try:
-        profile = TelegramProfile.objects.select_related("user").get(telegram_id=tg_id)
-    except TelegramProfile.DoesNotExist:
-        return JsonResponse({"status": "error", "message": "Профиль не найден"})
+        try:
+            profile = TelegramProfile.objects.select_related("user").get(telegram_id=tg_id)
+        except TelegramProfile.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Профиль не найден"})
 
-    user = profile.user
-    return JsonResponse({
-        "status": "ok",
-        "connected": True,
-        "site_user": {
-            "username": user.username,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
-            "email": user.email,
-        },
-        "telegram": {
-            "id": profile.telegram_id,
-            "username": profile.username,
+        user = profile.user
+        data = {
+            "status": "ok",
+            "connected": True,
+            "user_r": getattr(user, "user_r", False),
+            "site_user": {
+                "id": user.id,
+                "username": user.username,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "email": user.email,
+            },
+            "telegram": {
+                "id": profile.telegram_id,
+                "username": profile.username,
+            }
         }
-    })
+
+        # --- Данные для вкладок ---
+        items_html = ""
+        has_next = False
+
+        if user.user_r:  # работодатель
+            # Пагинация для вакансий
+            vacancies = Vacancy.objects.filter(user_id=user.id, is_active=True)
+            paginator = Paginator(vacancies, items_per_page)
+
+            try:
+                page_obj = paginator.page(page)
+                vacancies_page = page_obj.object_list
+                has_next = page_obj.has_next()
+            except EmptyPage:
+                vacancies_page = []
+                has_next = False
+
+            items_html = render_to_string(
+                "miniapp/partials/profile_vacancy_list.html",
+                {"vacancies": vacancies_page}
+            )
+
+        else:  # соискатель
+            # Пагинация для анкет
+            ankets = Anketa.objects.filter(user=user, is_active=True)
+            paginator = Paginator(ankets, items_per_page)
+
+            try:
+                page_obj = paginator.page(page)
+                ankets_page = page_obj.object_list
+                has_next = page_obj.has_next()
+            except EmptyPage:
+                ankets_page = []
+                has_next = False
+
+            items_html = render_to_string(
+                "miniapp/partials/anketa_list.html",
+                {"ankets": ankets_page}
+            )
+
+        data.update({
+            "html": items_html,
+            "has_next": has_next,
+            "current_page": page
+        })
+
+        return JsonResponse(data)
