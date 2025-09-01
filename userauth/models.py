@@ -65,14 +65,14 @@ class CustomUser(AbstractUser):
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='profile')
     slug = AutoSlugField(unique=True, populate_from='user__username', blank=True)
 
     def __str__(self):
         return str(self.user)
 
     def get_absolute_url(self):
-        return reverse('public_profile', kwargs={'slug': self.slug})
+        return reverse('public_profile', kwargs={'pk': self.user.pk})
 
 
 def generate_unique_token():
@@ -109,12 +109,10 @@ class ProfileToken(models.Model):
 
 
 class TelegramProfile(models.Model):
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         CustomUser,
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-        related_name='telegram_profiles'
+        related_name='telegram_profile'
     )
     telegram_id = models.BigIntegerField(blank=True, null=True)
     token = models.CharField(max_length=32, unique=True, default=generate_unique_token)
@@ -137,3 +135,8 @@ class TelegramProfile(models.Model):
 
     def __str__(self):
         return f"tg:{self.telegram_id} → user:{self.user_id}"
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user'], name='unique_user_telegram')
+        ]

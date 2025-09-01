@@ -28,7 +28,13 @@
             </small>
             <small class="text-muted d-block mt-1">
                 <i class="bi bi-clock me-1"></i>
-                {{ vacancy.published_at|timesince }} {% trans "назад" %}
+                    {% if vacancy.published_at.date == today %}
+                        {% trans 'Сегодня' %}
+                    {% elif vacancy.published_at.date == yesterday %}
+                        {% trans 'Вчера' %}
+                    {% else %}
+                        {{ vacancy.published_at|date:"d.m.Y" }}
+                    {% endif %}
             </small>
             <div class="d-flex justify-content-between align-items-center mt-auto">
                 <span class="badge

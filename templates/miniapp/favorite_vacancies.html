@@ -1,0 +1,61 @@
+{% extends "miniapp/base.html" %}
+
+{% block content %}
+<div class="header">
+    <h1>💖 Избранные вакансии</h1>
+</div>
+
+<div id="vacancy-container">
+    {% if has_tg_id %}
+        {% if error %}
+            <div style="background:#ffe5e5;padding:12px;text-align:center;margin:10px;border-radius:8px;">
+                {{ error }}
+            </div>
+        {% elif vacancies %}
+            {% include "miniapp/partials/vacancy_list.html" with vacancies=vacancies %}
+        {% else %}
+            <div style="text-align:center;padding:40px;color:#666;">
+                <p>📭 У вас пока нет избранных вакансий</p>
+                <p>Нажмите ❤️ на вакансии, чтобы добавить её в избранное</p>
+            </div>
+        {% endif %}
+    {% else %}
+        <p>Загрузка избранного...</p>
+    {% endif %}
+</div>
+
+<script>
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+{% if not has_tg_id %}
+// Если TG ID не передан в шаблоне, получаем его через JavaScript
+const container = document.getElementById('vacancy-container');
+const initData = tg.initData;
+
+if (!initData) {
+    container.innerHTML = '<div style="background:#ffe5e5;padding:12px;text-align:center;">Ошибка: не удалось получить данные Telegram</div>';
+} else {
+    // Загружаем избранные вакансии через AJAX
+    fetch("{% url 'miniapp:favorite_vacancies_data' %}?initData=" + encodeURIComponent(initData), {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-Telegram-Init-Data': initData
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === "ok") {
+            container.innerHTML = data.html || '<div style="text-align:center;padding:40px;color:#666;">📭 У вас пока нет избранных вакансий</div>';
+        } else {
+            container.innerHTML = '<div style="background:#ffe5e5;padding:12px;text-align:center;">' + data.message + '</div>';
+        }
+    })
+    .catch(err => {
+        console.error("Fetch error:", err);
+        container.innerHTML = '<div style="background:#ffe5e5;padding:12px;text-align:center;">Ошибка загрузки данных</div>';
+    });
+}
+{% endif %}
+</script>
+{% endblock %}

@@ -45,7 +45,6 @@ async def notify_users(vacancy: Vacancy, user_id):
                     location_text = await get_text(user_id, 'location')
                     view_text = await get_text(user_id, 'view_vacancy_button')
                     vacancy_url = f"https://quality-herring-fine.ngrok-free.app/vacancies/{vacancy.id}/"
-
                     await bot.send_message(
                         chat_id=profile.telegram_id,
                         text=f"Новая вакансия: <b>{vacancy.title}</b>\n\n"

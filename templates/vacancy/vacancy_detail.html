@@ -36,12 +36,14 @@
                         <i class="bi bi-three-dots-vertical"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="vacancyMenuButton">
-                        <li><a class="dropdown-item" href="{{ user.profile.get_absolute_url }} vacancy.user.id %}">
+                        <li><a class="dropdown-item" href="{% url 'userauth:public_profile' vacancy.user.pk %}">
                             <i class="bi bi-person me-2"></i>{% trans "Посмотреть профиль" %}
                         </a></li>
-                        <li><a class="dropdown-item" href="#">
-                            <i class="bi bi-share me-2"></i>{% trans "Поделиться" %}
-                        </a></li>
+                        {% if vacancy.user.id == request.user.id %}
+                            <li><a class="dropdown-item" href="{% url 'api:vacancy_update' vacancy.id %}">
+                                <i class="bi bi-person me-2"></i>{% trans "Редактировать" %}
+                            </a></li>
+                        {% endif %}
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <a class="dropdown-item text-danger" href="#"

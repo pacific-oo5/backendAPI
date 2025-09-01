@@ -143,8 +143,10 @@ class ProfileView(View):
 class PublicProfileView(View):
     template_name = 'userauth/public_profile.html'
 
-    def get(self, request, slug):
-        user = get_object_or_404(CustomUser, profile__slug=slug)
+    def get(self, request, pk):
+        if request.user.is_authenticated and request.user.pk == pk:
+            return redirect('userauth:profile')
+        user = get_object_or_404(CustomUser, pk=pk)
 
         vacancies = Vacancy.objects.filter(user=user, is_active=True) if user.user_r else None
         ankets = Anketa.objects.filter(user=user, is_active=True) if not user.user_r else None

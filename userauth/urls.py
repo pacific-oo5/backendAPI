@@ -8,7 +8,7 @@ from rest_framework_simplejwt.views import (
 app_name='userauth'
 urlpatterns = [
     path('profile/', ProfileView.as_view(), name='profile'),
-    path('profile/<slug:slug>/', PublicProfileView.as_view(), name='public_profile'),
+    path('user/<int:pk>/', PublicProfileView.as_view(), name='public_profile'),
 ]
 
 urlpatterns += [

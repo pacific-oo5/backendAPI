@@ -11,7 +11,7 @@ class VacancyAdmin(admin.ModelAdmin):
     readonly_fields = ('published_at',)
     fieldsets = (
         (_('Основная информация'), {
-            'fields': ('user', 'title', 'description', 'about_me', 'salary')
+            'fields': ('user', 'title', 'description', 'about_me', 'salary', 'favorite_by')
         }),
         (_('Детали вакансии'), {
             'fields': ('work_type', 'work_time', 'country', 'city', 'is_remote')

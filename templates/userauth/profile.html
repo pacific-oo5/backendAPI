@@ -90,13 +90,6 @@
                                                 <h6 class="mb-0 text-dark">{{ tg_name }}</h6>
                                                 <small class="text-muted">{{ tg_username }}</small>
                                             </div>
-                                            <div class="telegram-actions">
-                                                <button class="btn btn-outline-primary btn-sm copy-btn"
-                                                        onclick="copyToken('{{ tg_token }}')"
-                                                        title="{% trans 'Скопировать токен' %}">
-                                                    <i class="bi bi-clipboard"></i>
-                                                </button>
-                                            </div>
                                         </div>
                                     </div>
                                 {% else %}
@@ -118,7 +111,7 @@
             <!-- Vacancies/Resume Section -->
             <div class="d-flex justify-content-between align-items-center mb-4" data-aos="fade-up" data-aos-delay="200">
                 <h4 class="mb-0">
-                    {% if user.user_r %}{% trans "Мои вакансии" %}{% else %}{% trans "Профиль соискателя" %}{% endif %}
+                    {% if user.user_r %}{% trans "Профиль работодателя" %}{% else %}{% trans "Профиль соискателя" %}{% endif %}
                 </h4>
                 {% if user.user_r %}
                     <a href="{% url 'api:vacancy_create' %}" class="btn btn-success">
@@ -140,7 +133,7 @@
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="responses-tab" data-bs-toggle="tab" data-bs-target="#responses" type="button" role="tab" aria-controls="responses" aria-selected="false">
-                        {% trans "Мои отклики" %}
+                        {% if user.user_r %}{% trans "Отклики" %}{% else %}{% trans "Мои отклики" %}{% endif %}
                     </button>
                 </li>
             </ul>
@@ -235,7 +228,7 @@
                                 <div class="d-flex w-100 justify-content-between">
                                     <h5 class="mb-1">
                                         {% if user.user_r %}
-                                            {{ response.anketa.desired_position }}
+                                            {{ response.vacancy.title }}
                                         {% else %}
                                             {{ response.vacancy.title }}
                                         {% endif %}
@@ -244,7 +237,7 @@
                                 </div>
                                 <p class="mb-1">
                                     {% if user.user_r %}
-                                        {% trans "Отклик от" %} {{ response.anketa.first_name }} {{ response.anketa.last_name }}
+                                        {% trans "Отклик от" %} {{ response.anketa.user.username }} {{ response.anketa.user.email }}
                                     {% else %}
                                         {% trans "Отклик на вакансию" %} "{{ response.vacancy.title }}"
                                     {% endif %}

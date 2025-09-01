@@ -1,20 +1,21 @@
 import hashlib, hmac
+import json
 from django.contrib.auth import get_user_model
 from django.core.paginator import PageNotAnInteger, EmptyPage, Paginator
-from django.shortcuts import render
-
+from django.shortcuts import render, get_object_or_404
 from django.views import generic, View
 from django.template.loader import render_to_string
 from django.db.models import Q
-
+from django.views.decorators.csrf import csrf_exempt
 
 from api.choices import WORK_CHOICES, WORK_TIME_CHOICES
 from api.models import Vacancy, Anketa, VacancyResponse
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 from dotenv import load_dotenv
 
+from miniapp.utils import get_tg_id
 from userauth.models import TelegramProfile
 
 load_dotenv()
@@ -45,7 +46,6 @@ class MiniAppVacancyPageView(generic.ListView):
             self.object_list = self.get_queryset()
             page = request.GET.get("page", 1)
             paginator = self.get_paginator(self.object_list, self.paginate_by)
-
             try:
                 vacancies = paginator.page(page)
             except PageNotAnInteger:
@@ -60,6 +60,58 @@ class MiniAppVacancyPageView(generic.ListView):
             })
         return super().get(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        tg_id = self.request.GET.get('tg_id')  # tg_id приходит из mini app
+        telegram_profile = TelegramProfile.objects.filter(telegram_id=tg_id).first() if tg_id else None
+        auth_user = bool(telegram_profile)
+
+        context.update({
+            "auth_user": auth_user,
+            "telegram_profile": telegram_profile,
+        })
+        return context
+
+class MiniAppVacancyDetailView(generic.DetailView):
+    model = Vacancy
+    template_name = 'miniapp/partials/vacancy_detail.html'
+    context_object_name = 'vacancy'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tg_id = self.request.GET.get('tg_id')
+        telegram_user = None
+
+        if tg_id:
+            telegram_user = TelegramProfile.objects.filter(telegram_id=tg_id).first()
+            context['telegram_user'] = telegram_user
+
+            if telegram_user:
+                user_r = telegram_user.user.user_r  # True = работодатель, False = соискатель
+                context['user_r'] = user_r
+
+                if not user_r:  # только для соискателей
+                    context['anketa_list'] = Anketa.objects.filter(
+                        user=telegram_user.user, is_active=True
+                    )
+
+                    response = VacancyResponse.objects.filter(
+                        worker=telegram_user.user, vacancy=self.object
+                    ).select_related("anketa").first()
+
+                    if response:
+                        context['responded'] = True
+                        context['selected_anketa_id'] = response.anketa.id if response.anketa else None
+                    else:
+                        context['responded'] = False
+
+            context['is_favorite'] = (
+                self.object.favorite_by.filter(pk=telegram_user.user.pk).exists()
+                if telegram_user else False
+            )
+
+        return context
 
 class MiniAppFilterView(generic.ListView):
     model = Vacancy
@@ -164,6 +216,7 @@ class MiniAppProfileDataView(View):
         tg_id = request.GET.get("tg_id")
         page = int(request.GET.get("page", 1))
         items_per_page = 10  # Добавляем пагинацию
+        responses = None
 
         if not tg_id:
             return JsonResponse({"status": "error", "message": "tg_id не передан"})
@@ -199,7 +252,7 @@ class MiniAppProfileDataView(View):
             # Пагинация для вакансий
             vacancies = Vacancy.objects.filter(user_id=user.id, is_active=True)
             paginator = Paginator(vacancies, items_per_page)
-
+            responses = VacancyResponse.objects.filter(vacancy__user=user).select_related('vacancy', 'anketa', 'worker').order_by('-responded_at')
             try:
                 page_obj = paginator.page(page)
                 vacancies_page = page_obj.object_list
@@ -215,6 +268,7 @@ class MiniAppProfileDataView(View):
 
         else:  # соискатель
             # Пагинация для анкет
+            responses = VacancyResponse.objects.filter(worker=user).select_related('vacancy', 'anketa').order_by('-responded_at')
             ankets = Anketa.objects.filter(user=user, is_active=True)
             paginator = Paginator(ankets, items_per_page)
 
@@ -234,7 +288,226 @@ class MiniAppProfileDataView(View):
         data.update({
             "html": items_html,
             "has_next": has_next,
-            "current_page": page
+            "current_page": page,
+            "responses": [
+                {
+                    "id": r.id,
+                    "vacancy_id": r.vacancy.id,
+                    "vacancy_title": r.vacancy.title,
+                    "anketa_id": r.anketa.id if r.anketa else None,
+                    "worker_id": r.worker.id if r.worker else None,
+                    "responded_at": r.responded_at.strftime("%Y-%m-%d %H:%M"),
+                }
+                for r in responses
+            ]
         })
 
         return JsonResponse(data)
+
+
+def _get_user_by_tg(request):
+    tg_id = get_tg_id(request)
+    if not tg_id:
+        return None, JsonResponse({"success": False, "error": "tg_id отсутствует"}, status=400)
+    try:
+        prof = TelegramProfile.objects.select_related('user').get(telegram_id=tg_id)
+        if not prof.user:
+            return None, JsonResponse({"success": False, "error": "Telegram профиль не связан с пользователем"}, status=403)
+        return prof.user, None
+    except TelegramProfile.DoesNotExist:
+        return None, JsonResponse({"success": False, "error": "Профиль Telegram не найден"}, status=404)
+
+@csrf_exempt
+def miniapp_respond_vacancy(request, pk):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid method"}, status=405)
+
+    telegram_id = request.headers.get("X-Telegram-Id")
+    if not telegram_id:
+        return JsonResponse({"error": "No Telegram ID"}, status=400)
+
+    profile = TelegramProfile.objects.filter(telegram_id=telegram_id).select_related("user").first()
+    if not profile or not profile.user:
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+
+    user = profile.user
+    if user.user_r:
+        return JsonResponse({"error": "Только соискатели могут откликаться."}, status=403)
+
+    vacancy = get_object_or_404(Vacancy, pk=pk)
+    anketa_id = json.loads(request.body).get('anketa_id')
+    anketa = Anketa.objects.filter(user=user, id=anketa_id, is_active=True).first()
+    if not anketa:
+        return JsonResponse({"error": "Анкета не найдена или не активна"}, status=400)
+
+    if VacancyResponse.objects.filter(worker=user, vacancy=vacancy).exists():
+        return JsonResponse({"error": "Вы уже откликались."}, status=400)
+
+    VacancyResponse.objects.create(
+        worker=user,
+        vacancy=vacancy,
+        anketa=anketa
+    )
+    return JsonResponse({"success": True, "message": "Отклик отправлен!"})
+
+
+@csrf_exempt
+def miniapp_toggle_favorite(request, pk):
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid method"}, status=405)
+
+    telegram_id = request.headers.get("X-Telegram-Id")
+    if not telegram_id:
+        return JsonResponse({"error": "No Telegram ID"}, status=400)
+
+    profile = TelegramProfile.objects.filter(telegram_id=telegram_id).select_related("user").first()
+    if not profile or not profile.user:
+        return JsonResponse({"error": "Unauthorized"}, status=401)
+
+    user = profile.user
+    vacancy = get_object_or_404(Vacancy, pk=pk)
+
+    if user in vacancy.favorite_by.all():
+        vacancy.favorite_by.remove(user)
+        return JsonResponse({"success": True, "favorite": False, "message": "Вакансия удалена из избранного"})
+    else:
+        vacancy.favorite_by.add(user)
+        return JsonResponse({"success": True, "favorite": True, "message": "Вакансия добавлена в избранное"})
+
+
+class MiniAppProfileResponsesView(View):
+    def get(self, request, *args, **kwargs):
+        tg_id = request.GET.get("tg_id")
+        if not tg_id:
+            return JsonResponse({"status": "error", "message": "tg_id не передан"})
+
+        try:
+            profile = TelegramProfile.objects.select_related("user").get(telegram_id=tg_id)
+        except TelegramProfile.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "Профиль не найден"})
+
+        user = profile.user
+
+        if user.user_r:  # работодатель
+            responses = VacancyResponse.objects.filter(
+                vacancy__user=user
+            ).select_related("vacancy", "anketa", "worker").order_by("-responded_at")
+        else:  # соискатель
+            responses = VacancyResponse.objects.filter(
+                worker=user
+            ).select_related("vacancy", "anketa").order_by("-responded_at")
+
+        data = {
+            "status": "ok",
+            "responses": [
+                {
+                    "id": r.id,
+                    "title": getattr(r.vacancy, "title", None) or getattr(r.anketa, "title", None),
+                    "status": r.status,
+                    "date": r.responded_at.isoformat(),
+                    "message": getattr(r, "message", None),
+                }
+                for r in responses
+            ]
+        }
+        return JsonResponse(data)
+
+
+@csrf_exempt
+def user_anketas(request):
+    tg_id = request.GET.get("tg_id")
+    if not tg_id:
+        return JsonResponse({"error": "tg_id не передан"}, status=400)
+
+    profile = TelegramProfile.objects.filter(telegram_id=tg_id).select_related("user").first()
+    if not profile or not profile.user:
+        return JsonResponse({"error": "Пользователь не найден"}, status=404)
+
+    ankets = Anketa.objects.filter(user=profile.user, is_active=True)
+    anketa_list = [{"id": a.id, "title": a.title} for a in ankets]
+
+    return JsonResponse({"anketas": anketa_list})
+
+@csrf_exempt
+def has_responded(request, pk):
+    tg_id = request.GET.get("tg_id")
+    if not tg_id:
+        return JsonResponse({"error": "tg_id не передан"}, status=400)
+
+    profile = TelegramProfile.objects.filter(telegram_id=tg_id).select_related("user").first()
+    if not profile or not profile.user:
+        return JsonResponse({"error": "Пользователь не найден"}, status=404)
+
+    vacancy = Vacancy.objects.filter(pk=pk).first()
+    if not vacancy:
+        return JsonResponse({"error": "Вакансия не найдена"}, status=404)
+
+    response = VacancyResponse.objects.filter(worker=profile.user, vacancy=vacancy).first()
+    if response:
+        return JsonResponse({"responded": True, "anketa": response.anketa.id})
+    return JsonResponse({"responded": False, "anketa": None})
+
+
+class FavoriteVacanciesView(View):
+    template_name = "miniapp/favorite_vacancies.html"
+
+    def get(self, request, *args, **kwargs):
+        tg_id = get_tg_id(request)
+
+        if not tg_id:
+            # Рендерим шаблон с JavaScript, который сам обработает загрузку
+            return render(request, self.template_name, {
+                'has_tg_id': False
+            })
+
+        try:
+            profile = TelegramProfile.objects.select_related('user').get(telegram_id=tg_id)
+            user = profile.user
+            vacancies = Vacancy.objects.filter(favorite_by=user, is_active=True).order_by("-published_at")
+
+            return render(request, self.template_name, {
+                'has_tg_id': True,
+                'vacancies': vacancies,
+                'telegram_profile': profile,
+                'tg_id': tg_id
+            })
+
+        except TelegramProfile.DoesNotExist:
+            return render(request, self.template_name, {
+                'has_tg_id': True,
+                'error': 'Профиль не найден. Сначала подключите аккаунт через сайт.'
+            })
+
+
+class MiniAppFavoriteVacanciesDataView(View):
+    def get(self, request, *args, **kwargs):
+        tg_id = get_tg_id(request)
+
+        if not tg_id:
+            return JsonResponse({
+                "status": "error",
+                "message": "Telegram ID не получен"
+            })
+
+        try:
+            profile = TelegramProfile.objects.select_related("user").get(telegram_id=tg_id)
+            user = profile.user
+
+            favorites = Vacancy.objects.filter(favorite_by=user, is_active=True).order_by("-published_at")
+
+            html = render_to_string(
+                "miniapp/partials/vacancy_list.html",
+                {"vacancies": favorites}
+            )
+
+            return JsonResponse({
+                "status": "ok",
+                "html": html,
+                "count": favorites.count(),
+            })
+
+        except TelegramProfile.DoesNotExist:
+            return JsonResponse({
+                "status": "error",
+                "message": "Профиль не найден. Сначала подключите аккаунт через сайт."
+            })

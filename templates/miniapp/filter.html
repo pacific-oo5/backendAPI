@@ -365,22 +365,16 @@
 
     // Обработчик клика по вакансии
     document.addEventListener('click', (e) => {
-        const vacancyCard = e.target.closest('.vacancy-card');
-        if (vacancyCard) {
-            const vacancyId = vacancyCard.dataset.vacancyId;
-            tg.showPopup({
-                title: 'Перейти к вакансии',
-                message: 'Хотите посмотреть подробности вакансии?',
-                buttons: [
-                    {id: 'view', type: 'default', text: 'Посмотреть'},
-                    {id: 'cancel', type: 'cancel', text: 'Отмена'}
-                ]
-            }, (buttonId) => {
-                if (buttonId === 'view') {
-                    window.open(`/vacancies/${vacancyId}/`, '_blank');
-                }
-            });
-        }
+        const card = e.target.closest('.vacancy-card');
+        if (!card) return;
+        const vacancyId = card.dataset.vacancyId;
+        const tgId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+
+        // Добавляем tg_id в URL, если есть
+        let url = `/miniapp/vacancies/${vacancyId}/`;
+        if (tgId) url += `?tg_id=${tgId}`;
+
+        window.location.href = url;
     });
 
     // Загрузка при открытии страницы

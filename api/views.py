@@ -1,4 +1,6 @@
 import os
+from datetime import date, timedelta
+
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -10,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
 
+from userauth.models import Profile
 from .choices import STATUS_CHOICES, WORK_CHOICES, WORK_TIME_CHOICES
 from .models import VacancyResponse, Vacancy, Anketa, VacancyView, VacancyComplaint
 from .forms import AnketaForm, VacancyForm
@@ -172,7 +175,7 @@ def vacancy_stats(request, pk):
 def vacancy_delete(request, pk):
     vacancy = get_object_or_404(Vacancy, pk=pk, user=request.user)
     vacancy.delete()
-    return redirect('profile')
+    return redirect('userauth:profile')
 
 
 class VacancyUpdateView(LoginRequiredMixin, generic.UpdateView):
@@ -184,7 +187,7 @@ class VacancyUpdateView(LoginRequiredMixin, generic.UpdateView):
         return Vacancy.objects.filter(user=self.request.user)
 
     def get_success_url(self):
-        return reverse('profile')
+        return reverse('userauth:profile')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -196,7 +199,7 @@ class VacancyCreateView(LoginRequiredMixin, generic.CreateView):
     model = Vacancy
     form_class = VacancyForm
     template_name = 'vacancy/vacancy_create.html'
-    success_url = reverse_lazy('profile')
+    success_url = reverse_lazy('userauth:profile')
     
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -216,7 +219,7 @@ class AnketaCreateView(LoginRequiredMixin, generic.CreateView):
     model = Anketa
     form_class = AnketaForm
     template_name = 'form/anketa_form.html'
-    success_url = reverse_lazy('profile')  # можно на список анкет
+    success_url = reverse_lazy('userauth:profile')  # можно на список анкет
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -240,7 +243,7 @@ class AnketaDetailView(LoginRequiredMixin, generic.DetailView):
         if not request.user.user_r: # type: ignore
             if anketa.user != request.user: # type: ignore
                 messages.error(request, _("Вы не можете просматривать чужую анкету."))
-                return redirect("profile")
+                return redirect("userauth:profile")
 
         # Если работодатель — доступ только к анкетам, откликнувшимся на его вакансии
         else:
@@ -280,7 +283,7 @@ def response_update_status(request, pk):
         response.status = status
         response.save()
 
-    return redirect('profile')
+    return redirect('userauth:profile')
 
 
 @require_POST

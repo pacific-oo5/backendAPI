@@ -1,0 +1,41 @@
+{% for anketa in ankets %}
+<div class="anketa-card">
+    <div class="anketa-header">
+        <h3>{{ anketa.title }}</h3>
+    </div>
+    <div class="anketa-body">
+        <p>{{ anketa.description|truncatechars:120 }}</p>
+    </div>
+    <div class="anketa-footer">
+        <small>Опубликовано: {{ anketa.created_at|date:"d.m.Y" }}</small>
+    </div>
+</div>
+{% empty %}
+<p style="text-align:center; padding:20px;">Нет анкет</p>
+{% endfor %}
+
+<style>
+.anketa-card {
+    background: var(--tg-theme-bg-color, #fff);
+    border: 1px solid var(--tg-theme-secondary-bg-color, #e5e5e5);
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.anketa-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--tg-theme-text-color, #111);
+}
+.anketa-body p {
+    margin: 8px 0 0;
+    color: var(--tg-theme-hint-color, #666);
+    font-size: 14px;
+}
+.anketa-footer {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--tg-theme-hint-color, #888);
+}
+</style>

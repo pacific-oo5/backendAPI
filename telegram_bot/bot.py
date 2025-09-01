@@ -52,25 +52,35 @@ async def get_user_language_bot(telegram_id):
 
 
 async def get_main_keyboard(telegram_id):
+    profile = await sync_to_async(lambda: TelegramProfile.objects.filter(telegram_id=telegram_id).first())()
     """Основная клавиатура с кнопками"""
     lang = await get_user_language_bot(telegram_id)
-    return ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text="➕ Добавить фильтр" if lang == 'ru' else
-                           "➕ Filter кошуу" if lang == 'kg' else
-                           "➕ Add filter")],
-            [KeyboardButton(text="🗑️ Удалить фильтр" if lang == 'ru' else
-                           "🗑️ Filter өчүрүү" if lang == 'kg' else
-                           "🗑️ Delete filter"),
-             KeyboardButton(text="📋 Мои фильтры" if lang == 'ru' else
-                           "📋 Менин фильтрлерим" if lang == 'kg' else
-                           "📋 My filters")],
-            [KeyboardButton(text="🌐 Сменить язык" if lang == 'ru' else
-                           "🌐 Тил өзгөртүү" if lang == 'kg' else
-                           "🌐 Change language")]
-        ],
-        resize_keyboard=True
-    )
+    if profile and profile.is_connected:
+        keyboard = ReplyKeyboardMarkup(
+            keyboard=[
+                [KeyboardButton(text="➕ Добавить фильтр" if lang == 'ru' else
+                               "➕ Фильтер кошуу" if lang == 'kg' else
+                               "➕ Add filter")],
+                [KeyboardButton(text="🗑️ Удалить фильтр" if lang == 'ru' else
+                               "🗑️ Фильтер өчүрүү" if lang == 'kg' else
+                               "🗑️ Delete filter"),
+                 KeyboardButton(text="📋 Мои фильтры" if lang == 'ru' else
+                               "📋 Менин фильтрлерим" if lang == 'kg' else
+                               "📋 My filters")],
+                [KeyboardButton(text="🌐 Сменить язык" if lang == 'ru' else
+                               "🌐 Тил өзгөртүү" if lang == 'kg' else
+                               "🌐 Change language")]
+            ],
+            resize_keyboard=True
+        )
+    else:
+        keyboard = ReplyKeyboardMarkup(
+            keyboard=[
+                [KeyboardButton(text="🌐 Сменить язык")]
+            ],
+            resize_keyboard=True
+        )
+    return keyboard
 
 
 # --- /start ---
@@ -90,23 +100,33 @@ async def start(message: types.Message, state: FSMContext):
             await message.answer("❌ Неверный или устаревший токен.")
             return
 
-        # Если токен уже привязан к другому телеграм аккаунту
-        if profile.telegram_id and profile.telegram_id != message.from_user.id:
-            old_id = profile.telegram_id
-            profile.telegram_id = message.from_user.id
-            profile.is_connected = True
-            # Можно уведомить старого юзера через бота, если нужно
-        else:
-            profile.telegram_id = message.from_user.id
-            profile.is_connected = True
+        # Токен уже привязан
+        if profile.telegram_id:
+            if profile.telegram_id == message.from_user.id:
+                await message.answer("✅ Этот токен уже привязан к вашему аккаунту.")
+            else:
+                await message.answer(
+                    "❌ Этот токен уже используется другим аккаунтом. "
+                    "Сначала отвяжите токен и сгенерируйте новый."
+                )
+            return  # не сохраняем ничего в БД
 
-        # Обновляем имя, username
+        # Если токен свободен — привязываем к текущему Telegram
+        profile.telegram_id = message.from_user.id
+        profile.is_connected = True
         profile.first_name = message.from_user.first_name
         profile.last_name = message.from_user.last_name
         profile.username = message.from_user.username
-
         await sync_to_async(profile.save)()
-        await message.answer(f"✅ Telegram аккаунт успешно подключён, {profile.username}!")
+        keyboard = InlineKeyboardMarkup(
+            inline_keyboard=[
+                [InlineKeyboardButton(
+                    text="SweetBoy MINI APP",
+                    web_app=WebAppInfo(url="https://quality-herring-fine.ngrok-free.app/miniapp/vacancies/41/")
+                )]
+            ]
+        )
+        await message.answer(f"✅ Telegram аккаунт успешно подключён, {profile.username}!", reply_markup=keyboard)
         return
 
     # --- Просто старт ---
@@ -118,6 +138,10 @@ async def start(message: types.Message, state: FSMContext):
                 [InlineKeyboardButton(text="✅ Оставить токен", callback_data="keep_token")],
                 [InlineKeyboardButton(text="🔄 Сменить токен", callback_data="change_token")],
                 [InlineKeyboardButton(text="❌ Отвязать токен", callback_data="unlink_token")],
+                [InlineKeyboardButton(
+                    text="SweetBoy MINI APP",
+                    web_app=WebAppInfo(url="https://quality-herring-fine.ngrok-free.app/miniapp/vacancies/41/")
+                )]
             ]
         )
         sent_message = await message.answer(
@@ -192,64 +216,113 @@ async def change_language(message: types.Message):
 # --- Обработка кнопок ---
 @dp.callback_query()
 async def callback_handler(callback: types.CallbackQuery, state: FSMContext):
+    # --- Кнопка "Оставить токен" ---
     if callback.data == "keep_token":
-        # Удаляем предыдущее сообщение с кнопками
         try:
             await callback.message.delete()
         except:
             pass
 
-        # Отправляем новое сообщение
-        msg = await callback.message.answer(await get_text(callback.from_user.id, 'token_kept'))
+        profile = await sync_to_async(lambda: TelegramProfile.objects.filter(telegram_id=callback.from_user.id).first())()
+        if profile:
+            profile.first_name = callback.from_user.first_name
+            profile.last_name = callback.from_user.last_name
+            profile.username = callback.from_user.username
+            profile.is_connected = True
+            await sync_to_async(profile.save)()
+            msg_text = await get_text(callback.from_user.id, 'token_kept')
+        else:
+            msg_text = "⚠️ У вас нет подключённого токена."
+
+        new_keyboard = await get_main_keyboard(callback.from_user.id)
+        sent_msg = await callback.message.answer(msg_text, reply_markup=new_keyboard)
         await asyncio.sleep(3)
-        await msg.delete()
+        await sent_msg.delete()
         await state.clear()
 
+    # --- Кнопка "Сменить токен" ---
     elif callback.data == "change_token":
-        # Удаляем предыдущее сообщение с кнопками
         try:
             await callback.message.delete()
         except:
             pass
 
-        # Отправляем новое сообщение
         await callback.message.answer(await get_text(callback.from_user.id, 'enter_new_token'))
         await state.set_state(Form.waiting_for_token)
 
+    # --- Кнопки смены языка ---
     elif callback.data.startswith("lang_"):
-        # Удаляем предыдущее сообщение с кнопками выбора языка
-        try:
-            await callback.message.delete()
-        except:
-            pass
-
-        lang_code = callback.data.split("_")[1]
         try:
             profile = await sync_to_async(TelegramProfile.objects.get)(telegram_id=callback.from_user.id)
+            lang_code = callback.data.split("_")[1]
             profile.language = lang_code
             await sync_to_async(profile.save)()
+
+            # Получаем обновлённую клавиатуру с кнопками фильтров (если подключён аккаунт)
+            new_keyboard = await get_main_keyboard(callback.from_user.id)
+
             await callback.message.answer(
-                await get_text(callback.from_user.id, 'language_changed', language=LANGUAGES[lang_code]['name'])
+                await get_text(callback.from_user.id, 'language_changed', language=LANGUAGES[lang_code]['name']),
+                reply_markup=new_keyboard
             )
         except TelegramProfile.DoesNotExist:
             await callback.message.answer(await get_text(callback.from_user.id, 'not_linked'))
+
+    # --- Кнопка "Отвязать токен" ---
+    elif callback.data == "unlink_token":
+        try:
+            profile = await sync_to_async(lambda: TelegramProfile.objects.filter(telegram_id=callback.from_user.id).first())()
+            if profile:
+                profile.telegram_id = None
+                profile.first_name = ""
+                profile.last_name = ""
+                profile.username = ""
+                profile.is_connected = False
+                await sync_to_async(profile.save)()
+                await callback.message.edit_text("❌ Токен успешно отвязан.")
+            else:
+                await callback.message.edit_text("⚠️ У вас нет подключённого токена.")
+        except:
+            await callback.message.edit_text("⚠️ Ошибка при отвязке токена.")
+
 # --- Привязка аккаунта ---
 @dp.message(Form.waiting_for_token)
 async def link_account(message: types.Message, state: FSMContext):
+    await message.delete()
     token = message.text.strip()
     try:
         profile = await sync_to_async(TelegramProfile.objects.get)(token=token)
+
+        if profile.telegram_id:
+            if profile.telegram_id == message.from_user.id:
+                await message.answer("✅ Этот токен уже привязан к вашему аккаунту.")
+            else:
+                await message.answer(
+                    "❌ Этот токен уже используется другим аккаунтом. "
+                    "Сначала отвяжите токен и сгенерируйте новый."
+                )
+            await state.clear()
+            return
+
+        # Привязываем токен к текущему пользователю
         profile.telegram_id = message.from_user.id
+        profile.is_connected = True
+        profile.first_name = message.from_user.first_name
+        profile.last_name = message.from_user.last_name
+        profile.username = message.from_user.username
         await sync_to_async(profile.save)()
+
         await message.answer(
             await get_text(message.from_user.id, 'account_linked', token=token),
             reply_markup=await get_main_keyboard(message.from_user.id)
         )
         await state.clear()
         await message.delete()
+
     except TelegramProfile.DoesNotExist:
         await message.delete()
         await message.answer(await get_text(message.from_user.id, 'invalid_token'))
+        await state.clear()
 
 
 # --- Добавление фильтра ---
@@ -366,7 +439,7 @@ async def list_filters(message: types.Message):
 async def unknown_command(message: types.Message):
     await message.answer(
         f"{await get_text(message.from_user.id, 'unknown_command')}\n"
-        "/start, /addfilter, /delfilter, /listfilters, /help, /lang",
+        "/start, /help, /lang",
         reply_markup=await get_main_keyboard(message.from_user.id)
     )
 

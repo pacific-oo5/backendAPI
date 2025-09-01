@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>{{ vacancy.title }}</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        html {scroll-behavior: smooth;}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            line-height: 1.6;
+            padding: 16px;
+            padding-bottom: 80px;
+            margin-top: 80px;
+        }
+        .vacancy-header { margin-bottom: 16px; }
+        .vacancy-header h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+        .salary { font-size: 18px; font-weight: 600; color: var(--tg-theme-button-color, #40a7e3); }
+
+        .location { margin-bottom: 12px; color: var(--tg-theme-hint-color, #666); }
+        .meta { font-size: 14px; color: var(--tg-theme-hint-color, #777); margin-bottom: 20px; }
+
+        .work-details { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+        .detail-item {
+            padding: 6px 12px;
+            background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border-radius: 12px;
+            font-size: 13px;
+        }
+
+        .section { margin-bottom: 20px; }
+        .section h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+        .section-content {
+            background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        /* Стили в vacancy_detail.html */
+        .action-buttons {
+            position: sticky; /* вместо fixed */
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            gap: 12px;
+            padding: 12px 16px;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            border-top: 1px solid var(--tg-theme-secondary-bg-color, #f0f0f0);
+            z-index: 1000;
+        }
+
+        @media (max-width: 480px) {
+            .action-buttons {
+                flex-direction: column;
+                bottom: 0;
+            }
+        }
+
+        .anketaSelect {
+            flex: 2;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid var(--tg-theme-secondary-bg-color, #ccc);
+            font-size: 15px;
+            background-color: var(--tg-theme-bg-color, #fff);
+            color: var(--tg-theme-text-color, #000);
+            cursor: pointer;
+            appearance: none;
+        }
+
+        .anketaSelect:focus {
+            outline: none;
+            border-color: var(--tg-theme-button-color, #40a7e3);
+        }
+
+
+        .respond-btn, .favorite-btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 15px;
+            transition: transform 0.2s ease;
+        }
+        .respond-btn {
+            background-color: var(--tg-theme-button-color, #40a7e3);
+            color: var(--tg-theme-button-text-color, #ffffff);
+        }
+
+
+        .respond-btn:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+
+        .respond-btn:active { transform: scale(0.95); }
+        .favorite-btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.3s ease; /* плавный переход для цвета, фона и трансформаций */
+            background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            color: var(--tg-theme-text-color, #000);
+        }
+        .favorite-btn.active {
+            background-color: #ff4757; /* красный при добавлении в избранное */
+            color: #fff;
+            transform: scale(1.05); /* небольшое увеличение при активации */
+        }
+        .favorite-btn.active { background-color: #ff4757; color: #fff; }
+
+        .favorite-btn:active {
+            transform: scale(0.95); /* эффект нажатия */
+        }
+
+        @media (max-width: 480px) {
+            .vacancy-header h1 { font-size: 20px; }
+            .salary { font-size: 16px; }
+            .action-buttons { flex-direction: column; bottom: 60px; }
+        }
+    </style>
+</head>
+<body id="main-header">
+
+    <div class="header">
+            <h1>{{ vacancy.title }}</h1>
+        </div>
+    <div class="vacancy-header">
+        {% if vacancy.salary %}
+        <div class="salary">{{ vacancy.salary }} сом</div>
+        {% endif %}
+    </div>
+
+    <div class="location">
+        {% if vacancy.is_remote %}
+            📍 Удалённая работа
+        {% else %}
+            📍 {{ vacancy.city }}{% if vacancy.country %}, {{ vacancy.country }}{% endif %}
+        {% endif %}
+    </div>
+
+    <div class="meta">
+        Опубликовано: {{ vacancy.published_at|date:"d.m.Y" }}<br>
+        {% if vacancy.is_active %} ✅ Вакансия активна {% else %} ❌ Неактивна {% endif %}
+    </div>
+
+    <div class="work-details">
+        <div class="detail-item">⏰ {{ vacancy.get_work_type_display }}</div>
+        <div class="detail-item">🌙 {{ vacancy.get_work_time_display }}</div>
+    </div>
+
+    <div class="section">
+        <h3>Описание вакансии</h3>
+        <div class="section-content">{{ vacancy.description|linebreaks }}</div>
+    </div>
+
+    <div class="section">
+        <h3>Обязанности</h3>
+        <div class="section-content">{{ vacancy.responsibilities|linebreaks }}</div>
+    </div>
+
+    <div class="section">
+        <h3>Требования</h3>
+        <div class="section-content">{{ vacancy.requirements|linebreaks }}</div>
+    </div>
+
+    <div class="section">
+        <h3>О компании</h3>
+        <div class="section-content">{{ vacancy.about_me|linebreaks }}</div>
+    </div>
+
+
+    {% if telegram_user %}
+        {% if user_r %}
+            <!-- Работодатель -->
+            <button class="favorite-btn {% if is_favorite %}active{% endif %}"
+                    id="favoriteBtn"
+                    onclick="toggleFavorite()">
+                {% if is_favorite %}💖 В избранном{% else %}❤️ В избранное{% endif %}
+            </button>
+        {% else %}
+            <!-- Соискатель -->
+            <div class="action-buttons">
+               <label for="anketaSelect">Выберите анкету:</label>
+                <select id="anketaSelect" class="anketaSelect" {% if responded %}disabled{% endif %}>
+                    <option value="">-- Выберите анкету --</option>
+                    {% for a in anketa_list %}
+                        <option value="{{ a.id }}" {% if a.id == selected_anketa_id %}selected{% endif %}>{{ a.title }}</option>
+                    {% endfor %}
+                </select>
+
+                <button id="respondBtn" class="respond-btn" {% if responded %}disabled{% endif %}>
+                    {% if responded %}📨 Вы уже откликнулись{% else %}📨 Откликнуться{% endif %}
+                </button>
+
+                <button class="favorite-btn {% if is_favorite %}active{% endif %}"
+                        id="favoriteBtn"
+                        onclick="toggleFavorite()">
+                    {% if is_favorite %}💖 В избранном{% else %}❤️ В избранное{% endif %}
+                </button>
+            </div>
+
+        {% endif %}
+    {% else %}
+        <!-- Аноним -->
+        <div class="section">
+            <div class="section-content">
+                Чтобы откликнуться или добавить вакансию в избранное, создайте аккаунт и подключите Telegram.
+            </div>
+        </div>
+    {% endif %}
+
+    <script>
+        const tg = window.Telegram?.WebApp;
+        function getTgId() {
+          return tg?.initDataUnsafe?.user?.id || null;
+        }
+        tg.expand();
+        const respondBtn = document.getElementById('respondBtn');
+        const anketaSelect = document.getElementById('anketaSelect');
+
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            window.history.back();
+            tg.BackButton.hide(); // Скрываем сразу после нажатия
+        });
+
+        if (respondBtn && anketaSelect) {
+            respondBtn.addEventListener('click', async () => {
+                const anketaId = anketaSelect.value;
+                const tgId = tg?.initDataUnsafe?.user?.id;
+                if (!tgId) return tg?.showPopup({title:'Ошибка', message:'ID не найден.'});
+                if (!anketaId) return tg?.showPopup({title:'Ошибка', message:'Выберите анкету.'});
+
+                const res = await fetch(`/miniapp/vacancies/{{ vacancy.id }}/respond/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Telegram-Id': tgId
+                    },
+                    body: JSON.stringify({ anketa_id: anketaId })
+                });
+
+                const data = await res.json().catch(()=>({}));
+                if (res.ok && data.success) {
+                    respondBtn.disabled = true;
+                    respondBtn.innerText = "📨 Вы уже откликнулись";
+                    anketaSelect.disabled = true;
+                    tg?.showPopup({title:'Успешно!', message:'Отклик отправлен.'});
+                } else {
+                    tg?.showPopup({title:'Ошибка', message:data.error || 'Не удалось отправить отклик'});
+                }
+            });
+        }
+
+
+    async function toggleFavorite() {
+      const tgId = getTgId();
+      if (!tgId) return tg?.showPopup?.({title:'Откройте в Telegram', message:'ID не найден.'});
+
+      const btn = document.getElementById('favoriteBtn');
+      const res = await fetch(`/miniapp/vacancies/{{ vacancy.id }}/favorite/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Telegram-Id': String(tgId)
+        },
+        body: JSON.stringify({})
+      });
+
+      const data = await res.json().catch(()=>({}));
+      if (res.ok && data.success) {
+        if (data.favorite) {
+          btn?.classList.add('active'); btn && (btn.innerHTML = '💖 В избранном');
+        } else {
+          btn?.classList.remove('active'); btn && (btn.innerHTML = '❤️ В избранное');
+        }
+      }
+
+      if (data.favorite) {
+            btn?.classList.add('active');
+            btn && (btn.innerHTML = '💖 В избранном');
+            btn?.animate([{ transform: 'scale(1.2)' }, { transform: 'scale(1)' }], { duration: 200 });
+        } else {
+            btn?.classList.remove('active');
+            btn && (btn.innerHTML = '❤️ В избранное');
+            btn?.animate([{ transform: 'scale(0.9)' }, { transform: 'scale(1)' }], { duration: 200 });
+        }
+    }
+    </script>
+</body>
+</html>

@@ -67,8 +67,7 @@
         </span>
       </div>
       <div class="profile-info">
-        <h3 class="mb-1">{{ profile_user.username|default:profile_user.email }}</h3>
-        <p class="mb-0 text-muted">{{ profile_user.email }}</p>
+        <h3 class="mb-1">{{ profile_user.username}}</h3>
       </div>
     </div>
   </div>
@@ -84,6 +83,15 @@
               <h5 class="card-title">{{ vacancy.name }}</h5>
               <h6 class="card-subtitle mb-2 text-muted">{% blocktrans with salary=vacancy.salary %}До {{ salary }} сом{% endblocktrans %}</h6>
               <p class="card-text">{{ vacancy.description|truncatechars:100 }}</p>
+              <p class="card-text">
+    {% if vacancy.published_at.date == today %}
+        {% trans 'Сегодня' %}
+    {% elif vacancy.published_at.date == yesterday %}
+        {% trans 'Вчера' %}
+    {% else %}
+        {{ vacancy.published_at|date:"d.m.Y" }}
+    {% endif %}
+</p>
               <a href="{% url 'api:vacancy_detail' vacancy.id %}" class="btn btn-outline-primary btn-sm"> {% trans "Подробнее" %}</a>
             </div>
             <div class="card-footer bg-transparent">

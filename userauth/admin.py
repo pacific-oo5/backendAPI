@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser
+from .models import CustomUser, TelegramProfile
 from django.utils.translation import gettext_lazy as _
 
 
@@ -22,3 +22,7 @@ class CustomUserAdmin(UserAdmin):
     )
     search_fields = ('email', 'first_name')
     ordering = ('email',)
+
+@admin.register(TelegramProfile)
+class TelegramProfileAdmin(admin.ModelAdmin):
+    pass
