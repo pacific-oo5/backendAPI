@@ -5,11 +5,19 @@ app_name="miniapp"
 urlpatterns = [
     path("", views.MiniAppVacancyPageView.as_view(), name='main'),
     path('filter/', views.MiniAppFilterView.as_view(), name='filter'),
+    path('filters/', views.get_filters, name='get_filters'),
+    # Добавление/удаление ключевых слов
+    path('filters/update/', views.update_filters, name='update_filters'),
+    # Вакансии по ключевым словам
+    path('vacancies/by_keywords/', views.vacancies_by_keywords, name='vacancies_by_keywords'),
+    path('filters/get/', views.get_filters, name='get_filters'),
     path('favorites/', views.FavoriteVacanciesView.as_view(), name='favorite_vacancies'),
     path('favorites/data/', views.MiniAppFavoriteVacanciesDataView.as_view(), name='favorite_vacancies_data'),
     path("profile/", views.ProfilePageView.as_view(), name="profile"),
+    path("settings/", views.SettingsPageView.as_view(), name="settings"),
     path("anketas/", views.user_anketas, name="miniapp_user_anketas"),
     path("profile/data/", views.MiniAppProfileDataView.as_view(), name="profile_data"),
+    path('profile/data/2/', views.profile_data, name='profile_data2'),
     path('vacancies/<int:pk>/', views.MiniAppVacancyDetailView.as_view(), name='vacancy_detail'),
     path("vacancies/<int:pk>/respond/", views.miniapp_respond_vacancy, name="respond_vacancy"),
     path("vacancies/<int:pk>/favorite/", views.miniapp_toggle_favorite, name="toggle_favorite"),

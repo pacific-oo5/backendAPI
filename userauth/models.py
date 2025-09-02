@@ -133,6 +133,15 @@ class TelegramProfile(models.Model):
         self.token = uuid.uuid4().hex
         self.save()
 
+    def reset_connection(self):
+        self.token = uuid.uuid4().hex
+        self.telegram_id = None
+        self.username = None
+        self.first_name = None
+        self.last_name = None
+        self.is_connected = False
+        self.save()
+
     def __str__(self):
         return f"tg:{self.telegram_id} → user:{self.user_id}"
 

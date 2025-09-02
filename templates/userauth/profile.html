@@ -55,6 +55,12 @@
                                 {% else %}
                                     <span class="ms-2 badge bg-secondary">{% trans "Не подключен" %}</span>
                                 {% endif %}
+
+                                <!-- Кнопка Настройки -->
+                                <button type="button" class="btn btn-outline-dark btn-sm ms-3"
+                                        data-bs-toggle="modal" data-bs-target="#settingsModal">
+                                    <i class="bi bi-gear"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -314,6 +320,34 @@
         </div>
     </div>
 </div>
+
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+          <div class="modal-header">
+            <h5 class="modal-title" id="settingsModalLabel">{% trans "Настройки профиля" %}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="modal-body">
+              <div class="mb-3">
+                <label class="form-label">{% trans "Имя" %}</label>
+                <input type="text" class="form-control" name="username" value="{{ user.username }}">
+              </div>
+            </div>
+            <div class="modal-footer d-flex justify-content-between">
+                {% if tg_connected %}
+                  <button type="submit" name="reset_telegram" class="btn btn-outline-danger">
+                    <i class="bi bi-telegram me-1"></i> {% trans "Отвязать Telegram" %}
+                  </button>
+                {% endif %}
+              <button type="submit" class="btn btn-primary">{% trans "Сохранить" %}</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
 
 <!-- Стили для улучшения внешнего вида -->
 <style>

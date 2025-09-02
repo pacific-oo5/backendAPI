@@ -59,10 +59,10 @@ async def get_main_keyboard(telegram_id):
         keyboard = ReplyKeyboardMarkup(
             keyboard=[
                 [KeyboardButton(text="➕ Добавить фильтр" if lang == 'ru' else
-                               "➕ Фильтер кошуу" if lang == 'kg' else
+                               "➕ Чыпка кошуу" if lang == 'kg' else
                                "➕ Add filter")],
                 [KeyboardButton(text="🗑️ Удалить фильтр" if lang == 'ru' else
-                               "🗑️ Фильтер өчүрүү" if lang == 'kg' else
+                               "🗑️ ️Чыпканы алып салуу" if lang == 'kg' else
                                "🗑️ Delete filter"),
                  KeyboardButton(text="📋 Мои фильтры" if lang == 'ru' else
                                "📋 Менин фильтрлерим" if lang == 'kg' else
@@ -76,7 +76,9 @@ async def get_main_keyboard(telegram_id):
     else:
         keyboard = ReplyKeyboardMarkup(
             keyboard=[
-                [KeyboardButton(text="🌐 Сменить язык")]
+                [KeyboardButton(text="🌐 Сменить язык" if lang == 'ru' else
+                                "🌐 Тилди өзгөртүү" if lang == 'kg' else
+                                "🌐 Change language")]
             ],
             resize_keyboard=True
         )

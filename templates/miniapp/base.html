@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -6,6 +7,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>{% block title %}Вакансии{% endblock %}</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.0/lottie.min.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         html {
@@ -18,6 +21,10 @@
         }
 
         body {
+            user-select: none;       /* стандарт */
+            -webkit-user-select: none; /* для Safari/Chrome */
+            -moz-user-select: none;    /* для Firefox */
+            -ms-user-select: none;     /* для IE/Edge */
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--tg-theme-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #000000);
@@ -25,6 +32,16 @@
             padding: 16px;
             padding-bottom: 80px;
             margin-top: 50px;
+        }
+
+        .duck-animation {
+            width:150px; height:150px;
+        }
+
+        .emoji-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
 
         .header {
@@ -113,6 +130,9 @@
             <h1>🔍 Доступные вакансии</h1>
         </div>
 
+        <div class="emoji-container">
+            <div id="duck-animation" class="duck-animation"></div>
+        </div>
         <div class="search-container">
             <input
                 type="text"
@@ -277,17 +297,18 @@ document.addEventListener('DOMContentLoaded', loadVacancies);
             <div class="menu-icon">🏠</div>
             <div class="menu-text">Главная</div>
         </a>
-        <a href="{{ filter_url }}" class="menu-item {% if request.path == filter_url %}active{% endif %}">
+        <a href="{% if request.path == filter_url %}#filter-header{% else %}{{ filter_url }}{% endif %}" class="menu-item {% if request.path == filter_url %}active{% endif %}">
             <div class="menu-icon">🔧</div>
             <div class="menu-text">Фильтр</div>
         </a>
 
-        <a href="{{ favorite_vacancies }}" class="menu-item {% if request.path == favorite_vacancies %}active{% endif %}">
+        <a href="{% if request.path == favorite_vacancies %}#favorite-header{% else %}{{ favorite_vacancies }}{% endif %}" class="menu-item {% if request.path == favorite_vacancies %}active{% endif %}">
             <div class="menu-icon">💖</div>
             <div class="menu-text">Избранное</div>
         </a>
 
-        <a href="{{ profile_url }}" class="menu-item {% if request.path == profile_url %}active{% endif %}">
+        <a href="{{ profile_url }}" class="menu-item {% if request.path == profile_url %}active disabled{% endif %}"
+           {% if request.path == profile_url %}onclick="return false;"{% endif %}>
             <div class="menu-icon">👤</div>
             <div class="menu-text">Профиль</div>
         </a>
@@ -303,6 +324,17 @@ document.addEventListener('DOMContentLoaded', loadVacancies);
             const cookieValue = document.cookie.match('(^|;)\\s*csrftoken\\s*=\\s*([^;]+)');
             return cookieValue ? cookieValue.pop() : '';
         }
+    </script>
+
+    <script>
+        {# FOR EMOJIES#}
+        var animation = lottie.loadAnimation({
+            container: document.getElementById('duck-animation'),
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: '{% static 'miniapp/emoji/104_PHONE_OUT.json' %}'
+        });
     </script>
 
     {% block scripts %}{% endblock %}

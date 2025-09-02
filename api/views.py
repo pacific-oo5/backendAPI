@@ -1,6 +1,4 @@
 import os
-from datetime import date, timedelta
-
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -11,8 +9,6 @@ from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.contrib import messages
-
-from userauth.models import Profile
 from .choices import STATUS_CHOICES, WORK_CHOICES, WORK_TIME_CHOICES
 from .models import VacancyResponse, Vacancy, Anketa, VacancyView, VacancyComplaint
 from .forms import AnketaForm, VacancyForm
@@ -96,7 +92,6 @@ class VacancyDetailView(generic.DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        all_vacancies = Vacancy.objects.filter(is_active=True).order_by('-published_at')
         user = self.request.user
         if user.is_authenticated and not user.user_r:  # type: ignore # только соискатель
             context['ankets'] = Anketa.objects.filter(user=user, is_active=True)
@@ -104,9 +99,6 @@ class VacancyDetailView(generic.DetailView):
         else:
             context['ankets'] = []
             context['has_responded'] = False
-        if os.getenv("AI", "False").lower() in ("true", "1", "yes"):
-            from .ai_search import get_similar_vacancies
-            context['similar_vacancies'] = get_similar_vacancies(self.object, all_vacancies, top_n=6) # type: ignore
         return context
 
 

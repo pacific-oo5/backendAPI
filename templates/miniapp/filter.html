@@ -4,100 +4,171 @@
 
 {% block content %}
 <div class="header">
-    <h1>🔍 Расширенный поиск</h1>
+    <h1 id="filter-header">🔍 Расширенный поиск</h1>
 </div>
 
-<!-- Форма фильтров -->
-<div class="filters-form">
-    <div class="filter-group">
-        <input
-            type="text"
-            id="search-input"
-            class="search-input"
-            placeholder="Поиск по ключевым словам..."
-            value="{{ search_query }}"
-            oninput="debouncedSearch()"
-            onkeydown="if(event.key==='Enter'){this.blur(); debouncedSearch();}"
-        >
-        <div class="search-icon">🔍</div>
-    </div>
+<!-- Контейнер вкладок -->
+<div id="tabs-container" class="tabs" style="display: none;"></div>
 
-    <div class="filter-row">
-        <div class="filter-select">
-            <select id="work-type-filter" onchange="applyFilters()">
-                <option value="">Все типы работы</option>
-                {% for value, label in work_choices %}
-                <option value="{{ value }}" {% if work_type_selected == value %}selected{% endif %}>
-                    {{ label }}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="filter-select">
-            <select id="work-time-filter" onchange="applyFilters()">
-                <option value="">Все смены</option>
-                {% for value, label in work_time_choices %}
-                <option value="{{ value }}" {% if work_time_selected == value %}selected{% endif %}>
-                    {{ label }}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
-
-    <div class="filter-row">
-    <div class="filter-input">
-        <input
-            type="number"
-            id="min-salary"
-            placeholder="Мин. зарплата"
-            value="{{ min_salary }}"
-            oninput="debouncedSearch()"
-            inputmode="numeric"
-            pattern="\d*"
-            onkeydown="if(event.key==='Enter'){this.blur(); debouncedSearch();}"
-        >
-    </div>
-    <div class="filter-input">
-        <input
-            type="number"
-            id="max-salary"
-            placeholder="Макс. зарплата"
-            value="{{ max_salary }}"
-            oninput="debouncedSearch()"
-            inputmode="numeric"
-            pattern="\d*"
-            onkeydown="if(event.key==='Enter'){this.blur(); debouncedSearch();}"
-        >
-    </div>
-</div>
-
-    <div class="filter-checkbox">
-        <label>
+    <!-- Вкладка поиска -->
+<div id="tab-search" class="tab-content {% if profile_data.user_r != True %}active{% endif %}">
+    <!-- Форма фильтров -->
+    <div class="filters-form">
+        <div class="filter-group">
             <input
-                type="checkbox"
-                id="remote-filter"
-                {% if is_remote_selected %}checked{% endif %}
-                onchange="applyFilters()"
+                type="text"
+                id="search-input"
+                class="search-input"
+                placeholder="Поиск по ключевым словам..."
+                value="{{ search_query }}"
+                oninput="debouncedSearch()"
+                onkeydown="if(event.key==='Enter'){this.blur(); debouncedSearch();}"
             >
-            📍 Удаленная работа
-        </label>
+            <div class="search-icon">🔍</div>
+        </div>
+
+        <div class="filter-row">
+            <div class="filter-select">
+                <select id="work-type-filter" onchange="applyFilters()">
+                    <option value="">Все типы работы</option>
+                    {% for value, label in work_choices %}
+                    <option value="{{ value }}" {% if work_type_selected == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-select">
+                <select id="work-time-filter" onchange="applyFilters()">
+                    <option value="">Все смены</option>
+                    {% for value, label in work_time_choices %}
+                    <option value="{{ value }}" {% if work_time_selected == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="filter-row">
+            <div class="filter-input">
+                <input
+                    type="number"
+                    id="min-salary"
+                    placeholder="Мин. зарплата"
+                    value="{{ min_salary }}"
+                    oninput="debouncedSearch()"
+                    inputmode="numeric"
+                    pattern="\d*"
+                    onkeydown="if(event.key==='Enter'){this.blur(); debouncedSearch();}"
+                >
+            </div>
+            <div class="filter-input">
+                <input
+                    type="number"
+                    id="max-salary"
+                    placeholder="Макс. зарплата"
+                    value="{{ max_salary }}"
+                    oninput="debouncedSearch()"
+                    inputmode="numeric"
+                    pattern="\d*"
+                    onkeydown="if(event.key==='Enter'){this.blur(); debouncedSearch();}"
+                >
+            </div>
+        </div>
+
+        <div class="filter-checkbox">
+            <label>
+                <input
+                    type="checkbox"
+                    id="remote-filter"
+                    {% if is_remote_selected %}checked{% endif %}
+                    onchange="applyFilters()"
+                >
+                📍 Удаленная работа
+            </label>
+        </div>
+
+        <button class="btn-clear" onclick="clearFilters()">🧹 Очистить фильтры</button>
     </div>
 
-    <button class="btn-clear" onclick="clearFilters()">🧹 Очистить фильтры</button>
+    <!-- Результаты поиска -->
+    <div id="search-vacancies">
+        {% include "miniapp/partials/vacancy_list.html" %}
+    </div>
 </div>
 
-<!-- Результаты -->
-<div id="vacancy-container">
-    {% include "miniapp/partials/vacancy_list.html" %}
+<!-- Вкладка ключевых слов -->
+<div id="tab-keywords" class="tab-content">
+    <div class="filters-form">
+        <h3>📝 Мои ключевые слова</h3>
+        <div id="keywords-message" style="margin: 10px 0; color: var(--tg-theme-hint-color, #666);">
+            Добавьте ключевые слова — бот будет автоматически искать новые вакансии и отправлять уведомления
+        </div>
+        <ul id="filterList"></ul>
+
+        <div class="filter-row">
+            <input type="text" id="newKeyword" class="search-input" placeholder="Добавить слово..." onkeydown="if(event.key==='Enter'){addKeyword()}">
+            <button onclick="addKeyword()">Добавить</button>
+        </div>
+    </div>
+    <div id="keywords-vacancies"></div>
 </div>
+
+<div id="loading" class="loading" style="display: none;">Загрузка...</div>
 
 <div id="loading" class="loading" style="display: none;">
     Загрузка...
 </div>
 
 <style>
+    .tabs {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    .tab-btn {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 12px;
+        background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .tab-btn.active {
+        background: var(--tg-theme-button-color, #40a7e3);
+        color: white;
+    }
+    .tab-content {
+        display: none;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    #filterList {
+        margin: 10px 0;
+        padding: 0;
+        list-style: none;
+    }
+    #filterList li {
+        background: #eee;
+        padding: 8px 12px;
+        border-radius: 8px;
+        margin: 5px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    #filterList li span {
+        cursor: pointer;
+        color: red;
+        font-weight: bold;
+        margin-left: 10px;
+    }
+
     .filters-form {
         background: var(--tg-theme-secondary-bg-color, #f8f9fa);
         padding: 20px;
@@ -116,35 +187,20 @@
         margin-bottom: 12px;
     }
 
-    .filter-select select {
-        width: 100%;
-        padding: 12px;
-        border: 2px solid var(--tg-theme-secondary-bg-color, #f0f0f0);
-        border-radius: 12px;
-        background: var(--tg-theme-bg-color, #ffffff);
-        color: var(--tg-theme-text-color, #000000); /* текст адаптируется под тему */
-        font-family: 'Inter', sans-serif;
-        font-size: 14px;
-    }
-
     .filter-select, .filter-input {
         flex: 1;
     }
 
     .filter-select select,
     .filter-input input {
-    width: 100%;
-    padding: 12px;
-    border: 2px solid var(--tg-theme-secondary-bg-color, #f0f0f0);
-    border-radius: 12px;
-    background: var(--tg-theme-bg-color, #ffffff); /* фон под тему */
-    color: var(--tg-theme-text-color, #000000); /* текст под тему */
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-}
-    .filter-select select option {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid var(--tg-theme-secondary-bg-color, #f0f0f0);
+        border-radius: 12px;
         background: var(--tg-theme-bg-color, #ffffff);
         color: var(--tg-theme-text-color, #000000);
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
     }
 
     .filter-checkbox {
@@ -159,11 +215,6 @@
         font-weight: 500;
     }
 
-    .filter-checkbox input {
-        width: 18px;
-        height: 18px;
-    }
-
     .btn-clear {
         width: 100%;
         padding: 12px;
@@ -174,217 +225,317 @@
         font-family: 'Inter', sans-serif;
         font-weight: 600;
         cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .btn-clear:active {
-        background: var(--tg-theme-button-color, #40a7e3);
-    }
-
-    .search-container {
-        margin-bottom: 20px;
-        position: relative;
     }
 
     .search-input {
         width: 100%;
-        padding: 16px 48px 16px 16px;
+        padding: 12px;
         border: 2px solid var(--tg-theme-secondary-bg-color, #f0f0f0);
-        border-radius: 16px;
-        background-color: var(--tg-theme-bg-color, #ffffff);
+        border-radius: 12px;
+        background: var(--tg-theme-bg-color, #ffffff);
         color: var(--tg-theme-text-color, #000000);
-        font-size: 16px;
-        font-family: 'Inter', sans-serif;
-    }
-
-    .search-icon {
-        position: absolute;
-        right: 16px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--tg-theme-hint-color, #999999);
-    }
-
-    .vacancy-list {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
+        font-size: 14px;
     }
 
     .vacancy-card {
         background-color: var(--tg-theme-secondary-bg-color, #f8f9fa);
         border-radius: 20px;
-        padding: 24px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        cursor: pointer;
-    }
-
-    .vacancy-title {
-        font-size: 18px;
-        font-weight: 600;
-        margin-bottom: 12px;
-    }
-
-    .vacancy-salary {
-        font-size: 16px;
-        font-weight: 700;
-        color: #10b981;
-        margin-bottom: 8px;
-    }
-
-    .vacancy-location {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--tg-theme-hint-color, #666666);
-        margin-bottom: 12px;
-        font-size: 14px;
-    }
-
-    .vacancy-description {
-        color: var(--tg-theme-text-color, #000000);
+        padding: 20px;
         margin-bottom: 16px;
-        font-size: 14px;
-        line-height: 1.5;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .vacancy-meta {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-
-    .meta-tag {
-        background: linear-gradient(135deg, var(--tg-theme-button-color, #40a7e3), #2d8ac7);
-        color: var(--tg-theme-button-text-color, #ffffff);
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
+        cursor: pointer;
     }
 </style>
 
 <script>
-    let currentPage = 1;
-    let isLoading = false;
-    let debounceTimer;
+let tg = window.Telegram.WebApp;
+let currentPage = 1;
+let isLoading = false;
+let debounceTimer;
+let profileData = null;
+let currentTab = "search";
 
-    // Сбор всех фильтров
-    function getFilters() {
-        return {
-            q: document.getElementById('search-input').value,
-            work_type: document.getElementById('work-type-filter').value,
-            work_time: document.getElementById('work-time-filter').value,
-            min_salary: document.getElementById('min-salary').value,
-            max_salary: document.getElementById('max-salary').value,
-            is_remote: document.getElementById('remote-filter').checked ? 'true' : ''
-        };
-    }
+// Основная функция инициализации
+async function initPage() {
+    await loadProfile();
+    setupEventListeners();
+    setupTabs(); // создаем вкладки после загрузки профиля
+}
 
-    // Обновление URL с фильтрами
-    function updateURL(filters) {
-        const params = new URLSearchParams();
-        for (const [key, value] of Object.entries(filters)) {
-            if (value) params.append(key, value);
+// Загрузка профиля пользователя
+async function loadProfile() {
+    try {
+        const tgId = tg.initDataUnsafe?.user?.id;
+        if (!tgId) return;
+
+        const response = await fetch(`/miniapp/profile/data/2/?tg_id=${tgId}`);
+        if (response.ok) {
+            profileData = await response.json();
+            console.log('Профиль загружен:', profileData);
         }
-        window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+    } catch (err) {
+        console.error(err);
     }
+}
 
-    // Применение фильтров
-    function applyFilters() {
-        const filters = getFilters();
-        updateURL(filters);
-        currentPage = 1;
-        loadVacancies();
+// Настройка вкладок (только для user_r=False)
+function setupTabs() {
+    if (!profileData || profileData.user_r !== false) return; // показываем только если false
+
+    const tabsContainer = document.getElementById("tabs-container");
+    tabsContainer.style.display = "flex";
+
+    tabsContainer.innerHTML = `
+        <button class="tab-btn active" data-tab="search">🔍 Поиск</button>
+        <button class="tab-btn" data-tab="keywords">📝 Ключевые слова</button>
+    `;
+
+    tabsContainer.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tab = btn.dataset.tab;
+            showTab(tab);
+        });
+    });
+}
+
+// Переключение вкладок
+function showTab(tab) {
+    if (!profileData || profileData.user_r !== false) return;
+
+    currentTab = tab;
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+
+    const btn = document.querySelector(`.tab-btn[data-tab="${tab}"]`);
+    if (btn) btn.classList.add("active");
+
+    document.getElementById('tab-search').classList.toggle('active', tab === 'search');
+    document.getElementById('tab-keywords').classList.toggle('active', tab === 'keywords');
+
+    if (tab === "keywords") {
+        loadKeywords();
+        loadVacanciesByKeywords();
     }
+}
 
-    // Очистка фильтров
-    function clearFilters() {
-        document.getElementById('search-input').value = '';
-        document.getElementById('work-type-filter').value = '';
-        document.getElementById('work-time-filter').value = '';
-        document.getElementById('min-salary').value = '';
-        document.getElementById('max-salary').value = '';
-        document.getElementById('remote-filter').checked = false;
+// Настройка обработчиков событий
+function setupEventListeners() {
+    // Бесконечная прокрутка
+    window.addEventListener('scroll', handleScroll);
 
-        updateURL({});
-        currentPage = 1;
-        loadVacancies();
+    // Клик по вакансиям
+    document.addEventListener('click', handleVacancyClick);
+}
+
+// Обработчик скролла
+function handleScroll() {
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !isLoading) {
+        if (currentTab === "search") {
+            loadVacancies();
+        } else if (currentTab === "keywords" && !profileData.user_r) {
+            loadVacanciesByKeywords();
+        }
     }
+}
 
-    // Поиск с задержкой
-    function debouncedSearch() {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(applyFilters, 500);
+// Обработчик клика по вакансии
+function handleVacancyClick(e) {
+    const card = e.target.closest('.vacancy-card');
+    if (!card) return;
+
+    const vacancyId = card.dataset.vacancyId;
+    const tgId = tg.initDataUnsafe?.user?.id;
+    let url = `/miniapp/vacancies/${vacancyId}/`;
+
+    if (tgId) url += `?tg_id=${tgId}`;
+    window.location.href = url;
+}
+
+// Функции фильтрации (работают всегда)
+function getFilters() {
+    return {
+        q: document.getElementById('search-input')?.value || '',
+        work_type: document.getElementById('work-type-filter')?.value || '',
+        work_time: document.getElementById('work-time-filter')?.value || '',
+        min_salary: document.getElementById('min-salary')?.value || '',
+        max_salary: document.getElementById('max-salary')?.value || '',
+        is_remote: document.getElementById('remote-filter')?.checked ? 'true' : ''
+    };
+}
+
+function applyFilters() {
+    const filters = getFilters();
+    updateURL(filters);
+    currentPage = 1;
+    loadVacancies();
+}
+
+function clearFilters() {
+    ['search-input','work-type-filter','work-time-filter','min-salary','max-salary'].forEach(id => {
+        const element = document.getElementById(id);
+        if (element) element.value = '';
+    });
+
+    const remoteFilter = document.getElementById('remote-filter');
+    if (remoteFilter) remoteFilter.checked = false;
+
+    updateURL({});
+    currentPage = 1;
+    loadVacancies();
+}
+
+function debouncedSearch() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(applyFilters, 500);
+}
+
+function updateURL(filters) {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(filters)) {
+        if (value) params.append(key, value);
     }
+    window.history.replaceState({}, '', `${window.location.pathname}?${params}`);
+}
 
-    // Загрузка вакансий
-    async function loadVacancies() {
-        if (isLoading) return;
+// Загрузка вакансий по фильтрам
+async function loadVacancies() {
+    if (isLoading) return;
 
-        isLoading = true;
-        document.getElementById('loading').style.display = 'block';
+    isLoading = true;
+    document.getElementById('loading').style.display = 'block';
 
-        const filters = getFilters();
-        const params = new URLSearchParams({
-            page: currentPage,
-            ...filters
+    const filters = getFilters();
+    const params = new URLSearchParams({ page: currentPage, ...filters });
+
+    try {
+        const response = await fetch(`?${params}`, {
+            headers: {'X-Requested-With':'XMLHttpRequest'}
         });
 
-        try {
-            const response = await fetch(`?${params}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            });
+        if (response.ok) {
+            const data = await response.json();
+            const container = document.getElementById('vacancy-container');
 
-            if (response.ok) {
-                const data = await response.json();
-
-                if (currentPage === 1) {
-                    document.getElementById('vacancy-container').innerHTML = data.html;
-                } else {
-                    document.getElementById('vacancy-container').innerHTML += data.html;
-                }
-
-                if (data.has_next) {
-                    currentPage++;
-                }
+            if (currentPage === 1) {
+                container.innerHTML = data.html;
+            } else {
+                container.innerHTML += data.html;
             }
-        } catch (error) {
-            console.error('Error:', error);
-        } finally {
-            isLoading = false;
-            document.getElementById('loading').style.display = 'none';
+
+            if (data.has_next) currentPage++;
         }
+    } catch(err) {
+        console.error('Ошибка загрузки вакансий:', err);
+    } finally {
+        isLoading = false;
+        document.getElementById('loading').style.display = 'none';
     }
+}
 
-    // Обработчик клика по вакансии
-    document.addEventListener('click', (e) => {
-        const card = e.target.closest('.vacancy-card');
-        if (!card) return;
-        const vacancyId = card.dataset.vacancyId;
-        const tgId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+// Функции для ключевых слов (только для user_r=False)
+async function loadKeywords() {
+    if (profileData.user_r) return;
 
-        // Добавляем tg_id в URL, если есть
-        let url = `/miniapp/vacancies/${vacancyId}/`;
-        if (tgId) url += `?tg_id=${tgId}`;
+    try {
+        const tgId = tg.initDataUnsafe?.user?.id;
+        const res = await fetch(`/miniapp/filters/get/?tg_id=${tgId}`);
 
-        window.location.href = url;
-    });
-
-    // Загрузка при открытии страницы
-    document.addEventListener('DOMContentLoaded', loadVacancies);
-
-    // Бесконечная прокрутка
-    window.addEventListener('scroll', () => {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 && !isLoading) {
-            loadVacancies();
+        if (res.ok) {
+            const data = await res.json();
+            renderFilters(data.filters);
         }
-    });
+    } catch (error) {
+        console.error('Ошибка загрузки ключевых слов:', error);
+    }
+}
+
+async function addKeyword() {
+    if (profileData.user_r) return;
+
+    const keyword = document.getElementById("newKeyword").value.trim();
+    if (!keyword) return;
+
+    try {
+        const tgId = tg.initDataUnsafe?.user?.id;
+        const res = await fetch("/miniapp/filters/update/", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({ tg_id: tgId, keyword, action: "add" })
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            renderFilters(data.filters);
+            document.getElementById("newKeyword").value = "";
+            loadVacanciesByKeywords();
+        }
+    } catch (error) {
+        console.error('Ошибка добавления ключевого слова:', error);
+    }
+}
+
+async function removeKeyword(keyword) {
+    if (profileData.user_r) return;
+
+    try {
+        const tgId = tg.initDataUnsafe?.user?.id;
+        const res = await fetch("/miniapp/filters/update/", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({ tg_id: tgId, keyword, action: "remove" })
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            renderFilters(data.filters);
+            loadVacanciesByKeywords();
+        }
+    } catch (error) {
+        console.error('Ошибка удаления ключевого слова:', error);
+    }
+}
+
+function renderFilters(filters) {
+    const list = document.getElementById("filterList");
+    const message = document.getElementById("keywords-message");
+
+    list.innerHTML = "";
+
+    if (!filters || filters.length === 0) {
+        message.style.display = "block";
+    } else {
+        message.style.display = "none";
+        filters.forEach(f => {
+            const li = document.createElement("li");
+            li.innerHTML = `${f} <span onclick="removeKeyword('${f}')">✖</span>`;
+            list.appendChild(li);
+        });
+    }
+}
+
+async function loadVacanciesByKeywords() {
+    if (!profileData || profileData.user_r !== false) return;
+    try {
+        const tgId = tg.initDataUnsafe?.user?.id;
+        const res = await fetch(`/miniapp/vacancies/by_keywords/?tg_id=${tgId}`);
+        if (res.ok) {
+            const data = await res.json();
+            const container = document.getElementById("keywords-vacancies");
+
+            if (data.html && data.html.trim() !== "") {
+                container.innerHTML = `
+                    <div id="previous-vacancies" style="margin: 10px 0; font-weight: 500; color: var(--tg-theme-text-color, #000);">
+                        Ранее найденные вакансии:
+                    </div>
+                    ${data.html}
+                `;
+            } else {
+                container.innerHTML = "";
+            }
+        }
+    } catch(err){ console.error(err); }
+}
+
+// Инициализация страницы
+document.addEventListener('DOMContentLoaded', initPage);
 </script>
 {% endblock %}

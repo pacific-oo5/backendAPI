@@ -124,6 +124,15 @@ class ProfileView(View):
 
     def post(self, request):
         user = request.user
+        profile, _ = TelegramProfile.objects.get_or_create(user=user)
+
+        if 'reset_telegram' in request.POST:
+            profile.reset_connection()
+
+        if 'username' in request.POST:
+            user.username = request.POST.get('username')
+            user.save()
+
         if 'title' in request.POST or 'photo' in request.FILES:
             name = request.POST.get('title')
             photo = request.FILES.get('photo')
@@ -137,7 +146,7 @@ class ProfileView(View):
             if password_form.is_valid():
                 password_form.save()
                 update_session_auth_hash(request, password_form.user)
-        return redirect('profile')
+        return redirect('userauth:profile')
 
 
 class PublicProfileView(View):

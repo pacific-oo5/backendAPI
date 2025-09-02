@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Настройки</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            margin: 0;
+            padding: 16px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .header {
+            text-align: center;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--tg-theme-secondary-bg-color, #f0f0f0);
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            margin: 12px 0;
+            border-radius: 12px;
+            background-color: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .settings-item:active {
+            background-color: var(--tg-theme-button-color, #40a7e3);
+            color: var(--tg-theme-button-text-color, #ffffff);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            display: none;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            border-radius: 24px;
+            transition: 0.4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px; width: 20px;
+            left: 2px; bottom: 2px;
+            background-color: white;
+            border-radius: 50%;
+            transition: 0.4s;
+        }
+
+        input:checked + .slider {
+            background-color: var(--tg-theme-button-color, #40a7e3);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">⚙️ Настройки</div>
+
+    <div class="settings-item">
+        <span>Тёмная тема</span>
+        <label class="toggle-switch">
+            <input type="checkbox" id="theme-toggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="settings-item" onclick="logoutUser()">
+        <span>🚪 Выйти</span>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.BackButton.show();
+        tg.BackButton.onClick(() => {
+            window.history.back();
+            tg.BackButton.hide(); // Скрываем сразу после нажатия
+        });
+
+        const themeToggle = document.getElementById('theme-toggle');
+
+        // Устанавливаем состояние переключателя в зависимости от темы Telegram
+        themeToggle.checked = tg.colorScheme === "dark";
+
+        // Следим за сменой темы в Telegram
+        Telegram.WebApp.onEvent("themeChanged", () => {
+            themeToggle.checked = tg.colorScheme === "dark";
+        });
+
+        // Переключатель "Тёмная тема"
+        themeToggle.addEventListener('change', (e) => {
+            // Здесь нельзя насильно поменять тему Telegram,
+            // только локально сохранить настройку или подсказать пользователю
+            alert("Тема управляется настройками Telegram 📱.\nСмените её в настройках клиента.");
+            themeToggle.checked = tg.colorScheme === "dark"; // возвращаем в актуальное состояние
+        });
+
+        // Выход
+        function logoutUser() {
+            localStorage.clear();
+            window.location.href = "/miniapp/main";
+        }
+    </script>
+</body>
+</html>

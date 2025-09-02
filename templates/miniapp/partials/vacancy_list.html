@@ -81,7 +81,11 @@
             <h3 class="vacancy-title">{{ vacancy.title }}</h3>
 
             <div class="vacancy-salary">
-                💰 {{ vacancy.salary }} сом
+                {% if vacancy.work_type != 'practice' %}
+                    💰 {{ vacancy.salary }} сом
+                {% else %}
+                    💰 Не <del>оплачиваемый</del> практика
+                {% endif %}
             </div>
 
             <div class="vacancy-location">

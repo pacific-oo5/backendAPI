@@ -174,12 +174,8 @@
 </div>
 
 <div class="tabs">
-    {% if user_r %}
-        <div class="tab active" data-tab="items">Мои объявления</div>
-    {% else %}
-        <div class="tab active" data-tab="items">Мои анкеты</div>
-    {% endif %}
-  <div class="tab" data-tab="responses">Отклики</div>
+    <div id="myTab" class="tab active" data-tab="items"></div>
+    <div class="tab" data-tab="responses">Отклики</div>
 </div>
 
 <div class="content">
@@ -238,9 +234,9 @@ const profileContainer = document.getElementById('profile-container');
 const itemsContainer = document.getElementById('items-container');
 const responsesContainer = document.getElementById('responses-container');
 const itemsLoadMore = document.getElementById('items-load-more');
-let profileData = null;
 let currentItemsPage = 1;
 let hasMoreItems = false;
+let profileData = null;
 
 function maskEmail(email) {
     if (!email || !email.includes('@')) return '—';
@@ -306,6 +302,13 @@ async function loadProfile() {
                 </div>
             `;
         }
+
+        const myTab = document.getElementById("myTab");
+            if (profileData.user_r) {
+                myTab.textContent = "Мои объявления";
+            } else {
+                myTab.textContent = "Мои анкеты";
+            }
     } catch (err) {
         console.error(err);
         profileContainer.innerHTML = "<p>Ошибка загрузки профиля.</p>";

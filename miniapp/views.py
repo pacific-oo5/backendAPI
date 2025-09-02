@@ -7,6 +7,7 @@ from django.views import generic, View
 from django.template.loader import render_to_string
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
 from api.choices import WORK_CHOICES, WORK_TIME_CHOICES
 from api.models import Vacancy, Anketa, VacancyResponse
@@ -211,6 +212,12 @@ class ProfilePageView(View):
         return render(request, self.template_name)
 
 
+class SettingsPageView(View):
+    template_name = "miniapp/settings.html"
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
 class MiniAppProfileDataView(View):
     def get(self, request, *args, **kwargs):
         tg_id = request.GET.get("tg_id")
@@ -230,7 +237,6 @@ class MiniAppProfileDataView(View):
         data = {
             "status": "ok",
             "connected": True,
-            "user_r": getattr(user, "user_r", False),
             "site_user": {
                 "id": user.id,
                 "username": user.username,
@@ -286,6 +292,7 @@ class MiniAppProfileDataView(View):
             )
 
         data.update({
+            "user_r": user.user_r,
             "html": items_html,
             "has_next": has_next,
             "current_page": page,
@@ -511,3 +518,100 @@ class MiniAppFavoriteVacanciesDataView(View):
                 "status": "error",
                 "message": "Профиль не найден. Сначала подключите аккаунт через сайт."
             })
+
+
+def get_filters(request):
+    tg_id = request.GET.get("tg_id")
+    profile = TelegramProfile.objects.filter(telegram_id=tg_id).first()
+    if not profile:
+        return JsonResponse({"error": "not_found"}, status=404)
+    return JsonResponse({"filters": profile.filters})
+
+
+@csrf_exempt
+@require_POST
+def update_filters(request):
+    data = json.loads(request.body)
+    tg_id = data.get('tg_id')
+    keyword = data.get('keyword')
+    action = data.get('action')
+
+    profile = TelegramProfile.objects.filter(telegram_id=tg_id).first()
+    if not profile:
+        return JsonResponse({'error': 'Profile not found'}, status=404)
+
+    filters = profile.filters or []
+
+    if action == 'add' and keyword not in filters:
+        filters.append(keyword)
+    elif action == 'remove' and keyword in filters:
+        filters.remove(keyword)
+
+    profile.filters = filters
+    profile.save()
+
+    return JsonResponse({'filters': filters})
+
+
+def vacancies_by_keywords(request):
+    try:
+        tg_id = request.GET.get('tg_id')
+        page = int(request.GET.get('page', 1))
+        per_page = 20
+
+        if not tg_id:
+            return JsonResponse({"html": "<p>Не указан ID пользователя</p>", "has_next": False})
+
+        profile = TelegramProfile.objects.filter(telegram_id=tg_id).first()
+        if not profile:
+            return JsonResponse({"html": "<p>Профиль не найден</p>", "has_next": False})
+
+        keywords = profile.filters or []
+        if not keywords:
+            return JsonResponse({"html": "<p>Добавьте ключевые слова для поиска</p>", "has_next": False})
+
+        # Создаем общий запрос для всех ключевых слов
+        from django.db.models import Q
+        query = Q()
+        for kw in keywords:
+            query |= Q(title__icontains=kw) | Q(description__icontains=kw)
+
+        # Получаем вакансии с пагинацией
+        vacancies = Vacancy.objects.filter(query).distinct().order_by('-published_at')
+
+        total_count = vacancies.count()
+        start = (page - 1) * per_page
+        end = start + per_page
+
+        paginated_vacancies = vacancies[start:end]
+        has_next = end < total_count
+
+        html = render_to_string("miniapp/partials/vacancy_list.html", {
+            "vacancies": paginated_vacancies
+        })
+
+        return JsonResponse({"html": html, "has_next": has_next})
+
+    except Exception as e:
+        return JsonResponse({"html": f"<p>Ошибка: {str(e)}</p>", "has_next": False})
+
+
+def get_filters(request):
+    tg_id = request.GET.get('tg_id')
+    profile = TelegramProfile.objects.filter(telegram_id=tg_id).first()
+    if not profile:
+        return JsonResponse({'error': 'Profile not found'}, status=404)
+
+    return JsonResponse({'filters': profile.filters or []})
+
+
+def profile_data(request):
+    tg_id = request.GET.get('tg_id')
+    profile = TelegramProfile.objects.filter(telegram_id=tg_id).first()
+    if not profile:
+        return JsonResponse({'error': 'Profile not found'}, status=404)
+
+    return JsonResponse({
+        'user_r': profile.user.user_r,
+        'keywords': profile.filters or []
+    })

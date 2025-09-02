@@ -1,8 +1,13 @@
 {% extends "miniapp/base.html" %}
+{% load static %}
 
 {% block content %}
 <div class="header">
-    <h1>💖 Избранные вакансии</h1>
+    <h1 id="favorite-header">💖 Избранные вакансии</h1>
+</div>
+
+<div class="emoji-container">
+    <div id="duck-animation-heart" class="duck-animation"></div>
 </div>
 
 <div id="vacancy-container">
@@ -27,6 +32,12 @@
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
+Telegram.WebApp.SettingsButton.show();
+
+Telegram.WebApp.SettingsButton.onClick(() => {
+    // например, открыть страницу настроек в твоём mini app
+    window.location.href = "{% url 'miniapp:settings' %}";
+});
 
 {% if not has_tg_id %}
 // Если TG ID не передан в шаблоне, получаем его через JavaScript
@@ -46,9 +57,9 @@ if (!initData) {
     .then(res => res.json())
     .then(data => {
         if (data.status === "ok") {
-            container.innerHTML = data.html || '<div style="text-align:center;padding:40px;color:#666;">📭 У вас пока нет избранных вакансий</div>';
+            container.innerHTML = data.html || '<div style="text-align:center;padding:40px;color: var(--tg-theme-text-color, #000000);">📭 У вас пока нет избранных вакансий</div>';
         } else {
-            container.innerHTML = '<div style="background:#ffe5e5;padding:12px;text-align:center;">' + data.message + '</div>';
+            container.innerHTML = '<div style="background: var(--tg-theme-bg-color, #ffffff);padding:12px;text-align:center;">' + data.message + '</div>';
         }
     })
     .catch(err => {
@@ -58,4 +69,15 @@ if (!initData) {
 }
 {% endif %}
 </script>
+
+        <script>
+        {# FOR EMOJIES#}
+        var animation = lottie.loadAnimation({
+            container: document.getElementById('duck-animation-heart'),
+            renderer: 'svg',       // или 'canvas'
+            loop: true,
+            autoplay: true,
+            path: "{% static 'miniapp/emoji/47_HEARTS_OUT.json  ' %}"
+        });
+    </script>
 {% endblock %}

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -11,6 +12,10 @@
         html {scroll-behavior: smooth;}
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
+            user-select: none;       /* стандарт */
+            -webkit-user-select: none; /* для Safari/Chrome */
+            -moz-user-select: none;    /* для Firefox */
+            -ms-user-select: none;     /* для IE/Edge */
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--tg-theme-bg-color, #ffffff);
             color: var(--tg-theme-text-color, #000000);
@@ -132,6 +137,7 @@
             .salary { font-size: 16px; }
             .action-buttons { flex-direction: column; bottom: 60px; }
         }
+
     </style>
 </head>
 <body id="main-header">
@@ -155,12 +161,17 @@
 
     <div class="meta">
         Опубликовано: {{ vacancy.published_at|date:"d.m.Y" }}<br>
-        {% if vacancy.is_active %} ✅ Вакансия активна {% else %} ❌ Неактивна {% endif %}
     </div>
 
     <div class="work-details">
-        <div class="detail-item">⏰ {{ vacancy.get_work_type_display }}</div>
-        <div class="detail-item">🌙 {{ vacancy.get_work_time_display }}</div>
+        <div class="detail-item">
+          <div id="emoji-clock" style="width:16px; height:16px; display:inline-block; vertical-align:middle;"></div>
+          {{ vacancy.get_work_type_display }}
+        </div>
+        <div class="detail-item">
+            <div id="emoji-moon" style="width:16px; height:16px; display:inline-block; vertical-align:middle;"></div>
+            {{ vacancy.get_work_time_display }}
+        </div>
     </div>
 
     <div class="section">
@@ -233,6 +244,12 @@
         const respondBtn = document.getElementById('respondBtn');
         const anketaSelect = document.getElementById('anketaSelect');
 
+        Telegram.WebApp.SettingsButton.show();
+        Telegram.WebApp.SettingsButton.onClick(() => {
+            // например, открыть страницу настроек в твоём mini app
+            window.location.href = "{% url 'miniapp:settings' %}";
+        });
+
         tg.BackButton.show();
         tg.BackButton.onClick(() => {
             window.history.back();
@@ -301,6 +318,25 @@
             btn?.animate([{ transform: 'scale(0.9)' }, { transform: 'scale(1)' }], { duration: 200 });
         }
     }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.0/lottie.min.js"></script>
+    <script>
+    lottie.loadAnimation({
+        container: document.getElementById('emoji-clock'),
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: '{% static 'miniapp/emoji/time.json' %}'
+    });
+
+    lottie.loadAnimation({
+        container: document.getElementById('emoji-moon'),
+        renderer: 'svg',
+        loop: true,
+        autoplay: true,
+        path: '{% static 'miniapp/emoji/moon.json' %}'
+    });
     </script>
 </body>
 </html>
