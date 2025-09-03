@@ -9,7 +9,7 @@
     <title>{% trans "СЛАДКИЙ МАЛЬЧИК" %}</title>
     <link rel="stylesheet" href="{% static 'main/css/main.css' %}">
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'main/logo/logo.png' %}">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <!-- Bootstrap 5 CSS -->
@@ -147,6 +147,34 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
     <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const navCollapseEl = document.getElementById('navbarNav');
+  const toggler = document.querySelector('.navbar-toggler');
+  if (!navCollapseEl || !toggler) return;
+
+  const isMobile = () => window.getComputedStyle(toggler).display !== 'none';
+  const bsCollapse = bootstrap.Collapse.getInstance(navCollapseEl) || new bootstrap.Collapse(navCollapseEl, { toggle: false });
+
+  // Закрыть при клике на нав-ссылку или кнопку (не для dropdown-toggle)
+  document.querySelectorAll('#navbarNav .nav-link, #navbarNav .btn').forEach(el => {
+    el.addEventListener('click', (e) => {
+      if (!isMobile()) return;                         // только на мобилках
+      if (el.getAttribute('data-bs-toggle')) return;  // не трогаем элементы управления bootstrap
+      bsCollapse.hide();
+    });
+  });
+
+  // Закрыть при смене языка (форма сабмитится — но скроем меню до навигации)
+  const langSelect = document.querySelector('#navbarNav form select[name="language"]');
+  if (langSelect) langSelect.addEventListener('change', () => { if (isMobile()) bsCollapse.hide(); });
+
+  // Закрыть меню при открытии модалки выхода
+  const logoutModal = document.getElementById('logoutModal');
+  if (logoutModal) logoutModal.addEventListener('show.bs.modal', () => { if (isMobile()) bsCollapse.hide(); });
+});
+</script>
+
+    <script>
         let page = 2
         let loading = false;
         let hasNext = true;
@@ -234,6 +262,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 }
     </script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js">
 </body>
 </html>

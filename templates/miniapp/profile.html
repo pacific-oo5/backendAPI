@@ -67,12 +67,6 @@
     }
   }
 
-  .vacancy-list, .anketa-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
   .response-list {
     display: flex;
     flex-direction: column;
@@ -361,6 +355,9 @@ async function loadResponses() {
                             ${response.date ? `Дата: ${new Date(response.date).toLocaleDateString()}` : ''}
                             ${response.message ? `<br>Сообщение: ${response.message}` : ''}
                         </div>
+                        <div class="item-footer">
+                            <button class="item-btn">Посмотреть</button>
+                          </div>
                     </div>
                 `).join('');
             } else {
@@ -493,6 +490,95 @@ document.addEventListener('DOMContentLoaded', loadProfile);
     }
 
     document.addEventListener('DOMContentLoaded', loadProfile);
-    </script>
 
+// Обработка кликов по динамически созданным элементам
+document.addEventListener('click', function(e) {
+    // Меню трех точек
+    if (e.target.closest('.menu-toggle')) {
+        const button = e.target.closest('.menu-toggle');
+        const dropdown = button.nextElementSibling;
+        const isShowing = dropdown.classList.contains('show');
+
+        document.querySelectorAll('.menu-dropdown.show').forEach(menu => {
+            if (menu !== dropdown) menu.classList.remove('show');
+        });
+
+        if (!isShowing) dropdown.classList.add('show');
+        else dropdown.classList.remove('show');
+
+        e.stopPropagation();
+    }
+
+    // Пункты меню
+    else if (e.target.closest('.menu-item.statistics')) {
+        const vacancyId = e.target.closest('.vacancy-card').dataset.vacancyId;
+        showVacancyStatistics(vacancyId);
+    }
+    else if (e.target.closest('.menu-item.edit')) {
+        const vacancyId = e.target.closest('.vacancy-card').dataset.vacancyId;
+        editVacancy(vacancyId);
+    }
+    else if (e.target.closest('.menu-item.delete')) {
+        const vacancyId = e.target.closest('.vacancy-card').dataset.vacancyId;
+        deleteVacancy(vacancyId);
+    }
+
+    // Закрытие меню при клике вне его
+    else {
+        document.querySelectorAll('.menu-dropdown.show').forEach(menu => {
+            menu.classList.remove('show');
+        });
+    }
+});
+
+// Функции обработки
+function showVacancyStatistics(vacancyId) {
+    Telegram.WebApp.showPopup({
+        title: 'Статистика',
+        message: `Статистика по вакансии #${vacancyId}`,
+        buttons: [{type: 'ok'}]
+    });
+}
+
+function editVacancy(vacancyId) {
+    Telegram.WebApp.showPopup({
+        title: 'Редактирование',
+        message: `Редактирование вакансии #${vacancyId}`,
+        buttons: [{type: 'ok'}]
+    });
+}
+
+function deleteVacancy(vacancyId) {
+    Telegram.WebApp.showConfirm(
+        'Вы уверены, что хотите удалить вакансию?',
+        function(result) {
+            if (result) {
+                // Здесь API запрос на удаление
+                fetch(`/api/vacancies/${vacancyId}/delete/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': getCSRFToken(),
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Telegram.WebApp.showPopup({
+                            title: 'Успешно',
+                            message: 'Вакансия удалена',
+                            buttons: [{type: 'ok'}]
+                        });
+                        // Обновляем список
+                        loadItems(1);
+                    }
+                });
+            }
+        }
+    );
+}
+
+function getCSRFToken() {
+    return document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+}
+</script>
 {% endblock %}
