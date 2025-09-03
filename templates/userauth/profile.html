@@ -236,7 +236,7 @@
                                         {% if user.user_r %}
                                             {{ response.vacancy.title }}
                                         {% else %}
-                                            {{ response.vacancy.title }}
+                                            {{ response.anketa.title }}
                                         {% endif %}
                                     </h5>
                                     <small class="text-muted">{{ response.responded_at|date:"d.m.Y H:i" }}</small>
@@ -249,19 +249,62 @@
                                     {% endif %}
                                 </p>
                                 <div class="d-flex justify-content-between align-items-center mt-2">
-                                    <small class="text-muted">
-                                        {% if response.status == 'new' %}
-                                            <span class="badge bg-info">{% trans "Новый" %}</span>
-                                        {% elif response.status == 'viewed' %}
-                                            <span class="badge bg-primary">{% trans "Просмотрено" %}</span>
-                                        {% elif response.status == 'accepted' %}
-                                            <span class="badge bg-success">{% trans "Принято" %}</span>
-                                        {% elif response.status == 'rejected' %}
-                                            <span class="badge bg-danger">{% trans "Отклонено" %}</span>
-                                        {% endif %}
-                                    </small>
+                                    {% if not user.user_r %}
+                                        <small class="text-muted">
+                                            {% if response.status == 'pending' %}
+                                                <span class="badge bg-info">{% trans "Ожидание" %}</span>
+                                            {% elif response.status == 'accepted' %}
+                                                <span class="badge bg-success">{% trans "Принято" %}</span>
+                                            {% elif response.status == 'rejected' %}
+                                                <span class="badge bg-danger">{% trans "Отклонено" %}</span>
+                                            {% endif %}
+                                        </small>
+                                    {% else %}
+                                          {% if request.user == response.vacancy.user %}
+                                            <form method="post" action="{% url 'api:response_update_status' response.id %}"
+                                                  class="d-flex gap-2 align-items-center">
+                                              {% csrf_token %}
+
+                                              <!-- Текущий статус -->
+                                              <span class="badge
+                                                {% if response.status == 'pending' %} bg-info
+                                                {% elif response.status == 'accepted' %} bg-success
+                                                {% elif response.status == 'rejected' %} bg-danger
+                                                {% endif %}">
+                                                {% if response.status == 'pending' %}
+                                                  {% trans "Ожидание" %}
+                                                {% elif response.status == 'accepted' %}
+                                                  {% trans "Принято" %}
+                                                {% elif response.status == 'rejected' %}
+                                                  {% trans "Отклонено" %}
+                                                {% endif %}
+                                              </span>
+
+                                              {% if response.status == 'pending' %}
+                                                <!-- Кнопка показать выбор -->
+                                                <button type="button" class="btn btn-sm btn-outline-primary"
+                                                        onclick="toggleSelect(this)">
+                                                  {% trans "Изменить" %}
+                                                </button>
+
+                                                <!-- Скрытая форма выбора -->
+                                                <div class="status-select collapse-anim d-none">
+                                                    <select name="status" class="form-select form-select-sm" style="margin-bottom: 3px">
+                                                        <option value="accepted">{% trans "Принято" %}</option>
+                                                        <option value="rejected">{% trans "Отклонено" %}</option>
+                                                    </select>
+                                                    <button type="submit" class="btn btn-sm btn-success">{% trans "Отправить" %}</button>
+                                                </div>
+                                              {% endif %}
+                                            </form>
+                                          {% endif %}
+                                    {% endif %}
                                     <div>
-                                        <a href="{% url 'api:vacancy_detail' response.vacancy.id %}" class="btn btn-sm btn-outline-primary">{% trans "Подробнее" %}</a>
+                                        {% if not user.user_r %}
+                                            <a href="{% url 'api:vacancy_detail' response.vacancy.id %}" class="btn btn-sm btn-outline-primary">{% trans "Вакансия" %}</a>
+                                        {% else %}
+                                            <a href="{% url 'api:anketa_detail' response.anketa.id %}" class="btn btn-sm btn-outline-primary">{% trans "Анкета" %}</a>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>
@@ -348,7 +391,13 @@
         </div>
       </div>
     </div>
-
+<style>
+.collapse-anim {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.3s ease;
+}
+</style>
 <!-- Стили для улучшения внешнего вида -->
 <style>
     .nav-tabs .nav-link {
@@ -439,5 +488,18 @@
             });
         });
     });
+</script>
+
+    <script>
+        function toggleSelect(btn) {
+          const block = btn.nextElementSibling;
+          if (block.classList.contains("d-none")) {
+              block.classList.remove("d-none");
+              block.style.maxHeight = block.scrollHeight + "px";
+          } else {
+              block.style.maxHeight = "0";
+              setTimeout(() => block.classList.add("d-none"), 300); // совпадает с transition
+          }
+        }
 </script>
 {% endblock %}
