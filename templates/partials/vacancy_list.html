@@ -42,7 +42,7 @@
                     {% elif vacancy.work_time == 'weekends' %}bg-dark
                     {% else %}bg-success{% endif %} rounded-pill">
                     {% if vacancy.is_remote %}<i class="bi bi-laptop me-1"></i>{% trans "Удалённо" %}
-                    {% else %}<i class="bi bi-building me-1"></i>{{ vacancy.get_work_time_display }}{% endif %}
+                    {% else %}<i class="bi bi-moon-fill"></i> {{ vacancy.get_work_time_display }}{% endif %}
                 </span>
                 <a href="{% url 'api:vacancy_detail' vacancy.id %}" class="btn btn-sm btn-outline-primary rounded-pill">
                     {% trans "Подробнее" %} <i class="bi bi-arrow-right ms-1"></i>

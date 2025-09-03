@@ -14,6 +14,13 @@
   .btn-rounded {
     border-radius: 50px;
   }
+
+  .favorite-btn {
+    transition: all 0.2s ease-in-out;
+    }
+    .favorite-btn.active {
+        color: green;
+    }
     </style>
 
 {% if messages %}
@@ -36,6 +43,15 @@
                         <i class="bi bi-three-dots-vertical"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="vacancyMenuButton">
+                    {% if user.is_authenticated %}
+                        <li>
+                            <a href="#" class="dropdown-item favorite-btn" data-id="{{ vacancy.id }}">
+                                <i class="bi {% if request.user in vacancy.favorite_by.all %}bi-heart-fill{% else %}bi-heart{% endif %} me-2"></i>
+                                {% trans "Избранное" %}
+                            </a>
+                        </li>
+                    {% endif %}
+
                         <li><a class="dropdown-item" href="{% url 'userauth:public_profile' vacancy.user.pk %}">
                             <i class="bi bi-person me-2"></i>{% trans "Посмотреть профиль" %}
                         </a></li>
@@ -59,7 +75,11 @@
                     <div class="d-flex justify-content-between align-items-start mb-4">
                         <div>
                             <h1 class="card-title fw-bold text-dark mb-2">{{ vacancy.title }}</h1>
-                            <h4 class="text-primary fw-bold mb-3">{{ vacancy.salary }} {% trans "сом" %}</h4>
+                            {% if not vacancy.work_type == 'practice' %}
+                                <h4 class="text-primary fw-bold mb-3">{{ vacancy.salary }} {% trans "сом" %}</h4>
+                            {% else %}
+                                <h4 class="text-primary fw-bold md-3">{% trans 'Не оплачиваемый практика' %}</h4>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -88,7 +108,7 @@
                     </div>
 
                     <div class="vacancy-section mb-4">
-                        <h4 class="section-title"><i class="bi bi-building me-2"></i>{% trans "О компании" %}</h4>
+                        <h4 class="section-title"><i class="bi bi-buildings"></i> {% trans "О компании" %}</h4>
                         <p class="mb-4">{{ vacancy.about_me }}</p>
                     </div>
 
@@ -144,7 +164,11 @@
                         <h5 class="card-title fw-bold text-dark">{{ related.title }}</h5>
                         <h6 class="card-subtitle mb-2 text-primary fw-semibold">
                             <i class="bi bi-currency-exchange me-1"></i>
-                            {% blocktrans with salary=related.salary %}До {{ salary }} сом{% endblocktrans %}
+                            {% if not related.work_type == 'practice' %}
+                                {% blocktrans with salary=related.salary %}До {{ salary }} сом{% endblocktrans %}
+                            {% else %}
+                                {% trans 'Не оплачиваемый практика' %}
+                            {% endif %}
                         </h6>
                         <p class="card-text text-muted">{{ related.description|truncatechars:100 }}</p>
                         <div class="d-flex justify-content-between align-items-center">
@@ -250,42 +274,82 @@
 </script>
 
     <!-- Модальное окно -->
-                        <div class="modal fade" id="complaintModal" tabindex="-1" aria-labelledby="complaintModalLabel" aria-hidden="true">
-                          <div class="modal-dialog modal-dialog-centered modal-md">
-                            <div class="modal-content border-0 shadow-sm">
-                              <form method="POST" action="{% url 'api:vacancy_complaint' vacancy.id %}">
-                                {% csrf_token %}
-                                <div class="modal-header">
-                                  <h5 class="modal-title" id="complaintModalLabel">{% trans "Жалоба на вакансию" %}</h5>
-                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans "Закрыть" %}"></button>
-                                </div>
-                                <div class="modal-body">
-                                  {% if not request.user.is_authenticated %}
-                                  <div class="mb-3">
-                                    <label for="anon_name" class="form-label">{% trans "Ваше имя" %}</label>
-                                    <input type="text" class="form-control" id="anon_name" name="anon_name" placeholder="{% trans 'Имя или Ник' %}">
-                                  </div>
-                                  <div class="mb-3">
-                                    <label for="anon_email" class="form-label">{% trans "Ваш Email" %}</label>
-                                    <input type="email" class="form-control" id="anon_email" name="anon_email" placeholder="{% trans 'Email для связи' %}">
-                                  </div>
-                                  {% endif %}
-                                  <div class="mb-3">
-                                    <label for="reason" class="form-label">{% trans "Причина жалобы" %}</label>
-                                    <textarea class="form-control" id="reason" name="reason" rows="4" required placeholder="{% trans 'Опишите проблему...' %}"></textarea>
-                                  </div>
-                                </div>
-                                <div class="modal-footer d-flex justify-content-between">
-                                  <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">
-                                    &times; {% trans "Отмена" %}
-                                  </button>
-                                  <button type="submit" class="btn btn-danger rounded-pill">
-                                    {% trans "Отправить жалобу" %}
-                                  </button>
-                                </div>
-                              </form>
-                            </div>
-                          </div>
-                        </div>
+<div class="modal fade" id="complaintModal" tabindex="-1" aria-labelledby="complaintModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-md">
+    <div class="modal-content border-0 shadow-sm">
+      <form method="POST" action="{% url 'api:vacancy_complaint' vacancy.id %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title" id="complaintModalLabel">{% trans "Жалоба на вакансию" %}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="{% trans "Закрыть" %}"></button>
+        </div>
+        <div class="modal-body">
+          {% if not request.user.is_authenticated %}
+          <div class="mb-3">
+            <label for="anon_name" class="form-label">{% trans "Ваше имя" %}</label>
+            <input type="text" class="form-control" id="anon_name" name="anon_name" placeholder="{% trans 'Имя или Ник' %}">
+          </div>
+          <div class="mb-3">
+            <label for="anon_email" class="form-label">{% trans "Ваш Email" %}</label>
+            <input type="email" class="form-control" id="anon_email" name="anon_email" placeholder="{% trans 'Email для связи' %}">
+          </div>
+          {% endif %}
+          <div class="mb-3">
+            <label for="reason" class="form-label">{% trans "Причина жалобы" %}</label>
+            <textarea class="form-control" id="reason" name="reason" rows="4" required placeholder="{% trans 'Опишите проблему...' %}"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-between">
+          <button type="button" class="btn btn-outline-secondary rounded-pill" data-bs-dismiss="modal">
+            &times; {% trans "Отмена" %}
+          </button>
+          <button type="submit" class="btn btn-danger rounded-pill">
+            {% trans "Отправить жалобу" %}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const favButtons = document.querySelectorAll(".favorite-btn");
+    const csrftokenInput = document.querySelector('[name=csrfmiddlewaretoken]');
+    const csrftoken = csrftokenInput ? csrftokenInput.value : null;
+
+    favButtons.forEach(button => {
+        button.addEventListener("click", function(e) {
+            e.preventDefault();
+            const vacancyId = this.dataset.id;
+            const icon = this.querySelector("i");
+
+            fetch(`/vacancy/${vacancyId}/favorite/`, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken,
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                credentials: "same-origin"
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.is_favorite) {
+                    icon.classList.remove("bi-heart");
+                    icon.classList.add("bi-heart-fill");
+                    icon.style.color = "green";
+                    icon.style.transform = "scale(1.3)";
+                    setTimeout(() => icon.style.transform = "scale(1)", 200);
+                } else {
+                    icon.classList.remove("bi-heart-fill");
+                    icon.classList.add("bi-heart");
+                    icon.style.color = "";
+                }
+            })
+            .catch(err => console.error("Ошибка избранного:", err));
+        });
+    });
+});
+</script>
 
 {% endblock %}

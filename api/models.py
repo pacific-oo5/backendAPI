@@ -7,6 +7,8 @@ from userauth.models import CustomUser
 from .choices import STATUS_CHOICES, WORK_CHOICES, WORK_TIME_CHOICES, ACTION_CHOICES
 from django.utils.translation import gettext_lazy as _
 
+from .validators import phone_validator, validate_positive, validate_min_length, validate_text_only
+
 
 class Vacancy(models.Model):
     user = models.ForeignKey(
@@ -19,15 +21,18 @@ class Vacancy(models.Model):
     title = models.CharField(
         verbose_name=_('Название'),
         max_length=100,
-        help_text=_('Название вакансии, например: Python разработчик')
+        help_text=_('Название вакансии, например: Python разработчик'),
+        validators=[validate_min_length]
     )
     description = models.TextField(
         verbose_name=_('Описание'),
-        help_text=_('Краткое описание вакансии')
+        help_text=_('Краткое описание вакансии'),
+        validators=[validate_min_length]
     )
     about_me = models.TextField(
         verbose_name=_('О вас или компании'),
-        help_text=_('Информация о работодателе или команде')
+        help_text=_('Информация о работодателе или команде'),
+        validators=[validate_min_length]
     )
     work_type = models.CharField(
         verbose_name=_('Тип занятости'),
@@ -44,17 +49,20 @@ class Vacancy(models.Model):
         verbose_name=_('Зарплата'),
         help_text=_('Укажите зарплату в сомах'),
         blank=True,
-        null=True
+        null=True,
+        validators=[validate_positive]
     )
     country = models.CharField(
         null=True,
         verbose_name=_('Страна'),
-        help_text=_('Страна, где предлагается вакансия')
+        help_text=_('Страна, где предлагается вакансия'),
+        validators=[validate_text_only]
     )
     city = models.CharField(
         null=True,
         verbose_name=_('Город'),
-        help_text=_('Город, где предлагается вакансия')
+        help_text=_('Город, где предлагается вакансия'),
+        validators=[validate_text_only]
     )
     is_remote = models.BooleanField(
         verbose_name=_('Удаленный'),
@@ -63,11 +71,13 @@ class Vacancy(models.Model):
     )
     requirements = models.TextField(
         verbose_name=_('Требования'),
-        help_text=_('Требуемые навыки и квалификация')
+        help_text=_('Требуемые навыки и квалификация'),
+        validators=[validate_min_length]
     )
     responsibilities = models.TextField(
         verbose_name=_('Обязанности'),
-        help_text=_('Что нужно будет делать на работе')
+        help_text=_('Что нужно будет делать на работе'),
+        validators=[validate_min_length]
     )
     published_at = models.DateTimeField(
         auto_now=True,
@@ -99,8 +109,8 @@ class VacancyView(models.Model):
     ip = models.GenericIPAddressField(null=True, blank=True)
     user_agent = models.TextField(null=True, blank=True)
     referrer = models.URLField(null=True, blank=True)
-    country = models.CharField(max_length=50, blank=True, null=True)
-    city = models.CharField(max_length=50, blank=True, null=True)
+    country = models.CharField(max_length=50, blank=True, null=True, validators=[validate_text_only])
+    city = models.CharField(max_length=50, blank=True, null=True, validators=[validate_text_only])
 
     action = models.CharField(max_length=20, choices=ACTION_CHOICES, default="view")
 
@@ -156,31 +166,39 @@ class Anketa(models.Model):
     )
     title = models.CharField(
         verbose_name=_('Название'),
-        help_text=_('Название анкеты, например: Backend разработчик')
+        help_text=_('Название анкеты, например: Backend разработчик'),
+        validators=[validate_min_length]
     )
     about_me = models.TextField(
         verbose_name=_('Обо мне'),
-        help_text=_('Расскажите кратко о себе, навыках и целях')
+        help_text=_('Расскажите кратко о себе, навыках и целях'),
+        validators=[validate_min_length]
     )
     experience = models.TextField(
         verbose_name=_('Опыт работы'),
-        help_text=_('Опишите, где и кем вы работали ранее')
+        help_text=_('Опишите, где и кем вы работали ранее'),
+        validators=[validate_min_length]
     )
     country = models.CharField(
         null=True,
         verbose_name=_('Страна'),
-        help_text=_('Укажите страну проживания')
+        help_text=_('Укажите страну проживания'),
+        validators=[validate_text_only]
     )
     city = models.CharField(
         null=True,
         verbose_name=_('Город'),
-        help_text=_('Укажите город проживания')
+        help_text=_('Укажите город проживания'),
+        validators=[validate_text_only]
     )
+
     phone_number = models.CharField(
-        max_length=20,
+        max_length=16,
         verbose_name=_('Телефон'),
-        help_text=_('Введите номер телефона в формате +996XXXXXXXXX')
+        help_text=_('Введите номер телефона в международном формате: +<код страны><номер>'),
+        validators=[phone_validator]
     )
+
     is_active = models.BooleanField(
         default=True,
         verbose_name=_('Активна ли анкета'),
@@ -204,9 +222,9 @@ class VacancyComplaint(models.Model):
         related_name='vacancy_complaints'
     )
     vacancy = models.ForeignKey(Vacancy, on_delete=models.CASCADE, related_name='complaints')
-    reason = models.TextField()  # причина жалобы
-    anon_name = models.CharField(max_length=100, blank=True, null=True)  # имя анонима
-    anon_email = models.EmailField(blank=True, null=True)  # email анонима
+    reason = models.TextField(validators=[validate_min_length])
+    anon_name = models.CharField(max_length=100, blank=True, null=True)
+    anon_email = models.EmailField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

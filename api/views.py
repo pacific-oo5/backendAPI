@@ -307,3 +307,18 @@ def vacancy_complaint(request, vacancy_id):
 
     messages.success(request, _("Жалоба отправлена."))
     return redirect(request.META.get('HTTP_REFERER', '/'))
+
+
+@login_required
+def toggle_favorite(request, vacancy_id):
+    vacancy = get_object_or_404(Vacancy, id=vacancy_id)
+    user = request.user
+
+    if user in vacancy.favorite_by.all():
+        vacancy.favorite_by.remove(user)
+        is_favorite = False
+    else:
+        vacancy.favorite_by.add(user)
+        is_favorite = True
+
+    return JsonResponse({"is_favorite": is_favorite})

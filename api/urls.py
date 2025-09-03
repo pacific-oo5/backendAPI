@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import AnketaCreateView, VacancyCreateView, VacancyListView, vacancy_delete, vacancy_toggle, \
     VacancyUpdateView, VacancyDetailView, vacancy_stats, respond_to_vacancy, \
-    AnketaDetailView, AnketaUpdateView, response_update_status, vacancy_complaint
+    AnketaDetailView, AnketaUpdateView, response_update_status, vacancy_complaint, toggle_favorite
 
 app_name = 'api'
 urlpatterns = [
@@ -15,6 +15,7 @@ urlpatterns = [
     path('vacancies/<int:pk>/respond/', respond_to_vacancy, name='respond_to_vacancy'),
     path('response/<int:pk>/update-status/', response_update_status, name='response_update_status'),
     path('vacancy/<int:vacancy_id>/complaint/', vacancy_complaint, name='vacancy_complaint'),
+    path("vacancy/<int:vacancy_id>/favorite/", toggle_favorite, name="toggle_favorite"),
 ]
 
 urlpatterns += [
