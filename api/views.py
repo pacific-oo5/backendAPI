@@ -152,14 +152,19 @@ def vacancy_toggle(request, pk):
 def vacancy_stats(request, pk):
     vacancy = get_object_or_404(Vacancy, pk=pk, user=request.user)
     views_count = VacancyView.objects.filter(vacancy=vacancy).count()
-    responses_count = VacancyResponse.objects.filter(vacancy=vacancy).count()
+    responses = VacancyResponse.objects.filter(vacancy=vacancy).select_related("anketa__user")
+
     stats = {
         "views": views_count,
-        "responses": responses_count,
+        "responses": responses.count(),
         "created": vacancy.published_at,
         "is_active": vacancy.is_active,
     }
-    return render(request, "vacancy/vacancy_stats.html", {"vacancy": vacancy, "stats": stats})
+    return render(
+        request,
+        "vacancy/vacancy_stats.html",
+        {"vacancy": vacancy, "stats": stats, "responses": responses},
+    )
 
 
 @require_POST

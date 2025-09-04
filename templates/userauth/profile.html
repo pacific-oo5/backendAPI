@@ -167,6 +167,15 @@
                                         <div class="card-footer bg-transparent">
                                             <div class="d-flex justify-content-between">
                                                 <a href="{% url 'api:vacancy_update' vacancy.id %}" class="btn btn-sm btn-outline-primary">{% trans "Редактировать" %}</a>
+                                                <a href="{% url 'api:vacancy_stats' vacancy.id %}"
+                                                   class="btn btn-sm btn-primary position-relative">
+                                                  {% trans "Статистика" %}
+                                                  {% if vacancy.responses.count %}
+                                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                                      {{ vacancy.responses.count }}
+                                                    </span>
+                                                  {% endif %}
+                                                </a>
                                                 <a href="{% url 'api:vacancy_detail' vacancy.id %}" class="btn btn-sm btn-primary">{% trans "Посмотреть" %}</a>
                                             </div>
                                         </div>
@@ -491,15 +500,15 @@
 </script>
 
     <script>
-        function toggleSelect(btn) {
-          const block = btn.nextElementSibling;
-          if (block.classList.contains("d-none")) {
-              block.classList.remove("d-none");
-              block.style.maxHeight = block.scrollHeight + "px";
-          } else {
-              block.style.maxHeight = "0";
-              setTimeout(() => block.classList.add("d-none"), 300); // совпадает с transition
-          }
-        }
-</script>
+            function toggleSelect(btn) {
+              const block = btn.nextElementSibling;
+              if (block.classList.contains("d-none")) {
+                  block.classList.remove("d-none");
+                  block.style.maxHeight = block.scrollHeight + "px";
+              } else {
+                  block.style.maxHeight = "0";
+                  setTimeout(() => block.classList.add("d-none"), 300); // совпадает с transition
+              }
+            }
+    </script>
 {% endblock %}

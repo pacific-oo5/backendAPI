@@ -8,49 +8,15 @@
   </h4>
 
   <ul class="list-group mt-3">
-    <!-- Отклики -->
     <li class="list-group-item">
       {% blocktrans with responses=stats.responses %}Отклики: {{ responses }}{% endblocktrans %}
     </li>
-
-    <!-- Просмотры -->
     <li class="list-group-item">
       {% blocktrans with views=stats.views %}Просмотры: {{ views }}{% endblocktrans %}
     </li>
-
-    <!-- Уникальные пользователи -->
-    <li class="list-group-item">
-      {% blocktrans with uniq=stats.unique_users %}Уникальные пользователи: {{ uniq }}{% endblocktrans %}
-    </li>
-
-    <!-- Уникальные IP -->
-    <li class="list-group-item">
-      {% blocktrans with uniq_ip=stats.unique_ips %}Уникальные IP: {{ uniq_ip }}{% endblocktrans %}
-    </li>
-
-    <!-- Последние просмотры -->
-    <li class="list-group-item">
-      {% trans "Последние просмотры:" %}
-      <ul class="mt-2">
-        {% for view in stats.last_views %}
-          <li>
-            {{ view.viewed_at|date:"d.m.Y H:i" }}
-            {% if view.user %} — {{ view.user.username }}{% endif %}
-            {% if view.ip %} (IP: {{ view.ip }}){% endif %}
-            {% if view.referrer %} → {{ view.referrer }}{% endif %}
-          </li>
-        {% empty %}
-          <li>{% trans "Нет просмотров" %}</li>
-        {% endfor %}
-      </ul>
-    </li>
-
-    <!-- Дата создания -->
     <li class="list-group-item">
       {% blocktrans with created=stats.created|date:"d.m.Y H:i" %}Создана: {{ created }}{% endblocktrans %}
     </li>
-
-    <!-- Статус -->
     <li class="list-group-item">
       {% trans "Статус:" %}
       {% if stats.is_active %}
@@ -61,5 +27,103 @@
     </li>
   </ul>
 </div>
+
+<hr>
+
+<div class="container py-4">
+  <h5>{% trans "Отклики" %}</h5>
+  {% if responses %}
+    <div class="list-group">
+      {% for response in responses %}
+      <div class="list-group-item list-group-item-action mb-3 rounded-3 response-item">
+        <div class="d-flex w-100 justify-content-between">
+          <h6 class="mb-1">{{ response.anketa.title }}</h6>
+          <small class="text-muted">{{ response.responded_at|date:"d.m.Y H:i" }}</small>
+        </div>
+        <p class="mb-1">
+          {% trans "Отклик от" %} {{ response.anketa.user.username }} ({{ response.anketa.user.email }})
+        </p>
+        <div class="d-flex justify-content-between align-items-center mt-2">
+        {% if request.user == response.vacancy.user %}
+                                            <form method="post" action="{% url 'api:response_update_status' response.id %}"
+                                                  class="d-flex gap-2 align-items-center">
+                                              {% csrf_token %}
+
+                                              <!-- Текущий статус -->
+                                              <span class="badge
+                                                {% if response.status == 'pending' %} bg-info
+                                                {% elif response.status == 'accepted' %} bg-success
+                                                {% elif response.status == 'rejected' %} bg-danger
+                                                {% endif %}">
+                                                {% if response.status == 'pending' %}
+                                                  {% trans "Ожидание" %}
+                                                {% elif response.status == 'accepted' %}
+                                                  {% trans "Принято" %}
+                                                {% elif response.status == 'rejected' %}
+                                                  {% trans "Отклонено" %}
+                                                {% endif %}
+                                              </span>
+
+                                              {% if response.status == 'pending' %}
+                                                <!-- Кнопка показать выбор -->
+                                                <button type="button" class="btn btn-sm btn-outline-primary"
+                                                        onclick="toggleSelect(this)">
+                                                  {% trans "Изменить" %}
+                                                </button>
+
+                                                <!-- Скрытая форма выбора -->
+                                                <div class="status-select collapse-anim d-none">
+                                                    <select name="status" class="form-select form-select-sm" style="margin-bottom: 3px">
+                                                        <option value="accepted">{% trans "Принято" %}</option>
+                                                        <option value="rejected">{% trans "Отклонено" %}</option>
+                                                    </select>
+                                                    <button type="submit" class="btn btn-sm btn-success">{% trans "Отправить" %}</button>
+                                                </div>
+                                              {% endif %}
+                                            </form>
+                                          {% endif %}
+
+          <a href="{% url 'api:anketa_detail' response.anketa.id %}" class="btn btn-sm btn-outline-primary">{% trans "Анкета" %}</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card p-4 text-center">
+      <i class="bi bi-chat-dots display-5 text-muted mb-3"></i>
+      <p class="text-muted">{% trans "У этой вакансии пока нет откликов" %}</p>
+    </div>
+  {% endif %}
+</div>
+
+    <style>
+        .collapse-anim {
+              overflow: hidden;
+              max-height: 0;
+              transition: max-height 0.3s ease;
+        }
+        .response-item {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .response-item:hover {
+            background-color: #f8f9fa;
+            border-color: #6366f1;
+        }
+</style>
+
+        <script>
+            function toggleSelect(btn) {
+              const block = btn.nextElementSibling;
+              if (block.classList.contains("d-none")) {
+                  block.classList.remove("d-none");
+                  block.style.maxHeight = block.scrollHeight + "px";
+              } else {
+                  block.style.maxHeight = "0";
+                  setTimeout(() => block.classList.add("d-none"), 300); // совпадает с transition
+              }
+            }
+    </script>
 
 {% endblock %}
