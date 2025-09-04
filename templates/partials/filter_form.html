@@ -32,12 +32,12 @@
         </select>
     </div>
     <div class="col-6 col-md-3">
-        <input type="number" name="min_salary" class="form-control no-spinner" 
+        <input type="number" inputmode="numeric" pattern="\d*" name="min_salary" class="form-control no-spinner"
            placeholder="{% trans 'ЗП от' %}" value="{{ min_salary }}"
            min="0" max="999999999" step="1" oninput="validity.valid||(value='');">
     </div>
     <div class="col-6 col-md-3">
-        <input type="number" name="max_salary" class="form-control no-spinner" 
+        <input type="number" inputmode="numeric" pattern="\d*" name="max_salary" class="form-control no-spinner"
            placeholder="{% trans 'ЗП до' %}" value="{{ max_salary }}"
            min="0" max="999999999" step="1" oninput="validity.valid||(value='');">
     </div>
