@@ -17,7 +17,7 @@
                 {% if not user.user_r %}
                 <a href="{% url 'api:anketa_edit' anketa.pk %}" class="btn btn-primary">{% trans "Редактировать" %}</a>
                 {% endif %}
-                <a href="{% url 'userauth:profile' %}" class="btn btn-secondary">{% trans "Назад" %}</a>
+                <a href="{{ request.META.HTTP_REFERER|default:'/profile' }}" class="btn btn-secondary">{% trans "Назад" %}</a>
             </div>
         </div>
     </div>
