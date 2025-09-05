@@ -2,7 +2,7 @@ import hashlib, hmac
 import json
 from django.contrib.auth import get_user_model
 from django.core.paginator import PageNotAnInteger, EmptyPage, Paginator
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views import generic, View
 from django.template.loader import render_to_string
 from django.db.models import Q
@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from api.choices import WORK_CHOICES, WORK_TIME_CHOICES
+from api.forms import VacancyForm
 from api.models import Vacancy, Anketa, VacancyResponse
 
 from django.http import JsonResponse, HttpResponse
@@ -121,10 +122,21 @@ class MiniAppFilterView(generic.ListView):
     paginate_by = 10
 
     def get_queryset(self):
+        # Берем параметры фильтров
+        query = self.request.GET.get("q")
+        work_type = self.request.GET.get("work_type")
+        work_time = self.request.GET.get("work_time")
+        min_salary = self.request.GET.get("min_salary")
+        max_salary = self.request.GET.get("max_salary")
+        is_remote = self.request.GET.get("is_remote")
+
+        # Если все пусто → возвращаем пустой queryset
+        if not any([query, work_type, work_time, min_salary, max_salary, is_remote]):
+            return Vacancy.objects.none()
+
+        # Строим запрос только если есть хотя бы один фильтр
         queryset = Vacancy.objects.filter(is_active=True).select_related('user').order_by("-published_at")
 
-        # Поиск по тексту
-        query = self.request.GET.get("q")
         if query:
             queryset = queryset.filter(
                 Q(title__icontains=query) |
@@ -133,28 +145,14 @@ class MiniAppFilterView(generic.ListView):
                 Q(country__icontains=query) |
                 Q(requirements__icontains=query)
             )
-
-        # Фильтр по типу работы
-        work_type = self.request.GET.get("work_type")
         if work_type:
             queryset = queryset.filter(work_type=work_type)
-
-        # Фильтр по времени работы
-        work_time = self.request.GET.get("work_time")
         if work_time:
             queryset = queryset.filter(work_time=work_time)
-
-        # Фильтр по зарплате
-        min_salary = self.request.GET.get("min_salary")
         if min_salary:
             queryset = queryset.filter(salary__gte=int(min_salary))
-
-        max_salary = self.request.GET.get("max_salary")
         if max_salary:
             queryset = queryset.filter(salary__lte=int(max_salary))
-
-        # Фильтр по удаленной работе
-        is_remote = self.request.GET.get("is_remote")
         if is_remote:
             queryset = queryset.filter(is_remote=(is_remote == 'true'))
 
@@ -615,3 +613,29 @@ def profile_data(request):
         'user_r': profile.user.user_r,
         'keywords': profile.filters or []
     })
+
+@csrf_exempt
+def vacancy_delete(request, pk):
+    if request.method == "DELETE":
+        vacancy = get_object_or_404(Vacancy, pk=pk)
+        vacancy.delete()
+        return JsonResponse({"success": True})
+    return JsonResponse({"success": False}, status=405)
+
+
+def vacancy_edit(request, pk):
+    vacancy = get_object_or_404(Vacancy, pk=pk)
+
+    if request.method == "POST":
+        form = VacancyForm(request.POST, instance=vacancy)
+        if form.is_valid():
+            form.save()
+            return redirect('miniapp:profile')
+        else:
+            print(form.errors)
+    else:
+        form = VacancyForm(instance=vacancy)
+
+
+    return render(request, 'miniapp/partials/vacancy_edit.html', {'form': form})
+

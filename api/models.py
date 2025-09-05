@@ -54,12 +54,14 @@ class Vacancy(models.Model):
     )
     country = models.CharField(
         null=True,
+        blank=True,
         verbose_name=_('Страна'),
         help_text=_('Страна, где предлагается вакансия'),
         validators=[validate_text_only]
     )
     city = models.CharField(
         null=True,
+        blank=True,
         verbose_name=_('Город'),
         help_text=_('Город, где предлагается вакансия'),
         validators=[validate_text_only]

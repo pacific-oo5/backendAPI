@@ -1,3 +1,4 @@
+{% load static %}
 <style>
     .vacancy-list {
         display: flex;
@@ -6,12 +7,14 @@
     }
 
     .vacancy-card {
+        text-decoration: none;
+        color: inherit;
         background-color: var(--tg-theme-secondary-bg-color, #f8f9fa);
+        border: 1px solid transparent;
         border-radius: 20px;
         padding: 24px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         transition: all 0.3s ease;
-        border: 1px solid transparent;
         cursor: pointer;
     }
 
@@ -77,7 +80,7 @@
 
 <div class="vacancy-list">
     {% for vacancy in vacancies %}
-        <div class="vacancy-card" data-vacancy-id="{{ vacancy.id }}">
+        <a href="{% url 'miniapp:vacancy_detail' vacancy.id %}" class="vacancy-card">
             <h3 class="vacancy-title">{{ vacancy.title }}</h3>
 
             <div class="vacancy-salary">
@@ -110,11 +113,25 @@
                     <span class="meta-tag">🌐 Удаленно</span>
                 {% endif %}
             </div>
-        </div>
+        </a>
     {% empty %}
+        <div class="emoji-container">
+                <div id="duck-animation-think" class="duck-animation"></div>
+            </div>
         <div class="no-results">
             <h3>😕 Вакансии не найдены</h3>
             <p>Попробуйте изменить параметры поиска</p>
         </div>
     {% endfor %}
 </div>
+
+<script>
+        {# FOR EMOJIES#}
+        var animation = lottie.loadAnimation({
+            container: document.getElementById('duck-animation-think'),
+            renderer: 'svg',
+            loop: true,
+            autoplay: true,
+            path: '{% static 'miniapp/emoji/_DUCK4_THINK_OUT.json' %}'
+        });
+</script>

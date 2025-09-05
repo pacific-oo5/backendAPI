@@ -240,20 +240,23 @@
         function getTgId() {
           return tg?.initDataUnsafe?.user?.id || null;
         }
+        const tgId = tg?.initDataUnsafe?.user?.id;
+
+        if (tgId) {
+            const currentUrl = new URL(window.location.href);
+            if (!currentUrl.searchParams.has("tg_id")) {
+                currentUrl.searchParams.set("tg_id", tgId);
+                window.location.replace(currentUrl.toString());
+            }
+        }
         tg.expand();
         const respondBtn = document.getElementById('respondBtn');
         const anketaSelect = document.getElementById('anketaSelect');
 
-        Telegram.WebApp.SettingsButton.show();
-        Telegram.WebApp.SettingsButton.onClick(() => {
-            // например, открыть страницу настроек в твоём mini app
-            window.location.href = "{% url 'miniapp:settings' %}";
-        });
-
         tg.BackButton.show();
         tg.BackButton.onClick(() => {
             window.history.back();
-            tg.BackButton.hide(); // Скрываем сразу после нажатия
+            tg.BackButton.hide();
         });
 
         if (respondBtn && anketaSelect) {

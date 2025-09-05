@@ -94,19 +94,15 @@
   }
 
   .response-status {
+      margin-left: 8px;
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 12px;
     font-weight: 500;
   }
 
-  .status-new {
+  .status-pending {
     background: #3b82f6;
-    color: white;
-  }
-
-  .status-viewed {
-    background: #f59e0b;
     color: white;
   }
 
@@ -126,37 +122,199 @@
     margin-top: 8px;
   }
 
-     /* Стили из вашего оригинала остаются без изменений */
-    .profile-wrapper { display: flex; justify-content: center; margin-top: 32px; padding: 0 12px; }
-    #profile-card { width: 100%; max-width: 420px; padding: 24px 20px; border-radius: 18px; background: var(--tg-theme-secondary-bg-color, #f7f8fa); box-shadow: 0 8px 24px rgba(0,0,0,0.08); position: relative; animation: cardIn .35s ease; }
-    @keyframes cardIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-    .profile-top { display: flex; gap: 16px; align-items: center; margin-bottom: 14px; }
-    .profile-avatar { min-width: 76px; width: 76px; height: 76px; border-radius: 50%; background: linear-gradient(135deg, #40a7e3, #2d8ac7); color: #fff; font-weight: 800; font-size: 28px; display: grid; place-items: center; box-shadow: 0 6px 16px rgba(64, 167, 227, 0.35); }
-    .profile-info { display: flex; flex-direction: column; gap: 4px; }
-    .profile-name { font-size: 18px; font-weight: 700; color: var(--tg-theme-text-color, #111); letter-spacing: -0.2px; }
-    .profile-email { color: var(--tg-theme-hint-color, #666); font-size: 14px; }
-    .profile-meta { margin-top: 10px; padding: 12px; border-radius: 14px; background: var(--tg-theme-bg-color, #fff); border: 1px solid var(--tg-theme-secondary-bg-color, #ececec); }
-    .meta-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 14px; color: var(--tg-theme-text-color, #222); }
-    .meta-row + .meta-row { border-top: 1px dashed var(--tg-theme-secondary-bg-color, #e5e5e5); }
-    .right-buttons { margin-top: 16px; display: flex; gap: 10px; justify-content: flex-end; align-items: center; }
-    .icon-button { border: none; background: transparent; font-size: 20px; cursor: pointer; color: var(--tg-theme-button-color, #40a7e3); transition: transform .15s ease, opacity .15s ease; }
-    .icon-button:hover { transform: translateY(-1px); opacity: 0.9; }
-    .btn { display: inline-block; padding: 10px 16px; border-radius: 12px; cursor: pointer; font-weight: 600; letter-spacing: .2px; border: 2px solid transparent; transition: all .2s ease; text-align: center; }
-    .btn.full { background: var(--tg-theme-button-color, #40a7e3); color: var(--tg-theme-button-text-color, #fff); }
-    .btn.outline { background: transparent; color: var(--tg-theme-button-color, #40a7e3); border-color: var(--tg-theme-button-color, #40a7e3); }
-    .btn.ghost { background: var(--tg-theme-secondary-bg-color, #f0f3f6); color: var(--tg-theme-text-color, #222); }
-    .btn:active { transform: translateY(1px); }
-    .overlay { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; z-index: 9999; background: rgba(0,0,0,0.30); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); animation: overlayFade .25s ease forwards; }
-    .overlay.show { display: flex; }
-    @keyframes overlayFade { from { opacity: 0; } to { opacity: 1; } }
-    .modal-card { width: 92%; max-width: 360px; background: var(--tg-theme-bg-color, #fff); border-radius: 18px; box-shadow: 0 16px 48px rgba(0,0,0,0.20); position: relative; padding: 20px 18px 16px; animation: modalIn .25s cubic-bezier(.2,.8,.2,1); border: 1px solid var(--tg-theme-secondary-bg-color, #ececec); }
-    @keyframes modalIn { from { transform: translateY(8px) scale(.98); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
-    .modal-close { position: absolute; top: 10px; right: 12px; width: 32px; height: 32px; font-size: 22px; border-radius: 50%; border: none; background: var(--tg-theme-secondary-bg-color, #f0f0f0); color: var(--tg-theme-text-color, #444); cursor: pointer; display: grid; place-items: center; transition: background .2s ease, transform .1s ease; }
+    .profile-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 32px;
+        padding: 0 12px;
+    }
+    .profile-card {
+        width: 100%;
+        max-width: 420px;
+        padding: 24px 20px;
+        border-radius: 18px;
+        background: var(--tg-theme-secondary-bg-color, #f7f8fa);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        position: relative;
+        animation: cardIn .35s ease;
+    }
+    @keyframes cardIn {
+        from { opacity: 0;
+            transform: translateY(8px);
+        } to {
+              opacity: 1;
+              transform: translateY(0);
+        }
+    }
+    .profile-top {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 14px;
+    }
+    .profile-avatar {
+        min-width: 76px;
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #40a7e3, #2d8ac7);
+        color: #fff;
+        font-weight: 800;
+        font-size: 28px;
+        display: grid;
+        place-items: center;
+        box-shadow: 0 6px 16px rgba(64, 167, 227, 0.35);
+    }
+    .profile-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    .profile-name {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--tg-theme-text-color, #111);
+        letter-spacing: -0.2px;
+    }
+    .profile-email {
+        color: var(--tg-theme-hint-color, #666);
+        font-size: 14px;
+    }
+    .profile-meta {
+        margin-top: 10px;
+        padding: 12px;
+        border-radius: 14px;
+        background: var(--tg-theme-bg-color, #fff);
+        border: 1px solid var(--tg-theme-secondary-bg-color, #ececec);
+    }
+    .meta-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0; font-size: 14px;
+        color: var(--tg-theme-text-color, #222);
+    }
+    .meta-row + .meta-row {
+        border-top: 1px dashed var(--tg-theme-secondary-bg-color, #e5e5e5);
+    }
+    .right-buttons {
+        margin-top: 16px;
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        align-items: center;
+    }
+    .icon-button {
+        border: none;
+        background: transparent;
+        font-size: 20px;
+        cursor: pointer;
+        color: var(--tg-theme-button-color, #40a7e3);
+        transition: transform .15s ease, opacity .15s ease;
+    }
+    .icon-button:hover {
+        transform: translateY(-1px);
+        opacity: 0.9;
+    }
+    .btn {
+        display: inline-block;
+        padding: 10px 16px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-weight: 600;
+        letter-spacing: .2px;
+        border: 2px solid transparent;
+        transition: all .2s ease;
+        text-align: center;
+    }
+    .btn.full {
+        background: var(--tg-theme-button-color, #40a7e3);
+        color: var(--tg-theme-button-text-color, #fff);
+    }
+    .btn.outline {
+        background: transparent;
+        color: var(--tg-theme-button-color, #40a7e3);
+        border-color: var(--tg-theme-button-color, #40a7e3);
+    }
+    .btn.ghost {
+        background: var(--tg-theme-secondary-bg-color, #f0f3f6);
+        color: var(--tg-theme-text-color, #222);
+    }
+    .btn:active {
+        transform: translateY(1px);
+    }
+    .overlay {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        background: rgba(0,0,0,0.30);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        animation: overlayFade .25s ease forwards; }
+    .overlay.show {
+        display: flex;
+    }
+    @keyframes overlayFade {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    .modal-card {
+        width: 92%;
+        max-width: 360px;
+        background: var(--tg-theme-bg-color, #fff);
+        border-radius: 18px;
+        box-shadow: 0 16px 48px rgba(0,0,0,0.20);
+        position: relative;
+        padding: 20px 18px 16px;
+        animation: modalIn .25s cubic-bezier(.2,.8,.2,1);
+        border: 1px solid var(--tg-theme-secondary-bg-color, #ececec); }
+    @keyframes modalIn {
+        from { transform: translateY(8px) scale(.98); opacity: 0; }
+        to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        width: 32px;
+        height: 32px;
+        font-size: 22px;
+        border-radius: 50%;
+        border: none;
+        background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+        color: var(--tg-theme-text-color, #444);
+        cursor: pointer;
+        display: grid;
+        place-items: center;
+        transition: background .2s ease, transform .1s ease;
+    }
     .modal-close:active { transform: scale(0.95); }
-    .modal-title { margin: 6px 0 10px; font-weight: 800; text-align: center; color: var(--tg-theme-text-color, #111); letter-spacing: -0.2px; }
-    #qrcode { display: flex; justify-content: center; align-items: center; padding: 6px; background: var(--tg-theme-secondary-bg-color, #f7f7f7); border-radius: 12px; margin: 10px auto 14px; }
-    #qrcode canvas, #qrcode img { width: 210px; height: 210px; border-radius: 8px; }
-    .share-actions { display: grid; gap: 10px; }
+    .modal-title {
+        margin: 6px 0 10px;
+        font-weight: 800;
+        text-align: center;
+        color: var(--tg-theme-text-color, #111);
+        letter-spacing: -0.2px; }
+    #qrcode {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 6px;
+        background: var(--tg-theme-secondary-bg-color, #f7f7f7);
+        border-radius: 12px;
+        margin: 10px auto 14px;
+    }
+    #qrcode canvas, #qrcode img {
+        width: 210px;
+        height: 210px;
+        border-radius: 8px;
+    }
+    .share-actions {
+        display: grid;
+        gap: 10px;
+    }
 </style>
 
 <div class="header">
@@ -268,7 +426,7 @@ async function loadProfile() {
                     <div class="profile-top">
                         <div class="profile-avatar">${initials}</div>
                         <div class="profile-info">
-                            <div class="profile-name">${user.username || (user.first_name || '')}</div>
+                            <div class="profile-name">${user.username || (user.email || '')}</div>
                             <div class="profile-email">${emailMasked}</div>
                         </div>
                     </div>
@@ -344,7 +502,7 @@ async function loadResponses() {
         if (data.status === "ok") {
             if (data.responses && data.responses.length > 0) {
                 responsesContainer.innerHTML = data.responses.map(response => `
-                    <div class="response-card">
+                    <div class="response-card" style="margin-bottom: 10px;">
                         <div class="response-header">
                             <div class="response-title">${response.title || 'Без названия'}</div>
                             <div class="response-status status-${response.status || 'new'}">
@@ -355,9 +513,6 @@ async function loadResponses() {
                             ${response.date ? `Дата: ${new Date(response.date).toLocaleDateString()}` : ''}
                             ${response.message ? `<br>Сообщение: ${response.message}` : ''}
                         </div>
-                        <div class="item-footer">
-                            <button class="item-btn">Посмотреть</button>
-                          </div>
                     </div>
                 `).join('');
             } else {
@@ -372,8 +527,7 @@ async function loadResponses() {
 
 function getStatusText(status) {
     const statusMap = {
-        'new': 'Новый',
-        'viewed': 'Просмотрено',
+        'pending': 'Ожидание',
         'accepted': 'Принято',
         'rejected': 'Отклонено'
     };
@@ -385,17 +539,14 @@ function loadMoreItems() {
     loadItems(currentItemsPage);
 }
 
-// Остальные функции (updateProfile, openModal, closeModal, shareNative, shareToTelegram, copyProfileUrl)
-// остаются без изменений, как в вашем оригинальном коде
 
 document.addEventListener('DOMContentLoaded', loadProfile);
 </script>
 
-<!-- Остальная часть кода с модальным окном и стилями остается без изменений -->
 <div id="overlay" class="overlay">
     <div class="modal-card">
         <button class="modal-close" aria-label="Close" onclick="closeModal()">×</button>
-        <h3 class="modal-title">Поделиться профилем</h3>
+            <h3 class="modal-title">Поделиться профилем</h3>
         <div id="qrcode"></div>
 
         <div class="share-actions">
@@ -406,7 +557,6 @@ document.addEventListener('DOMContentLoaded', loadProfile);
     </div>
 </div>
 
-<!-- QRCode.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
 
     <script>
@@ -541,11 +691,7 @@ function showVacancyStatistics(vacancyId) {
 }
 
 function editVacancy(vacancyId) {
-    Telegram.WebApp.showPopup({
-        title: 'Редактирование',
-        message: `Редактирование вакансии #${vacancyId}`,
-        buttons: [{type: 'ok'}]
-    });
+    window.location.href = `/miniapp/vacancies/${vacancyId}/edit/`;
 }
 
 function deleteVacancy(vacancyId) {
@@ -554,7 +700,7 @@ function deleteVacancy(vacancyId) {
         function(result) {
             if (result) {
                 // Здесь API запрос на удаление
-                fetch(`/api/vacancies/${vacancyId}/delete/`, {
+                fetch(`/miniapp/vacancies/${vacancyId}/delete/`, {
                     method: 'DELETE',
                     headers: {
                         'X-CSRFToken': getCSRFToken(),

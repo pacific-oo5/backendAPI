@@ -110,7 +110,7 @@
 
         <div class="filter-row">
             <input type="text" id="newKeyword" class="search-input" placeholder="Добавить слово..." onkeydown="if(event.key==='Enter'){addKeyword()}">
-            <button onclick="addKeyword()">Добавить</button>
+            <button onclick="addKeyword()" class="btn">Добавить</button>
         </div>
     </div>
     <div id="keywords-vacancies"></div>
@@ -123,6 +123,31 @@
 </div>
 
 <style>
+    :root{
+      --btn-bg: var(--tg-theme-button-color, #4f46e5);
+      --btn-text: var(--tg-theme-button-text-color, #fff);
+      --btn-bg-hover: #4338ca;
+      --btn-bg-active: #3730a3;
+    }
+    .btn{
+      -webkit-tap-highlight-color: transparent;
+      appearance: none;
+      border: 0;
+      outline: 0;
+      cursor: pointer;
+
+      padding: 12px 16px;
+      border-radius: 14px;
+      font: 600 15px/1.1 Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+
+      color: var(--btn-text);
+      background: var(--btn-bg);
+      box-shadow:
+        0 6px 16px rgba(0,0,0,.12),
+        inset 0 -2px 0 rgba(0,0,0,.15);
+
+      transition: transform .15s ease, box-shadow .2s ease, background .15s ease, opacity .2s ease;
+    }
     .tabs {
         display: flex;
         gap: 10px;
@@ -407,13 +432,16 @@ async function loadVacancies() {
     const params = new URLSearchParams({ page: currentPage, ...filters });
 
     try {
-        const response = await fetch(`?${params}`, {
-            headers: {'X-Requested-With':'XMLHttpRequest'}
+        // 🔹 Явно указываем правильный endpoint
+        const response = await fetch(`/miniapp/filter/?${params}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
         });
 
         if (response.ok) {
             const data = await response.json();
-            const container = document.getElementById('vacancy-container');
+
+            // 🔹 Используем тот контейнер, который реально есть
+            const container = document.getElementById('search-vacancies');
 
             if (currentPage === 1) {
                 container.innerHTML = data.html;
@@ -423,7 +451,7 @@ async function loadVacancies() {
 
             if (data.has_next) currentPage++;
         }
-    } catch(err) {
+    } catch (err) {
         console.error('Ошибка загрузки вакансий:', err);
     } finally {
         isLoading = false;
@@ -507,6 +535,7 @@ function renderFilters(filters) {
         filters.forEach(f => {
             const li = document.createElement("li");
             li.innerHTML = `${f} <span onclick="removeKeyword('${f}')">✖</span>`;
+            li.style.backgroundColor = "var(--tg-theme-bg-color, #ffffff)";
             list.appendChild(li);
         });
     }

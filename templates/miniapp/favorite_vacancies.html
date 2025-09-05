@@ -32,12 +32,6 @@
 <script>
 const tg = window.Telegram.WebApp;
 tg.expand();
-Telegram.WebApp.SettingsButton.show();
-
-Telegram.WebApp.SettingsButton.onClick(() => {
-    // например, открыть страницу настроек в твоём mini app
-    window.location.href = "{% url 'miniapp:settings' %}";
-});
 
 {% if not has_tg_id %}
 // Если TG ID не передан в шаблоне, получаем его через JavaScript
@@ -74,10 +68,11 @@ if (!initData) {
         {# FOR EMOJIES#}
         var animation = lottie.loadAnimation({
             container: document.getElementById('duck-animation-heart'),
-            renderer: 'svg',       // или 'canvas'
+            renderer: 'svg',
             loop: true,
             autoplay: true,
-            path: "{% static 'miniapp/emoji/47_HEARTS_OUT.json  ' %}"
+            path: "{% static 'miniapp/emoji/47_HEARTS_OUT.json' %}"
         });
     </script>
+
 {% endblock %}

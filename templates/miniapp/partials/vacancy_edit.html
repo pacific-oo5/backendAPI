@@ -1,0 +1,194 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Редактировать: {{ form.instance.title }}</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+html {scroll-behavior: smooth;}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.5;
+    padding: 16px;
+    margin-top: 60px;
+    padding-bottom: 120px;
+    background-color: var(--tg-theme-bg-color, #f5f6f7);
+    color: var(--tg-theme-text-color, #000000);
+}
+
+.header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--tg-theme-secondary-bg-color, #f0f0f0);
+        }
+.container {
+    max-width: 480px;
+    margin: 0 auto;
+    background: var(--tg-theme-secondary-bg-color, #f8f9fa);
+    color: var(--tg-theme-text-color, #000000);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    text-align: center;
+    color: var(--tg-theme-text-color, #000000);
+}
+form { display: flex; flex-direction: column; gap: 14px; }
+label { font-weight: 500; font-size: 14px; margin-bottom: 4px; color: var(--tg-theme-text-color, #000000); }
+input[type="text"], input[type="number"], textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #000;
+    font-size: 14px;
+    transition: border 0.2s;
+}
+input:focus, textarea:focus { border-color: #40a7e3; outline: none; }
+textarea { resize: none; }
+.checkbox-group { display: flex; align-items: center; gap: 10px; color: var(--tg-theme-text-color, #000000); }
+.checkbox-group input { width: 20px; height: 20px; }
+button {
+    padding: 14px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--tg-theme-text-color, #000000);
+}
+button.save { background-color: #40a7e3; color: var(--tg-theme-text-color, #000000); }
+button.save:active { transform: scale(0.95); color: var(--tg-theme-text-color, #000000); }
+button.cancel { background-color: #f0f0f0; color: #333; }
+.button-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.card-select { padding: 12px; border-radius: 12px; border: 1px solid #ccc; cursor: pointer; text-align: center; transition: all 0.2s ease; }
+.card-select.active {
+    border-color: #40a7e3;
+    background: var(--tg-theme-secondary-bg-color, #f8f9fa);
+}
+.card-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+</style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Редактировать вакансию</h1>
+    </div>
+
+<div class="container">
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label for="id_title">Название вакансии</label>
+        {{ form.title }}
+
+        <label for="id_description">Описание</label>
+        {{ form.description }}
+
+        <label for="id_about_me">О компании</label>
+        {{ form.about_me }}
+
+        <label>Тип работы</label>
+        <div class="card-container" id="workTypeContainer">
+            {% for key, value in form.fields.work_type.choices %}
+            <div class="card-select" data-value="{{ key }}">{{ value }}</div>
+            {% endfor %}
+        </div>
+        <input type="hidden" name="work_type" id="id_work_type" value="{{ form.initial.work_type }}">
+
+        <label>График работы</label>
+        <div class="card-container" id="workTimeContainer">
+            {% for key, value in form.fields.work_time.choices %}
+            <div class="card-select" data-value="{{ key }}">{{ value }}</div>
+            {% endfor %}
+        </div>
+        <input type="hidden" name="work_time" id="id_work_time" value="{{ form.initial.work_time }}">
+
+        <label>Страна</label>
+        {{ form.country }}
+
+        <label>Город</label>
+        {{ form.city }}
+
+        <label for="id_salary">Зарплата</label>
+        {{ form.salary }}
+
+        <div class="checkbox-group">
+            {{ form.is_remote }} <span>Удалённая работа</span>
+        </div>
+        <div class="checkbox-group">
+            {{ form.is_active }} <span>Активна</span>
+        </div>
+
+        <label for="id_requirements">Требования</label>
+        {{ form.requirements }}
+
+        <label for="id_responsibilities">Обязанности</label>
+        {{ form.responsibilities }}
+
+        <div class="button-group">
+            <button type="submit" class="save">Сохранить</button>
+            <button type="button" class="cancel" onclick="window.history.back()">Отмена</button>
+        </div>
+    </form>
+</div>
+
+<script>
+const tg = window.Telegram?.WebApp;
+tg.expand();
+tg.BackButton.show();
+tg.BackButton.onClick(() => { window.history.back(); tg.BackButton.hide(); });
+
+// Карточки выбора
+function setupCardSelect(containerId, hiddenInputId) {
+    const container = document.getElementById(containerId);
+    const hiddenInput = document.getElementById(hiddenInputId);
+    const cards = container.querySelectorAll('.card-select');
+
+    cards.forEach(card => {
+        if (card.dataset.value === hiddenInput.value) card.classList.add('active');
+        card.addEventListener('click', () => {
+            cards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            hiddenInput.value = card.dataset.value;
+            hiddenInput.dispatchEvent(new Event('change'));
+        });
+    });
+}
+
+// Инициализация карточек
+setupCardSelect('workTypeContainer', 'id_work_type');
+setupCardSelect('workTimeContainer', 'id_work_time');
+
+// Скрытие зарплаты для практики
+const workTypeInput = document.getElementById('id_work_type');
+const salaryInput = document.getElementById('id_salary');
+function toggleSalary() {
+    if (workTypeInput.value === 'practice') {
+        salaryInput.value = '';
+        salaryInput.disabled = true;
+    } else {
+        salaryInput.disabled = false;
+    }
+}
+workTypeInput.addEventListener('change', toggleSalary);
+toggleSalary();
+</script>
+
+</body>
+</html>
