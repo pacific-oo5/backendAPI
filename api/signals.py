@@ -1,10 +1,10 @@
 import logging
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from userauth.models import TelegramProfile
 from .models import Vacancy, VacancyResponse
-from telegram_bot.telegram_utils import notify_users, notify_vacancy_author
+from telegram_bot.telegram_utils import notify_users, notify_vacancy_author, notify_status_change
 import asyncio
 import threading
 
@@ -27,7 +27,6 @@ def run_async_in_thread(coroutine):
 @receiver(post_save, sender=Vacancy)
 def vacancy_created(sender, instance, created, **kwargs):
     if created:
-        logger.info(f"Вакансия создана: {instance.title}, запускаю уведомления...")
         user_id = instance.user.id
         run_async_in_thread(notify_users(instance, user_id))
         # Запускаем асинхронную задачу в отдельном потоке
@@ -41,4 +40,23 @@ def vacancy_response_created(sender, instance, created, **kwargs):
         if profile and profile.telegram_id:
             run_async_in_thread(notify_vacancy_author(profile.telegram_id, instance))
         else:
-            logger.info(f"Автор вакансии {instance.vacancy.user.id} не подключил Telegram")
+            pass
+
+
+@receiver(pre_save, sender=VacancyResponse)
+def vacancy_response_status_changed(sender, instance, **kwargs):
+    if not instance.pk:
+        return  # новый объект, статус не менялся
+
+    try:
+        old_instance = VacancyResponse.objects.get(pk=instance.pk)
+    except VacancyResponse.DoesNotExist:
+        return
+
+    # проверка изменения статуса
+    if old_instance.status != instance.status and instance.status in ['accepted', 'rejected']:
+        profile = TelegramProfile.objects.filter(user=instance.worker).first()
+        if profile and profile.telegram_id:
+            run_async_in_thread(
+                notify_status_change(profile.telegram_id, instance)
+            )

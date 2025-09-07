@@ -84,3 +84,21 @@ async def notify_vacancy_author(telegram_id, response):
     finally:
         await bot.session.close()
 
+
+async def notify_status_change(telegram_id, response):
+    bot = get_bot()
+    try:
+        status_text = "✅ Принят" if response.status == "accepted" else "❌ Отклонён"
+        text = (
+            f"Ваш отклик на вакансию «{response.vacancy.title}» был обновлён.\n\n"
+            f"Статус: {status_text}"
+        )
+
+        await bot.send_message(chat_id=telegram_id, text=text)
+        logger.info(f"Уведомление воркеру {telegram_id} отправлено")
+
+    except Exception as e:
+        logger.error(f"Ошибка notify_status_change: {e}")
+
+    finally:
+        await bot.session.close()
