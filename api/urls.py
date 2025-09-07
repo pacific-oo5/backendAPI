@@ -1,7 +1,21 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from .views import AnketaCreateView, VacancyCreateView, VacancyListView, vacancy_delete, vacancy_toggle, \
     VacancyUpdateView, VacancyDetailView, vacancy_stats, respond_to_vacancy, \
     AnketaDetailView, AnketaUpdateView, response_update_status, vacancy_complaint, toggle_favorite
+from .api import (
+    VacancyViewSet,
+    VacancyResponseViewSet
+)
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
+router = DefaultRouter()
+
+router.register(r'vacancies', VacancyViewSet, basename="vacancy")
+router.register(r'responses', VacancyResponseViewSet, basename="vacancy-response")
 
 app_name = 'api'
 urlpatterns = [
@@ -16,6 +30,12 @@ urlpatterns = [
     path('response/<int:pk>/update-status/', response_update_status, name='response_update_status'),
     path('vacancy/<int:vacancy_id>/complaint/', vacancy_complaint, name='vacancy_complaint'),
     path("vacancy/<int:vacancy_id>/favorite/", toggle_favorite, name="toggle_favorite"),
+]
+
+urlpatterns += [
+    path("api/auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path('api/', include(router.urls)),
 ]
 
 urlpatterns += [
