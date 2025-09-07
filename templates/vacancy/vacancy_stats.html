@@ -11,9 +11,7 @@
     <li class="list-group-item">
       {% blocktrans with responses=stats.responses %}Отклики: {{ responses }}{% endblocktrans %}
     </li>
-    <li class="list-group-item">
-      {% blocktrans with views=stats.views %}Просмотры: {{ views }}{% endblocktrans %}
-    </li>
+ 
     <li class="list-group-item">
       {% blocktrans with created=stats.created|date:"d.m.Y H:i" %}Создана: {{ created }}{% endblocktrans %}
     </li>
