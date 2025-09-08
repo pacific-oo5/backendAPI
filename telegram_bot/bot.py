@@ -300,100 +300,15 @@ async def link_account(message: types.Message, state: FSMContext):
         return
 
 
-# --- Список фильтров ---
-@dp.message(Command("listfilters"))
-@dp.message(F.text.contains("📋"))
-async def list_filters(message: types.Message):
-    await message.delete()
-    try:
-        profile = await sync_to_async(lambda: TelegramProfile.objects.filter(telegram_id=message.from_user.id).first())()
-        if profile.filters:
-            await message.answer(
-                await get_text(message.from_user.id, 'filters_list') + ", ".join(profile.filters)
-            )
-        else:
-            await message.answer(await get_text(message.from_user.id, 'no_filters'))
-    except TelegramProfile.DoesNotExist:
-        await message.answer(await get_text(message.from_user.id, 'not_linked'))
-
-
 # --- Обработка неизвестных команд ---
 @dp.message()
 async def unknown_command(message: types.Message):
+    await message.delete()
     await message.answer(
         f"{await get_text(message.from_user.id, 'unknown_command')}\n"
         "/start, /help, /lang",
         reply_markup=await get_main_keyboard(message.from_user.id)
     )
-
-
-@dp.inline_query()
-async def inline_vacancy_search(inline_query: InlineQuery):
-    query = inline_query.query.strip().lower()
-    user_id = inline_query.from_user.id
-
-    if not query:
-        title = await get_text(user_id, 'inline_search_title')
-        description = await get_text(user_id, 'inline_search_description')
-        message = await get_text(user_id, 'inline_search_message')
-
-        keyboard = InlineKeyboardMarkup(
-            inline_keyboard=[
-                [InlineKeyboardButton(
-                    text="Другие вакансии",
-                    web_app=WebAppInfo(url="https://quality-herring-fine.ngrok-free.app"),  # твой URL
-                )]
-            ]
-        )
-
-        results = [InlineQueryResultArticle(
-            id="1", title=title, description=description,
-            input_message_content=InputTextMessageContent(message_text=message),
-        )]
-    else:
-        vacancies = await sync_to_async(
-            lambda: list(
-                Vacancy.objects.filter(
-                    title__icontains=query,
-                    is_active=True
-                ).order_by('-published_at')[:20]
-            )
-        )()
-
-        if not vacancies:
-            title = await get_text(user_id, 'inline_no_results_title')
-            description = await get_text(user_id, 'inline_no_results_description', query=query)
-            message = await get_text(user_id, 'inline_no_results_message', query=query)
-
-            results = [InlineQueryResultArticle(
-                id="no_results", title=title, description=description,
-                input_message_content=InputTextMessageContent(message_text=message)
-            )]
-        else:
-            results = []
-            for i, vacancy in enumerate(vacancies):
-                # Локализованное описание
-                salary_text = await get_text(user_id, 'salary')
-                location_text = await get_text(user_id, 'location')
-
-                description = f"{vacancy.salary} {salary_text} • {vacancy.city or location_text}"
-                if vacancy.work_type:
-                    description += f" • {vacancy.get_work_type_display()}"
-
-                view_text = await get_text(user_id, 'view_vacancy')
-
-
-                results.append(InlineQueryResultArticle(
-                    id=str(vacancy.id),
-                    title=vacancy.title,
-                    description=description,
-                    input_message_content=InputTextMessageContent(
-                        message_text=await format_vacancy_message(user_id, vacancy, query),
-                        parse_mode="HTML"
-                    ),
-                ))
-
-    await inline_query.answer(results, cache_time=60, is_personal=True)
 
 
 async def format_vacancy_message(user_id, vacancy, query):

@@ -89,8 +89,15 @@ async def notify_status_change(telegram_id, response):
     bot = get_bot()
     try:
         status_text = "✅ Принят" if response.status == "accepted" else "❌ Отклонён"
+        employer_profile = getattr(response.vacancy.user, "telegram_profile", None)
+        if employer_profile and employer_profile.username:
+            employer_contact = f"@{employer_profile.username}"
+        else:
+            employer_contact = "Работодатель не указал Telegram"
+
         text = (
             f"Ваш отклик на вакансию «{response.vacancy.title}» был обновлён.\n\n"
+            f"Контакт работодателя: {employer_contact}\n\n"
             f"Статус: {status_text}"
         )
 
