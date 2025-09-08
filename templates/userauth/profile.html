@@ -142,7 +142,43 @@
                         {% if user.user_r %}{% trans "Отклики" %}{% else %}{% trans "Мои отклики" %}{% endif %}
                     </button>
                 </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="favorites-tab" data-bs-toggle="tab" data-bs-target="#favorites"
+                            type="button" role="tab" aria-controls="favorites" aria-selected="false">
+                        {% trans "Избранное" %}
+                    </button>
+                </li>
             </ul>
+
+            <!-- Favorites Tab -->
+            <div class="tab-pane fade" id="favorites" role="tabpanel" aria-labelledby="favorites-tab">
+                {% if favorites %}
+                    <div class="row">
+                        {% for vacancy in favorites %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100 vacancy-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ vacancy.title }}</h5>
+                                    <p class="card-text text-muted">{{ vacancy.company_name }}</p>
+                                    <span class="badge bg-primary">{{ vacancy.salary }} СОМ</span>
+                                    <p class="card-text mt-2">{{ vacancy.description|truncatewords:20 }}</p>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <a href="{% url 'api:vacancy_detail' vacancy.id %}" class="btn btn-sm btn-primary">
+                                        {% trans "Посмотреть" %}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="card p-5 text-center">
+                        <i class="bi bi-heart display-4 text-muted mb-3"></i>
+                        <h5 class="text-muted">{% trans "У вас пока нет избранных вакансий" %}</h5>
+                    </div>
+                {% endif %}
+            </div>
 
             <!-- Tabs Content -->
             <div class="tab-content" id="profileTabsContent" data-aos="fade-up" data-aos-delay="300">

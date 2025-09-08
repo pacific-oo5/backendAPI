@@ -96,6 +96,8 @@ class ProfileView(View):
         vacancies = Vacancy.objects.filter(user=user) if user.user_r else None
         ankets = Anketa.objects.filter(user=user, is_active=True) if not user.user_r else None
         responses = None
+        favorites = user.favorite_vacancies.all()
+
         profile, created = TelegramProfile.objects.get_or_create(user=request.user)
         if not user.user_r:
             responses = VacancyResponse.objects.filter(worker=user).select_related('vacancy', 'anketa').order_by('-responded_at')
@@ -112,7 +114,7 @@ class ProfileView(View):
             'ankets': ankets,
             'responses': responses,
             'in_profile': True,
-
+            'favorites': favorites,
             "tg_connected": profile.is_connected,
             "tg_token": str(profile.token),
             "tg_name": f"{profile.first_name or ''} {profile.last_name or ''}".strip() or profile.username or "Без имени",
