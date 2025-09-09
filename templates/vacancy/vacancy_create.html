@@ -33,18 +33,18 @@
     </div>
 
     <div class="mt-4">
-  <button type="submit" class="btn btn-primary me-2">{% trans "Создать" %}</button>
-        <a href="{{ request.META.HTTP_REFERER|default:'{% url "userauth:profile" %}' }}"
-           class="btn btn-outline-secondary me-2">
-           {% trans "Отмена" %}
-      </a>
-        {% if request.resolver_match.url_name == 'api:vacancy_create' %}
-          <a href="{% url 'api:vacancy_delete' pk=vacancy.id %}"
-             class="btn btn-danger"
-             onclick="return confirm('{% trans "Вы уверены, что хотите удалить вакансию?" %}')">
-             {% trans "Удалить" %}
+      <button type="submit" class="btn btn-primary me-2">{% trans "Создать" %}</button>
+            <a href="{{ request.META.HTTP_REFERER|default:'{% url "userauth:profile" %}' }}"
+               class="btn btn-outline-secondary me-2">
+               {% trans "Отмена" %}
           </a>
-        {% endif %}
+            {% if request.resolver_match.url_name == 'api:vacancy_create' %}
+              <a href="{% url 'api:vacancy_delete' pk=vacancy.id %}"
+                 class="btn btn-danger"
+                 onclick="return confirm('{% trans "Вы уверены, что хотите удалить вакансию?" %}')">
+                 {% trans "Удалить" %}
+              </a>
+            {% endif %}
 </div>
   <script>
 document.addEventListener("DOMContentLoaded", function() {

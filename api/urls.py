@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from .views import AnketaCreateView, VacancyCreateView, VacancyListView, vacancy_delete, vacancy_toggle, \
     VacancyUpdateView, VacancyDetailView, vacancy_stats, respond_to_vacancy, \
-    AnketaDetailView, AnketaUpdateView, response_update_status, vacancy_complaint, toggle_favorite
+    AnketaDetailView, AnketaUpdateView, response_update_status, vacancy_complaint, toggle_favorite, anketa_delete
 from .api import (
     VacancyViewSet,
     VacancyResponseViewSet
@@ -42,4 +42,5 @@ urlpatterns += [
     path('anketa/create/', AnketaCreateView.as_view(), name='anketa_create'),
     path('anketa/<int:pk>/', AnketaDetailView.as_view(), name='anketa_detail'),
     path('anketa/<int:pk>/edit/', AnketaUpdateView.as_view(), name='anketa_edit'),
+    path('anketa/<int:pk>/delete/', anketa_delete, name='anketa_delete'),
 ]

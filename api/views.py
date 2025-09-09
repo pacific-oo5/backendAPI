@@ -215,8 +215,13 @@ class VacancyCreateView(LoginRequiredMixin, generic.CreateView):
 class AnketaCreateView(LoginRequiredMixin, generic.CreateView):
     model = Anketa
     form_class = AnketaForm
-    template_name = 'form/anketa_form.html'
-    success_url = reverse_lazy('userauth:profile')  # можно на список анкет
+    template_name = 'form/anketa_create.html'
+    success_url = reverse_lazy('userauth:profile')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['request'] = self.request
+        return kwargs
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -224,7 +229,7 @@ class AnketaCreateView(LoginRequiredMixin, generic.CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['in_create'] = True  # Устанавливаем False, так как это не страница профиля
+        context['in_create'] = True
         return context
 
 
@@ -254,17 +259,29 @@ class AnketaDetailView(LoginRequiredMixin, generic.DetailView):
         return super().get(request, *args, **kwargs)
 
 
-class AnketaUpdateView(LoginRequiredMixin, UserPassesTestMixin, generic.UpdateView):
+class AnketaUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Anketa
     form_class = AnketaForm
     template_name = 'form/anketa_form.html'
 
-    def get_success_url(self):
-        return reverse_lazy('api:anketa_detail', kwargs={'pk': self.object.pk}) # type: ignore
+    def get_queryset(self):
+        return Anketa.objects.filter(user=self.request.user)
 
-    def test_func(self):
-        # Только владелец анкеты может её редактировать
-        return self.get_object().user == self.request.user # type: ignore
+    def get_success_url(self):
+        return reverse('api:anketa_detail', kwargs={'pk': self.object.pk})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['anketa'] = self.object  # передаём anketa.id в шаблон
+        return context
+
+
+@require_POST
+@login_required
+def anketa_delete(request, pk):
+    anketa = get_object_or_404(Anketa, pk=pk, user=request.user)
+    anketa.delete()
+    return redirect('userauth:profile')
     
 
 @login_required
