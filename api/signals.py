@@ -1,4 +1,5 @@
 import logging
+from asgiref.sync import async_to_sync
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
@@ -11,52 +12,29 @@ import threading
 logger = logging.getLogger(__name__)
 
 
-def run_async_in_thread(coroutine):
+def run_async_in_thread(coro):
     def run():
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
         try:
-            loop.run_until_complete(coroutine)
-        finally:
-            loop.close()
-    thread = threading.Thread(target=run)
-    thread.daemon = True
-    thread.start()
+            asyncio.run(coro)
+        except Exception as e:
+            logger.error(f"Ошибка в run_async_in_thread: {e}")
+    threading.Thread(target=run, daemon=True).start()
 
 
 @receiver(post_save, sender=Vacancy)
 def vacancy_created(sender, instance, created, **kwargs):
     if created:
-        user_id = instance.user.id
-        run_async_in_thread(notify_users(instance, user_id))
-        # Запускаем асинхронную задачу в отдельном потоке
-        logger.info("Задача уведомлений запущена в отдельном потоке")
+        run_async_in_thread(notify_users(instance, instance.user.id))
+        logger.info("Уведомления о новой вакансии запущены")
 
 
+# Уведомляем работодателя о новом отклике
 @receiver(post_save, sender=VacancyResponse)
 def vacancy_response_created(sender, instance, created, **kwargs):
     if created:
-        profile = TelegramProfile.objects.filter(user=instance.vacancy.user).first()
-        if profile and profile.telegram_id:
-            run_async_in_thread(notify_vacancy_author(profile.telegram_id, instance))
+        employer_profile = TelegramProfile.objects.filter(user=instance.vacancy.user).first()
+        if employer_profile and employer_profile.telegram_id:
+            run_async_in_thread(notify_vacancy_author(employer_profile.telegram_id, instance))
+            logger.info(f"Уведомление работодателю {employer_profile.telegram_id} отправлено")
         else:
-            pass
-
-
-@receiver(pre_save, sender=VacancyResponse)
-def vacancy_response_status_changed(sender, instance, **kwargs):
-    if not instance.pk:
-        return  # новый объект, статус не менялся
-
-    try:
-        old_instance = VacancyResponse.objects.get(pk=instance.pk)
-    except VacancyResponse.DoesNotExist:
-        return
-
-    # проверка изменения статуса
-    if old_instance.status != instance.status and instance.status in ['accepted', 'rejected']:
-        profile = TelegramProfile.objects.filter(user=instance.worker).first()
-        if profile and profile.telegram_id:
-            run_async_in_thread(
-                notify_status_change(profile.telegram_id, instance)
-            )
+            logger.warning(f"Нет Telegram профиля у работодателя {instance.vacancy.user}")

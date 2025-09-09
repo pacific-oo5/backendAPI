@@ -88,8 +88,9 @@ async def notify_vacancy_author(telegram_id, response):
 async def notify_status_change(telegram_id, response):
     bot = get_bot()
     try:
+        employer_profile = await sync_to_async(lambda: getattr(response.vacancy.user, "telegram_profile", None))()
+
         status_text = "✅ Принят" if response.status == "accepted" else "❌ Отклонён"
-        employer_profile = getattr(response.vacancy.user, "telegram_profile", None)
         if employer_profile and employer_profile.username:
             employer_contact = f"@{employer_profile.username}"
         else:
@@ -105,7 +106,6 @@ async def notify_status_change(telegram_id, response):
         logger.info(f"Уведомление воркеру {telegram_id} отправлено")
 
     except Exception as e:
-        logger.error(f"Ошибка notify_status_change: {e}")
-
+        logger.error(f"Ошибка notify_status_change: {e}", exc_info=True)
     finally:
         await bot.session.close()

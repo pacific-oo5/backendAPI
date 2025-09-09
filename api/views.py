@@ -273,12 +273,23 @@ def response_update_status(request, pk):
     response = get_object_or_404(VacancyResponse, pk=pk, vacancy__user=request.user)
     status = request.POST.get('status')
 
-    if response.status == 'accepted':
+    if response.status == status:
         return redirect('profile')
 
     if status in dict(STATUS_CHOICES):
+        old_status = response.status
         response.status = status
         response.save()
+
+        # Если статус изменился на принятый или отклонён
+        if old_status != status and status in ['accepted', 'rejected']:
+            from telegram_bot.telegram_utils import notify_status_change
+            from .signals import run_async_in_thread
+            worker_profile = getattr(response.worker, 'telegram_profile', None)
+            if worker_profile and worker_profile.telegram_id:
+                run_async_in_thread(
+                    notify_status_change(worker_profile.telegram_id, response)
+                )
 
     return redirect('userauth:profile')
 

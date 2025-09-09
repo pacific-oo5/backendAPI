@@ -145,7 +145,7 @@ class VacancyResponse(models.Model):
         null=True,
         blank=True,
         related_name='responses',
-        verbose_name=_('Анкета')
+        verbose_name=_('Анкета'),
     )
 
     responded_at = models.DateTimeField(auto_now=True, null=True, blank=True)
