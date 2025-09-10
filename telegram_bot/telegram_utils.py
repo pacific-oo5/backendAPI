@@ -68,11 +68,18 @@ async def notify_users(vacancy: Vacancy, user_id):
 async def notify_vacancy_author(telegram_id, response):
     bot = get_bot()
     try:
+        worker_profile = await sync_to_async(lambda: getattr(response.vacancy.user, "telegram_profile", None))()
+        if worker_profile and worker_profile.username:
+            worker_contact = f"@{worker_profile.username}"
+        else:
+            worker_contact = "Работодатель не указал Telegram"
+
         text = (
             f"{await get_text(telegram_id, 'new_response', title=response.vacancy.title)}\n\n"
             f"{await get_text(telegram_id, 'candidate', username=response.worker.username,
                               experience=response.anketa.experience,
                               city=response.anketa.city or 'Remote')}"
+            f"Контакт работодателя: {worker_contact}\n\n"
         )
 
         await bot.send_message(chat_id=telegram_id, text=text)
