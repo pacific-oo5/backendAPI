@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from api.choices import WORK_CHOICES, WORK_TIME_CHOICES
-from api.forms import VacancyForm
+from api.forms import VacancyForm, AnketaForm
 from api.models import Vacancy, Anketa, VacancyResponse
 
 from django.http import JsonResponse, HttpResponse
@@ -639,3 +639,27 @@ def vacancy_edit(request, pk):
 
     return render(request, 'miniapp/partials/vacancy_edit.html', {'form': form})
 
+
+@csrf_exempt
+def anketa_delete(request, pk):
+    if request.method == "DELETE":
+        anketa = get_object_or_404(Anketa, pk=pk)
+        anketa.delete()
+        return JsonResponse({"success": True})
+    return JsonResponse({"success": False}, status=405)
+
+
+def anketa_edit(request, pk):
+    anketa = get_object_or_404(Anketa, pk=pk)
+
+    if request.method == "POST":
+        form = AnketaForm(request.POST, instance=anketa)
+        if form.is_valid():
+            form.save()
+            return redirect('miniapp:profile')  # или куда нужно после сохранения
+        else:
+            print(form.errors)
+    else:
+        form = AnketaForm(instance=anketa)
+
+    return render(request, 'miniapp/partials/anketa_edit.html', {'form': form})

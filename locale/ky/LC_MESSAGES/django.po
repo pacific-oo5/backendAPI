@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-21 20:05+0600\n"
-"PO-Revision-Date: 2025-08-20 20:14+0000\n"
+"POT-Creation-Date: 2025-09-10 13:22+0600\n"
+"PO-Revision-Date: 2025-09-10 14:09+0000\n"
 "Last-Translator:   <admin@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -19,7 +19,48 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Translated-Using: django-rosetta 0.10.2\n"
 
-#: .\api\choices.py:4
+#: .\api\admin.py:13 .\api\admin.py:92
+msgid "Основная информация"
+msgstr "Негизги маалымат"
+
+#: .\api\admin.py:16
+#| msgid "Вакансии"
+msgid "Детали вакансии"
+msgstr "Жумуш чоо-жайы"
+
+#: .\api\admin.py:19 .\api\models.py:75
+#: .\templates\vacancy\vacancy_detail.html:121
+msgid "Требования"
+msgstr "Талаптар"
+
+#: .\api\admin.py:23 .\api\admin.py:72 .\api\admin.py:102
+#| msgid "Статистика"
+msgid "Статус"
+msgstr "Статус"
+
+#: .\api\admin.py:55 .\api\models.py:133 .\templates\userauth\profile.html:320
+#| msgid "Вакансии"
+msgid "Вакансия"
+msgstr "Вакансия"
+
+#: .\api\admin.py:59
+#| msgid "Соискатель:"
+msgid "Соискатель"
+msgstr "Жумуш издөөчү"
+
+#: .\api\admin.py:95 .\api\models.py:180
+#| msgid "Время работы"
+msgid "Опыт работы"
+msgstr "Тажрыйба"
+
+#: .\api\admin.py:99
+#| msgid "Контакты"
+msgid "Контактные данные"
+msgstr "Байланыш маалыматтары"
+
+#: .\api\choices.py:4 .\templates\userauth\profile.html:271
+#: .\templates\userauth\profile.html:291
+#: .\templates\vacancy\vacancy_stats.html:57
 msgid "Ожидание"
 msgstr "Күтүү"
 
@@ -37,7 +78,7 @@ msgstr "Жумуш"
 
 #: .\api\choices.py:11
 msgid "Практика"
-msgstr ""
+msgstr "Практика"
 
 #: .\api\choices.py:15
 msgid "Гибкий график"
@@ -53,275 +94,255 @@ msgstr "Дем алыш күндөрү"
 
 #: .\api\choices.py:21
 msgid "Просмотр"
-msgstr ""
+msgstr "Көрүү"
 
 #: .\api\choices.py:22
-#, fuzzy
 #| msgid "Отклик:"
 msgid "Отклик"
-msgstr "Жооп:"
+msgstr "Жооп"
 
-#: .\api\models.py:13
-#, fuzzy
+#: .\api\models.py:18
 #| msgid "Последние вакансии"
 msgid "Владелец вакансии"
-msgstr "Акыркы вакансиялар"
-
-#: .\api\models.py:14
-#, fuzzy
-#| msgid "Посмотреть вакансии"
-msgid "Пользователь, разместивший вакансию"
-msgstr "Вакансияларды көрүү"
-
-#: .\api\models.py:17 .\api\models.py:147
-#, fuzzy
-#| msgid "Ожидание"
-msgid "Название"
-msgstr "Күтүү"
+msgstr "Жумуш жарыялоо ээси"
 
 #: .\api\models.py:19
-msgid "Название вакансии, например: Python разработчик"
-msgstr ""
+#| msgid "Посмотреть вакансии"
+msgid "Пользователь, разместивший вакансию"
+msgstr "Вакансияны жарыялаган колдонуучу"
 
-#: .\api\models.py:22
-#, fuzzy
+#: .\api\models.py:22 .\api\models.py:170
+#| msgid "Ожидание"
+msgid "Название"
+msgstr "Аты"
+
+#: .\api\models.py:24
+msgid "Название вакансии, например: Python разработчик"
+msgstr "Жумуштун аталышы, мисалы: Python иштеп чыгуучусу"
+
+#: .\api\models.py:28
 #| msgid "Ожидание"
 msgid "Описание"
-msgstr "Күтүү"
+msgstr "Баяндоо"
 
-#: .\api\models.py:23
-#, fuzzy
+#: .\api\models.py:29
 #| msgid "Описание вакансии"
 msgid "Краткое описание вакансии"
-msgstr "Вакансиянын сүрөттөмөсү"
+msgstr "Вакансиянын кыскача баяндоосу"
 
-#: .\api\models.py:26
-#, fuzzy
+#: .\api\models.py:33
 #| msgid "О компании"
 msgid "О вас или компании"
-msgstr "Компания жөнүндө"
+msgstr "Сиз жөнүндө же компания тууралуу"
 
-#: .\api\models.py:27
+#: .\api\models.py:34
 msgid "Информация о работодателе или команде"
-msgstr ""
+msgstr "Иш берүүчү же команда жөнүндө маалымат"
 
-#: .\api\models.py:30 .\templates\partials\filter_form.html:20
+#: .\api\models.py:38 .\templates\partials\filter_form.html:20
 msgid "Тип занятости"
 msgstr "Жумуштун түрү"
 
-#: .\api\models.py:33
+#: .\api\models.py:41
 msgid "Выберите тип занятости: полная или частичная"
-msgstr ""
+msgstr "Жумуштун түрүн тандаңыз: толук убакыт же толук эмес"
 
-#: .\api\models.py:38
-#, fuzzy
+#: .\api\models.py:46
 #| msgid "Выберите свою роль"
 msgid "Выберите время работы: день или ночь"
-msgstr "Өзүңүздүн ролуңузду тандаңыз"
+msgstr "Иш убактыңызды тандаңыз: күндүзбү же түндөбү"
 
-#: .\api\models.py:41
+#: .\api\models.py:49
 msgid "Зарплата"
-msgstr ""
+msgstr "Эмгек акы"
 
-#: .\api\models.py:42
-#, fuzzy
+#: .\api\models.py:50
 #| msgid "Найдите работу мечты"
 msgid "Укажите зарплату в сомах"
-msgstr "Кыялыңыздагы жумушту табыңыз"
+msgstr "Айлык маянаны сом менен көрсөтүңүз"
 
-#: .\api\models.py:46 .\api\models.py:160
-#, fuzzy
+#: .\api\models.py:58 .\api\models.py:186
 #| msgid "Страна:"
 msgid "Страна"
-msgstr "Өлкө:"
+msgstr "Өлкө"
 
-#: .\api\models.py:47
-#, fuzzy
+#: .\api\models.py:59
 #| msgid "Таргетированные вакансии"
 msgid "Страна, где предлагается вакансия"
-msgstr "Максаттуу бош орундар"
+msgstr "Вакансия сунушталган өлкө"
 
-#: .\api\models.py:51 .\api\models.py:165
-#, fuzzy
+#: .\api\models.py:65 .\api\models.py:192
 #| msgid "Город:"
 msgid "Город"
-msgstr "Шаар:"
+msgstr "Шаар"
 
-#: .\api\models.py:52
-#, fuzzy
+#: .\api\models.py:66
 #| msgid "Таргетированные вакансии"
 msgid "Город, где предлагается вакансия"
-msgstr "Максаттуу бош орундар"
+msgstr "Вакансия сунушталган шаар"
 
-#: .\api\models.py:55
-#, fuzzy
+#: .\api\models.py:70
 #| msgid "Удалить"
 msgid "Удаленный"
-msgstr "Жок кылуу"
+msgstr "Алыстан"
 
-#: .\api\models.py:57
+#: .\api\models.py:72
 msgid "Отметьте, если работа удалённая"
-msgstr ""
+msgstr "Белгилеңиз, эгер жумуш удалённа болсо."
 
-#: .\api\models.py:60 .\templates\vacancy\vacancy_detail.html:53
-msgid "Требования"
-msgstr "Талаптар"
-
-#: .\api\models.py:61
+#: .\api\models.py:76
 msgid "Требуемые навыки и квалификация"
-msgstr ""
+msgstr "Керектүү тажрыйбалар жана квалификациялар"
 
-#: .\api\models.py:64 .\templates\vacancy\vacancy_detail.html:56
+#: .\api\models.py:80 .\templates\vacancy\vacancy_detail.html:126
 msgid "Обязанности"
 msgstr "Обязанности"
 
-#: .\api\models.py:65
+#: .\api\models.py:81
 msgid "Что нужно будет делать на работе"
-msgstr ""
+msgstr "Жумушта эмне кылуу керек болот"
 
-#: .\api\models.py:69
-#, fuzzy
+#: .\api\models.py:86
 #| msgid "Последние вакансии"
 msgid "Дата последней публикации вакансии"
-msgstr "Акыркы вакансиялар"
+msgstr "Акыркы жумуш жарыялоо датасы"
 
-#: .\api\models.py:72
-#, fuzzy
+#: .\api\models.py:89
 #| msgid "Активна"
 msgid "Активен"
 msgstr "Активдүү"
 
-#: .\api\models.py:74
+#: .\api\models.py:91
 msgid "Если выключить, вакансия будет скрыта"
-msgstr ""
+msgstr "Аны өчүрсөңүз, бош орун жашырылат"
 
-#: .\api\models.py:104
-#, fuzzy
+#: .\api\models.py:127
 #| msgid "Откликнуться"
 msgid "Откликнувшийся воркер"
-msgstr "Жооп бер"
+msgstr "Жооп берүүчү жумушчу"
 
-#: .\api\models.py:110 .\templates\userauth\profile.html:85
-#, fuzzy
-#| msgid "Вакансии"
-msgid "Вакансия"
-msgstr "Вакансиялар"
-
-#: .\api\models.py:112
-#, fuzzy
+#: .\api\models.py:135 .\templates\userauth\profile.html:148
+#: .\templates\vacancy\vacancy_detail.html:50
 #| msgid "Обязанности"
 msgid "Избранное"
-msgstr "Обязанности"
+msgstr "Өзгөчөлөнгөн"
 
-#: .\api\models.py:117
-#, fuzzy
+#: .\api\models.py:140
 #| msgid "Статус отклика:"
 msgid "Статус отклика"
-msgstr "Жооптун абалы:"
+msgstr "Жооптун абалы"
 
-#: .\api\models.py:125 .\templates\userauth\profile.html:86
+#: .\api\models.py:148 .\templates\userauth\profile.html:322
+#: .\templates\vacancy\vacancy_stats.html:84
 msgid "Анкета"
-msgstr ""
+msgstr "Анкета"
 
-#: .\api\models.py:144
+#: .\api\models.py:167
 msgid "Пользователь, к которому привязана анкета"
-msgstr ""
-
-#: .\api\models.py:148
-msgid "Название анкеты, например: Backend разработчик"
-msgstr ""
-
-#: .\api\models.py:151
-#, fuzzy
-#| msgid "Обо мне:"
-msgid "Обо мне"
-msgstr "Мен жөнүндө:"
-
-#: .\api\models.py:152
-msgid "Расскажите кратко о себе, навыках и целях"
-msgstr ""
-
-#: .\api\models.py:155
-#, fuzzy
-#| msgid "Время работы"
-msgid "Опыт работы"
-msgstr "Иштөө сааттары"
-
-#: .\api\models.py:156
-msgid "Опишите, где и кем вы работали ранее"
-msgstr ""
-
-#: .\api\models.py:161
-msgid "Укажите страну проживания"
-msgstr ""
-
-#: .\api\models.py:166
-#, fuzzy
-#| msgid "Должность, город, страна"
-msgid "Укажите город проживания"
-msgstr "Кызматы, шаары, өлкөсү"
-
-#: .\api\models.py:170
-msgid "Телефон"
-msgstr ""
+msgstr "Профиль байланышкан колдонуучу"
 
 #: .\api\models.py:171
-msgid "Введите номер телефона в формате +996XXXXXXXXX"
-msgstr ""
+msgid "Название анкеты, например: Backend разработчик"
+msgstr "Анкетанын аталышы, мисалы: Backend developer"
 
 #: .\api\models.py:175
-#, fuzzy
-#| msgid "Нет активных анкет"
-msgid "Активна ли анкета"
-msgstr "Жигердүү анкета жок"
+#| msgid "Обо мне:"
+msgid "Обо мне"
+msgstr "Мен жөнүндө"
 
 #: .\api\models.py:176
-msgid "Если выключить, анкета будет скрыта из поиска"
-msgstr ""
+msgid "Расскажите кратко о себе, навыках и целях"
+msgstr "Өзүңүз, жөндөмүңүз жана максаттарыңыз жөнүндө кыскача айтып бериңиз"
 
-#: .\api\models.py:180
-#, fuzzy
+#: .\api\models.py:181
+msgid "Опишите, где и кем вы работали ранее"
+msgstr "Мурда кайда жана ким болуп иштегениңизди сүрөттөп бериңиз"
+
+#: .\api\models.py:187
+msgid "Укажите страну проживания"
+msgstr "Сураныч, жашаган өлкөңүздү жазыңыз"
+
+#: .\api\models.py:193
+#| msgid "Должность, город, страна"
+msgid "Укажите город проживания"
+msgstr "Сураныч, жашаган шаарыңызды жазыңыз"
+
+#: .\api\models.py:199
+msgid "Телефон"
+msgstr "Телефон"
+
+#: .\api\models.py:200
+msgid "Введите номер телефона в международном формате: +<код страны><номер>"
+msgstr ""
+"Телефон номериңизди эл аралык форматта киргизиңиз: +<өлкө коду><номер>"
+
+#: .\api\models.py:206
+#| msgid "Нет активных анкет"
+msgid "Активна ли анкета"
+msgstr "Анкеиа активдүүбү?"
+
+#: .\api\models.py:207
+msgid "Если выключить, анкета будет скрыта из поиска"
+msgstr "Эгер сиз аны өчүрсөңүз, профиль издөөдөн жашырылат"
+
+#: .\api\models.py:211
 #| msgid "Создать анкету"
 msgid "Дата создания анкеты"
-msgstr "Анкета түзүү"
+msgstr "Анкета түзүлгөн датасы"
 
-#: .\api\views.py:117
+#: .\api\models.py:233 .\templates\vacancy\vacancy_detail.html:284
+#| msgid "Отклик на вакансию"
+msgid "Жалоба на вакансию"
+msgstr "Вакансияга даттануу"
+
+#: .\api\models.py:234
+#| msgid "Отклик на вакансию"
+msgid "Жалобы на вакансии"
+msgstr "Вакансия боюнча даттануулар"
+
+#: .\api\models.py:240
+#| msgid "Добро пожаловать"
+msgid "Аноним пожаловался на "
+msgstr "аттуу анонимдүү арызданган"
+
+#: .\api\views.py:111
 msgid "Только соискатели могут откликаться."
-msgstr ""
+msgstr "Талапкерлер гана жооп бере алат."
 
-#: .\api\views.py:128
-#, fuzzy
+#: .\api\views.py:122
 #| msgid "Вы уверены, что хотите удалить эту вакансию?"
 msgid "Вы уже откликались на эту вакансию."
-msgstr "Бул вакансияны чын эле жок кылгыңыз келеби?"
+msgstr "Сиз бул вакансияга арыз бергенсиз."
 
-#: .\api\views.py:136
-#, fuzzy
+#: .\api\views.py:130
 #| msgid "Отклик на вакансию"
 msgid "Отклик отправлен!"
-msgstr "Вакансияга жооп"
-
-#: .\api\views.py:237
-msgid "Вы не можете просматривать чужую анкету."
-msgstr ""
+msgstr "Жооп жөнөтүлдү!"
 
 #: .\api\views.py:247
-#, fuzzy
-#| msgid "У вас ещё нет активных анкет."
-msgid "У вас нет доступа к этой анкете."
-msgstr "Сизде азырынча активдүү профилдер жок."
+msgid "Вы не можете просматривать чужую анкету."
+msgstr "Сиз башка бирөөнүн анкетасын көрө албайсыз."
+
+#: .\api\views.py:320
+#| msgid "Найдите работу мечты"
+msgid "Укажите причину жалобы."
+msgstr "Арызыңыздын себебин айтыңыз."
+
+#: .\api\views.py:341
+#| msgid "Отклик на вакансию"
+msgid "Жалоба отправлена."
+msgstr "Арыз жөнөтүлдү."
 
 #: .\backendAPI\jazzmin.py:5 .\backendAPI\jazzmin.py:6
 #: .\backendAPI\jazzmin.py:7 .\backendAPI\jazzmin.py:18
-#: .\templates\main\applicants.html:15 .\templates\main\employers.html:104
-#: .\templates\main\main.html:9 .\templates\partials\footer.html:16
-#: .\templates\partials\menu.html:6
+#: .\templates\main\employers.html:100 .\templates\main\main.html:9
+#: .\templates\partials\footer.html:87 .\templates\partials\menu.html:7
 msgid "СЛАДКИЙ МАЛЬЧИК"
 msgstr "ТАТТУУ БАЛА"
 
 #: .\backendAPI\jazzmin.py:17
 msgid "Добро пожаловать в административную панель"
-msgstr ""
+msgstr "Админ панелине кош келиңиз"
 
 #: .\templates\anketa\anketa_detail.html:8
 msgid "Обо мне:"
@@ -341,7 +362,7 @@ msgstr "Шаар:"
 
 #: .\templates\anketa\anketa_detail.html:12
 msgid "Телефон:"
-msgstr ""
+msgstr "Телефон:"
 
 #: .\templates\anketa\anketa_detail.html:13
 msgid "Активна:"
@@ -356,13 +377,14 @@ msgid "Создана:"
 msgstr "Түзүлгөн:"
 
 #: .\templates\anketa\anketa_detail.html:18
-#: .\templates\userauth\profile.html:122
+#: .\templates\userauth\profile.html:176 .\templates\userauth\profile.html:204
+#: .\templates\vacancy\vacancy_detail.html:60
 msgid "Редактировать"
 msgstr "Түзөтүү"
 
 #: .\templates\anketa\anketa_detail.html:20
 #: .\templates\vacancy\respond_to_vacancy.html:16
-#: .\templates\vacancy\vacancy_detail.html:67
+#: .\templates\vacancy\vacancy_detail.html:148
 msgid "Назад"
 msgstr "Артка"
 
@@ -370,170 +392,134 @@ msgstr "Артка"
 msgid "Вход / Регистрация"
 msgstr "Кирүү / Каттоо"
 
-#: .\templates\auth\login_register.html:227
+#: .\templates\auth\login_register.html:228
 msgid "Вход"
 msgstr "Кирүү "
 
-#: .\templates\auth\login_register.html:228
+#: .\templates\auth\login_register.html:229
 msgid "Регистрация"
 msgstr "Каттоо"
 
-#: .\templates\auth\login_register.html:234
+#: .\templates\auth\login_register.html:235
 msgid "Добро пожаловать"
 msgstr "Кош келдиңиз"
 
-#: .\templates\auth\login_register.html:276
-#: .\templates\auth\login_register.html:307 .\templates\main\applicants.html:18
-#: .\templates\main\employers.html:107 .\templates\partials\menu.html:74
+#: .\templates\auth\login_register.html:277
+#: .\templates\auth\login_register.html:308
+#: .\templates\main\employers.html:102 .\templates\partials\menu.html:83
 msgid "Войти"
 msgstr "Кирүү"
 
-#: .\templates\auth\login_register.html:278
-#: .\templates\auth\login_register.html:299
+#: .\templates\auth\login_register.html:279
+#: .\templates\auth\login_register.html:300
 msgid "или"
 msgstr "же"
 
-#: .\templates\auth\login_register.html:282
+#: .\templates\auth\login_register.html:283
 msgid "Войти через Google"
 msgstr "Google менен кириңиз"
 
-#: .\templates\auth\login_register.html:286
+#: .\templates\auth\login_register.html:287
 msgid "Нет аккаунта?"
 msgstr "Каттоо эсебиңиз жокпу?"
 
-#: .\templates\auth\login_register.html:286
-#: .\templates\auth\login_register.html:297
+#: .\templates\auth\login_register.html:287
+#: .\templates\auth\login_register.html:298
 msgid "Зарегистрироваться"
 msgstr "Каттоо"
 
-#: .\templates\auth\login_register.html:303
+#: .\templates\auth\login_register.html:304
 msgid "Зарегистрироваться через Google"
 msgstr "Google менен катталыңыз"
 
-#: .\templates\auth\login_register.html:307
+#: .\templates\auth\login_register.html:308
 msgid "Уже есть аккаунт?"
 msgstr "Каттоо эсебиңиз барбы?"
 
-#: .\templates\auth\select_role.html:7
+#: .\templates\auth\select_role.html:8
 msgid "Выбор роли"
 msgstr "Рол тандоо"
 
-#: .\templates\auth\select_role.html:55
+#: .\templates\auth\select_role.html:57
 msgid "Выберите свою роль"
 msgstr "Өзүңүздүн ролуңузду тандаңыз"
 
-#: .\templates\auth\select_role.html:63 .\userauth\forms.py:8
-#, fuzzy
+#: .\templates\auth\select_role.html:65 .\userauth\forms.py:8
 #| msgid "Работодателям"
 msgid "Я работодатель"
-msgstr "Иш берүүчүлөр үчүн"
+msgstr "Мен жумуш берүүчүмүн"
 
-#: .\templates\auth\select_role.html:70
-#, fuzzy
+#: .\templates\auth\select_role.html:72
 #| msgid "Соискателям"
 msgid "Я соискатель"
-msgstr "Талапкерлер үчүн"
+msgstr "Мен жумуш издеген адаммын"
 
-#: .\templates\auth\select_role.html:75
+#: .\templates\auth\select_role.html:77
 msgid "Продолжить"
 msgstr "Улантуу"
 
-#: .\templates\form\anketa_form.html:9 .\templates\partials\menu.html:57
-#: .\templates\userauth\profile.html:37
+#: .\templates\form\anketa_create.html:9 .\templates\form\anketa_form.html:9
+#: .\templates\partials\menu.html:66 .\templates\userauth\profile.html:128
+#: .\templates\userauth\profile.html:237
 msgid "Создать анкету"
 msgstr "Анкета түзүү"
 
-#: .\templates\form\anketa_form.html:29
+#: .\templates\form\anketa_create.html:29 .\templates\form\anketa_form.html:31
+#: .\templates\userauth\profile.html:435
+#: .\templates\vacancy\edit_vacancy.html:35
 msgid "Сохранить"
 msgstr "Сактоо"
 
-#: .\templates\form\anketa_form.html:30
-#: .\templates\vacancy\vacancy_create.html:37
-#: .\templates\vacancy\vacancy_detail.html:131
+#: .\templates\form\anketa_create.html:30 .\templates\form\anketa_form.html:32
+#: .\templates\vacancy\edit_vacancy.html:38
+#: .\templates\vacancy\vacancy_create.html:39
+#: .\templates\vacancy\vacancy_detail.html:232
+#: .\templates\vacancy\vacancy_detail.html:305
 msgid "Отмена"
 msgstr "Жокко чыгаруу"
 
-#: .\templates\main\applicants.html:7
-msgid "СЛАДКИЙ МАЛЬЧИК - Для соискателей"
+#: .\templates\form\anketa_form.html:40
+#| msgid "Вы уверены, что хотите удалить эту вакансию?"
+msgid "Вы уверены, что хотите удалить анкету?"
+msgstr "Анкетаны чын эле жок кылгыңыз келеби?"
+
+#: .\templates\form\anketa_form.html:42
+#| msgid "Создать анкету"
+msgid "Удалить анкету"
+msgstr "Анкетаны жок кылуу"
+
+#: .\templates\main\applicants.html:8
+#| msgid "СЛАДКИЙ МАЛЬЧИК - Для соискателей"
+msgid "СЛАДКИЙ МАЛЬЧИК - Соискатели"
 msgstr "ТАТТУУ БАЛА - Жумуш издегендер үчүн"
 
-#: .\templates\main\applicants.html:28
+#: .\templates\main\applicants.html:32
 msgid "Найди работу своей мечты"
 msgstr "Кыялыңыздагы жумушту табыңыз"
 
-#: .\templates\main\applicants.html:29
-msgid ""
-"Для студентов и молодых специалистов — сотни вакансий от проверенных "
-"работодателей Кыргызстана."
-msgstr ""
-"Студенттер жана жаш адистер үчүн - Кыргызстандагы текшерилген иш "
-"берүүчүлөрдөн жүздөгөн вакансиялар."
+#: .\templates\main\applicants.html:33
+#| msgid ""
+#| "Подходящие стажировки и первые рабочие места для начинающих специалистов."
+msgid "Сотни вакансий для студентов и начинающих специалистов Кыргызстана."
+msgstr "Кыргызстанда студенттер жана жаш адистер үчүн жүздөгөн бош орундар."
 
-#: .\templates\main\applicants.html:30 .\templates\main\employers.html:124
-msgid "Узнать больше"
-msgstr "Көбүрөөк билүү"
+#: .\templates\main\applicants.html:47 .\templates\main\employers.html:143
+msgid "Почему выбирают нас"
+msgstr "Эмне үчүн бизди танда"
 
-#: .\templates\main\applicants.html:31
-msgid "Посмотреть вакансии"
-msgstr "Вакансияларды көрүү"
-
-#: .\templates\main\applicants.html:34
-msgid "Соискатели"
-msgstr "Талапкерлер"
-
-#: .\templates\main\applicants.html:43
-msgid "Почему студенты выбирают JobPortal"
-msgstr "Эмне үчүн Студенттер ТАТТУУ БАЛАны тандашат"
-
-#: .\templates\main\applicants.html:44
+#: .\templates\main\applicants.html:48
 msgid "Инструменты для быстрого поиска и развития карьеры"
 msgstr "Тез карьера издөө жана өнүктүрүү үчүн куралдар"
 
-#: .\templates\main\applicants.html:51
-msgid "Вакансии для студентов"
-msgstr "Студенттер үчүн бош орундар"
-
-#: .\templates\main\applicants.html:52
-msgid ""
-"Подходящие стажировки и первые рабочие места для начинающих специалистов."
-msgstr ""
-"Баштапкы деңгээлдеги адистер үчүн ылайыктуу практика жана биринчи жумуш "
-"орундары."
-
-#: .\templates\main\applicants.html:58
-msgid "Работодатели из Кыргызстана"
-msgstr "Кыргызстандан жумуш берүүчүлөр"
-
-#: .\templates\main\applicants.html:59
-msgid "Только проверенные компании, которые заинтересованы в молодых талантах."
-msgstr "Жаш таланттарга кызыккан далилденген компаниялар гана."
-
-#: .\templates\main\applicants.html:65
-msgid "Поддержка и советы"
-msgstr "Колдоо жана кеңеш"
-
-#: .\templates\main\applicants.html:66
-msgid "Советы по резюме, подготовке к собеседованиям и развитию навыков."
-msgstr ""
-"Резюме, интервьюга даярдануу жана чеберчиликти өнүктүрүү боюнча кеңештер."
-
-#: .\templates\main\applicants.html:76
-msgid "Готов начать карьеру уже сегодня?"
-msgstr "Карьераңызды бүгүн баштоого даярсызбы?"
-
-#: .\templates\main\applicants.html:77
-msgid "Создать аккаунт"
-msgstr "Каттоо эсебин түзүү"
-
-#: .\templates\main\employers.html:7
+#: .\templates\main\employers.html:8
 msgid "СЛАДКИЙ МАЛЬЧИК - Для работодателей"
 msgstr "SWEET BOY - Иш берүүчүлөр үчүн"
 
-#: .\templates\main\employers.html:117
+#: .\templates\main\employers.html:112
 msgid "Найдите лучших сотрудников"
 msgstr "Мыкты кызматкерлерди табыңыз"
 
-#: .\templates\main\employers.html:118
+#: .\templates\main\employers.html:113
 msgid ""
 "Размещайте вакансии, находите квалифицированных специалистов и управляйте "
 "откликами в одном месте"
@@ -541,166 +527,117 @@ msgstr ""
 "Жумуштарды жарыялаңыз, квалификациялуу адистерди таап, жоопторду бир жерден "
 "башкарыңыз"
 
-#: .\templates\main\employers.html:121
+#: .\templates\main\employers.html:116
 msgid "Начать сейчас"
 msgstr "Азыр башта"
 
-#: .\templates\main\employers.html:141
+#: .\templates\main\employers.html:119
+msgid "Узнать больше"
+msgstr "Көбүрөөк билүү"
+
+#: .\templates\main\employers.html:132
 msgid "Активных соискателей"
 msgstr "Активдүү жумуш издөөчүлөр"
 
-#: .\templates\main\employers.html:148
+#: .\templates\main\employers.html:133
 msgid "Работодателей находят сотрудников"
 msgstr "Иш берүүчүлөр кызматкерлерди табышат"
 
-#: .\templates\main\employers.html:155
+#: .\templates\main\employers.html:134
 msgid "Среднее время первого отклика"
 msgstr "Орточо биринчи жооп убактысы"
 
-#: .\templates\main\employers.html:167
-msgid "Почему выбирают нас"
-msgstr "Эмне үчүн бизди танда"
-
-#: .\templates\main\employers.html:168
+#: .\templates\main\employers.html:144
 msgid "Все инструменты для эффективного поиска персонала"
 msgstr "Натыйжалуу кадрларды издөө үчүн бардык куралдар"
 
-#: .\templates\main\employers.html:178
+#: .\templates\main\employers.html:150
 msgid "Таргетированные вакансии"
 msgstr "Максаттуу бош орундар"
 
-#: .\templates\main\employers.html:179
+#: .\templates\main\employers.html:151
 msgid "Наши алгоритмы показывают ваши вакансии только релевантным кандидатам"
 msgstr ""
 "Биздин алгоритмдер сиздин бош орундарыңызды тиешелүү талапкерлерге гана "
 "көрсөтөт"
 
-#: .\templates\main\employers.html:190
+#: .\templates\main\employers.html:157
 msgid "Аналитика и отчеты"
 msgstr "Аналитика жана отчеттор"
 
-#: .\templates\main\employers.html:191
+#: .\templates\main\employers.html:158
 msgid "Подробная статистика по просмотрам и откликам на ваши вакансии"
 msgstr ""
 "Сиздин бош орундарыңызга көз караштар жана жооптор боюнча толук статистика"
 
-#: .\templates\main\employers.html:202
+#: .\templates\main\employers.html:164
 msgid "Подбор кандидатов"
 msgstr "Талапкерлерди тандоо"
 
-#: .\templates\main\employers.html:203
-msgid "Наши HR-специалисты могут помочь с поиском идеального сотрудника"
-msgstr "Биздин HR адистерибиз сизге идеалдуу кызматкерди табууга жардам берет."
+#: .\templates\main\employers.html:165
+#| msgid ""
+#| "Наши HR-специалисты могут помочь с поиском идеального сотрудника"
+msgid "Наши HR-специалисты помогут найти идеального сотрудника"
+msgstr ""
+"Биздин HR адистерибиз сизге идеалдуу кызматкерди табууга жардам беришет"
 
-#: .\templates\main\employers.html:215
+#: .\templates\main\employers.html:175
 msgid "Как это работает"
 msgstr "Бул кантип иштейт"
 
-#: .\templates\main\employers.html:216
-msgid "Всего 3 простых шага к найму лучших сотрудников"
-msgstr "Мыкты кызматкерлерди жалдоо үчүн болгону 3 оңой кадам"
-
-#: .\templates\main\employers.html:225
+#: .\templates\main\employers.html:180
 msgid "Создайте вакансию"
 msgstr "Вакансия түзүү"
 
-#: .\templates\main\employers.html:226
+#: .\templates\main\employers.html:181
 msgid "Заполните простую форму с описанием вакансии и требованиями"
 msgstr "Жөнөкөй форманы вакансияны жана талаптарды баяндоо менен толтуруңуз"
 
-#: .\templates\main\employers.html:235
+#: .\templates\main\employers.html:187
 msgid "Получайте отклики"
 msgstr "Пикирлерди алыңыз"
 
-#: .\templates\main\employers.html:236
+#: .\templates\main\employers.html:188
 msgid "Кандидаты будут оставлять отклики и прикреплять свои анкеты"
 msgstr "Талапкерлер жооп калтырып, арыздарын тиркешет."
 
-#: .\templates\main\employers.html:245
+#: .\templates\main\employers.html:194
 msgid "Выберите лучших"
 msgstr "Эң жакшысын танда"
 
-#: .\templates\main\employers.html:246
+#: .\templates\main\employers.html:195
 msgid "Сравните кандидатов и пригласите на собеседование"
 msgstr "Талапкерлерди салыштырып, маектешүүгө чакырыңыз"
 
-#: .\templates\main\employers.html:257
-msgid "Что говорят работодатели"
-msgstr "Иш берүүчүлөр эмне дейт"
-
-#: .\templates\main\employers.html:264
-msgid "Айгуль Садыкова"
-msgstr ""
-
-#: .\templates\main\employers.html:265
-msgid "HR-директор, TechSolutions"
-msgstr ""
-
-#: .\templates\main\employers.html:266
-msgid ""
-"Благодаря СЛАДКИЙ МАЛЬЧИК мы сократили время подбора сотрудников в 2 раза. "
-"Отличная платформа!"
-msgstr ""
-"ТАТТУУ БАЛА компаниясынын аркасында кызматкерлерди кабыл алуу убактысын 2 "
-"эсеге кыскарттык. Мыкты платформа!"
-
-#: .\templates\main\employers.html:274
-msgid "Марат Ибрагимов"
-msgstr ""
-
-#: .\templates\main\employers.html:275
-msgid "Основатель, StartupKG"
-msgstr "Негиздөөчүсү, StartupKG"
-
-#: .\templates\main\employers.html:276
-msgid "Нашли 3 отличных разработчика за неделю. Сервис действительно работает!"
-msgstr ""
-"Бир жуманын ичинде 3 мыкты иштеп чыгуучу табылды. Кызмат чындап иштейт!"
-
-#: .\templates\main\employers.html:284
-msgid "Элина Токтосунова"
-msgstr ""
-
-#: .\templates\main\employers.html:285
-msgid "Директор, FinancePro"
-msgstr ""
-
-#: .\templates\main\employers.html:286
-msgid ""
-"Удобный интерфейс и качественные кандидаты. Рекомендую всем HR-специалистам."
-msgstr ""
-"Ыңгайлуу интерфейс жана сапаттуу талапкерлер. Мен аны бардык HR адистерине "
-"сунуштайм."
-
-#: .\templates\main\employers.html:297
+#: .\templates\main\employers.html:205
 msgid "Готовы найти идеальных сотрудников?"
 msgstr "Сиздин идеалдуу кызматкерлерди табууга даярсызбы?"
 
-#: .\templates\main\employers.html:298
+#: .\templates\main\employers.html:206
 msgid "Присоединяйтесь к тысячам компаний, которые уже используют наш сервис"
 msgstr "Биздин кызматты колдонгон миңдеген компанияларга кошулуңуз"
 
-#: .\templates\main\employers.html:299
+#: .\templates\main\employers.html:207
 msgid "Зарегистрироваться бесплатно"
 msgstr "Бекер катталыңыз"
 
-#: .\templates\main\main.html:33
+#: .\templates\main\main.html:44
 msgid "Фильтрация"
-msgstr ""
+msgstr "Фильтрация"
 
-#: .\templates\main\main.html:40 .\templates\partials\search_form.html:5
+#: .\templates\main\main.html:51 .\templates\partials\search_form.html:5
 msgid "Найти"
 msgstr "Табуу"
 
-#: .\templates\main\main.html:49
+#: .\templates\main\main.html:60
 msgid "Найдите работу мечты"
 msgstr "Кыялыңыздагы жумушту табыңыз"
 
-#: .\templates\main\main.html:50
+#: .\templates\main\main.html:61
 msgid "Лучшие вакансии в одном месте"
 msgstr "Мыкты вакансиялар бир жерде"
 
-#: .\templates\main\main.html:56
+#: .\templates\main\main.html:67
 msgid "Последние вакансии"
 msgstr "Акыркы вакансиялар"
 
@@ -720,439 +657,662 @@ msgstr "эмгек акы баштап"
 msgid "ЗП до"
 msgstr "чейин айлык акы"
 
-#: .\templates\partials\footer.html:17
+#: .\templates\partials\footer.html:88
 msgid "Лучшая платформа для поиска работы и сотрудников в Кыргызстане."
 msgstr "Кыргызстанда жумуш жана кызматкерлерди табуу үчүн эң мыкты платформа."
 
-#: .\templates\partials\footer.html:20
+#: .\templates\partials\footer.html:91
 msgid "Контакты"
 msgstr "Байланыштар"
 
-#: .\templates\partials\footer.html:22
+#: .\templates\partials\footer.html:93
 msgid "г. Бишкек, ул. Примерная 123"
 msgstr "Бишкек шаары, ул. Примерная 123"
 
-#: .\templates\partials\footer.html:28
+#: .\templates\partials\footer.html:99
 msgid "Мы в соцсетях"
 msgstr "Биз социалдык тармактардабыз"
 
-#: .\templates\partials\footer.html:40
+#: .\templates\partials\footer.html:107
+msgid "Политика конфиденциальности"
+msgstr "Купуялык саясаты"
+
+#: .\templates\partials\footer.html:108
+#| msgid "Должность, город, страна"
+msgid "Условия обслуживания"
+msgstr "Тейлөө шарттары"
+
+#: .\templates\partials\footer.html:115
 msgid "СЛАДКИЙ МАЛЬЧИК. Все права защищены."
 msgstr "ТАТТУУ БАЛА. Бардык укуктар корголгон."
 
-#: .\templates\partials\menu.html:18
+#: .\templates\partials\menu.html:22
 msgid "Вакансии"
 msgstr "Вакансиялар"
 
-#: .\templates\partials\menu.html:22
+#: .\templates\partials\menu.html:28
 msgid "Работодателям"
 msgstr "Иш берүүчүлөр үчүн"
 
-#: .\templates\partials\menu.html:25
+#: .\templates\partials\menu.html:33
 msgid "Соискателям"
 msgstr "Талапкерлер үчүн"
 
-#: .\templates\partials\menu.html:53 .\templates\userauth\profile.html:35
+#: .\templates\partials\menu.html:62 .\templates\userauth\profile.html:124
+#: .\templates\userauth\profile.html:233
+#: .\templates\vacancy\vacancy_create.html:7
 msgid "Создать вакансию"
 msgstr "Бош орун түзүү"
 
-#: .\templates\partials\menu.html:64
+#: .\templates\partials\menu.html:73
 msgid "Профиль"
 msgstr "Профиль"
 
-#: .\templates\partials\menu.html:70
+#: .\templates\partials\menu.html:79
 msgid "Выйти"
 msgstr "Чыгуу"
 
-#: .\templates\partials\menu.html:86
-#, fuzzy
+#: .\templates\partials\menu.html:95
 #| msgid "Последние вакансии"
 msgid "Подтверждение выхода"
-msgstr "Акыркы вакансиялар"
+msgstr "Чыгууну ырастоо"
 
-#: .\templates\partials\menu.html:90
-#, fuzzy
+#: .\templates\partials\menu.html:99
 #| msgid "Вы уверены, что хотите удалить эту вакансию?"
 msgid "Вы уверены, что хотите выйти?"
-msgstr "Бул вакансияны чын эле жок кылгыңыз келеби?"
+msgstr "Чын эле чыккыңыз келеби?"
 
-#: .\templates\partials\menu.html:93
-#, fuzzy
+#: .\templates\partials\menu.html:102
 #| msgid "Да,Нет"
 msgid "Нет"
-msgstr "Ооба, Жок"
+msgstr "Жок"
 
-#: .\templates\partials\menu.html:94
-#, fuzzy
+#: .\templates\partials\menu.html:103
 #| msgid "Выйти"
 msgid "Да, выйти"
-msgstr "Чыгуу"
-
-#: .\templates\partials\vacancy_list.html:8
-#, python-format
-msgid "До %(salary)s сом "
-msgstr "%(salary)s сомго чейин"
+msgstr "Ооба, чыгуу"
 
 #: .\templates\partials\vacancy_list.html:16
-#: .\templates\userauth\profile.html:151
-#: .\templates\vacancy\vacancy_detail.html:36
-#: .\templates\vacancy\vacancy_detail.html:86
-msgid "Удалённая работа"
-msgstr "Алыстан иштөө"
-
-#: .\templates\partials\vacancy_list.html:19
-#: .\templates\userauth\profile.html:63 .\templates\userauth\profile.html:154
-#: .\templates\userauth\public_profile.html:30
-#: .\templates\userauth\public_profile.html:54
-#: .\templates\vacancy\vacancy_detail.html:89
-msgid "Подробнее"
-msgstr "Кененирээк"
-
-#: .\templates\userauth\profile.html:32 .\templates\userauth\profile.html:103
-#, fuzzy
-#| msgid "Вакансии"
-msgid "Мои вакансии"
-msgstr "Вакансиялар"
-
-#: .\templates\userauth\profile.html:32
-#, fuzzy
-#| msgid "Соискателям"
-msgid "Профиль соискателя"
-msgstr "Талапкерлер үчүн"
-
-#: .\templates\userauth\profile.html:45
-msgid "Мои анкеты"
-msgstr "Менин анкеталарым"
-
-#: .\templates\userauth\profile.html:48
-msgid "Мои отклики"
-msgstr "Менин жоопторум"
-
-#: .\templates\userauth\profile.html:70
-msgid "У вас ещё нет активных анкет."
-msgstr "Сизде азырынча активдүү профилдер жок."
-
-#: .\templates\userauth\profile.html:83 .\templates\userauth\profile.html:179
-msgid "Анкета:"
-msgstr ""
-
-#: .\templates\userauth\profile.html:84
-msgid "Статус отклика:"
-msgstr "Жооптун абалы:"
-
-#: .\templates\userauth\profile.html:93
-msgid "Вы ещё не отправляли отклики."
-msgstr "Сиз азырынча эч кандай жооп бере элексиз."
-
-#: .\templates\userauth\profile.html:106
-msgid "Отклики"
-msgstr "Жооптор"
-
-#: .\templates\userauth\profile.html:123
-msgid "Статистика"
-msgstr "Статистика"
-
-#: .\templates\userauth\profile.html:129
-msgid "Деактивировать"
-msgstr "Убактылуу өчүрүү"
-
-#: .\templates\userauth\profile.html:129
-msgid "Активировать"
-msgstr "Иштетүү"
-
-#: .\templates\userauth\profile.html:135
-msgid "Вы уверены, что хотите удалить эту вакансию?"
-msgstr "Бул вакансияны чын эле жок кылгыңыз келеби?"
-
-#: .\templates\userauth\profile.html:137
-msgid "Удалить"
-msgstr "Жок кылуу"
-
-#: .\templates\userauth\profile.html:144
-#: .\templates\userauth\public_profile.html:28
-#: .\templates\vacancy\vacancy_detail.html:79
+#: .\templates\userauth\public_profile.html:84
+#: .\templates\vacancy\vacancy_detail.html:169
 #, python-format
 msgid "До %(salary)s сом"
 msgstr "%(salary)s сомго чейин"
 
-#: .\templates\userauth\profile.html:167
-msgid "У вас пока нет вакансий."
-msgstr "Сизде азырынча вакансия жок."
+#: .\templates\partials\vacancy_list.html:20
+#: .\templates\vacancy\vacancy_detail.html:81
+#: .\templates\vacancy\vacancy_detail.html:171
+msgid "Не оплачиваемый практика"
+msgstr "Акы төлөнбөгөн стажировка"
 
-#: .\templates\userauth\profile.html:180
-msgid "Соискатель:"
-msgstr "Талапкер:"
+#: .\templates\partials\vacancy_list.html:32
+#: .\templates\userauth\public_profile.html:88
+msgid "Сегодня"
+msgstr "Бүгүн"
 
-#: .\templates\userauth\profile.html:181
-#: .\templates\vacancy\vacancy_stats.html:55
-msgid "Статус:"
-msgstr ""
+#: .\templates\partials\vacancy_list.html:34
+#: .\templates\userauth\public_profile.html:90
+msgid "Вчера"
+msgstr "Кечээ"
 
-#: .\templates\userauth\profile.html:182
-msgid "Отклик:"
-msgstr "Жооп:"
+#: .\templates\partials\vacancy_list.html:44
+#: .\templates\vacancy\vacancy_detail.html:180
+#| msgid "Удалить"
+msgid "Удалённо"
+msgstr "Алыстан иштөө"
 
-#: .\templates\userauth\profile.html:194
-msgid "Обновить"
-msgstr "Жаңыртуу"
+#: .\templates\partials\vacancy_list.html:48
+#: .\templates\userauth\public_profile.html:95
+#: .\templates\userauth\public_profile.html:119
+#: .\templates\vacancy\vacancy_detail.html:184
+msgid "Подробнее"
+msgstr "Кененирээк"
 
-#: .\templates\userauth\profile.html:197
-msgid "Кандидат принят"
-msgstr ""
+#: .\templates\partials\vacancy_list.html:59
+#| msgid "Работодателям"
+msgid "Вакансии не найдены"
+msgstr "Бош орундар табылган жок"
 
-#: .\templates\userauth\profile.html:199
-#, fuzzy
+#: .\templates\partials\vacancy_list.html:60
+msgid "Попробуйте изменить параметры поиска"
+msgstr "Издөө параметрлериңизди өзгөртүп көрүңүз"
+
+#: .\templates\userauth\profile.html:52
+msgid "Telegram:"
+msgstr "Telegram:"
+
+#: .\templates\userauth\profile.html:54
+msgid "Подключен"
+msgstr "Туташкан"
+
+#: .\templates\userauth\profile.html:56
+msgid "Не подключен"
+msgstr "Туташкан эмес"
+
+#: .\templates\userauth\profile.html:82
+msgid "Telegram уведомления"
+msgstr "Telegram эскертмелери"
+
+#: .\templates\userauth\profile.html:84
+msgid "Получайте уведомления о новых откликах и сообщениях"
+msgstr "Жаңы жооптор жана билдирүүлөр жөнүндө эскертмелерди алыңыз"
+
+#: .\templates\userauth\profile.html:107
+msgid "Подключить"
+msgstr "Туташуу"
+
+#: .\templates\userauth\profile.html:120
+#| msgid "Соискателям"
+msgid "Профиль работодателя"
+msgstr "Жумуш берүүчүнүн профили"
+
+#: .\templates\userauth\profile.html:120
+#| msgid "Соискателям"
+msgid "Профиль соискателя"
+msgstr "Арыз берүүчүнүн профили"
+
+#: .\templates\userauth\profile.html:137
+#| msgid "Вакансии"
+msgid "Мои вакансии"
+msgstr "Менин вакансияларым"
+
+#: .\templates\userauth\profile.html:137
+msgid "Мои анкеты"
+msgstr "Менин анкеталарым"
+
+#: .\templates\userauth\profile.html:142
+#: .\templates\vacancy\vacancy_stats.html:32
+msgid "Отклики"
+msgstr "Жооптор"
+
+#: .\templates\userauth\profile.html:142
+msgid "Мои отклики"
+msgstr "Менин жоопторум"
+
+#: .\templates\userauth\profile.html:179
+msgid "Статистика"
+msgstr "Статистика"
+
+#: .\templates\userauth\profile.html:186 .\templates\userauth\profile.html:205
+#: .\templates\userauth\profile.html:393
+#| msgid "Посмотреть анкету"
+msgid "Посмотреть"
+msgstr "Көрүү"
+
+#: .\templates\userauth\profile.html:219
+#| msgid "У вас пока нет вакансий."
+msgid "У вас пока нет вакансий"
+msgstr "ССизде азырынча вакансия жок"
+
+#: .\templates\userauth\profile.html:221
+#| msgid "У вас пока нет вакансий."
+msgid "У вас пока нет анкет"
+msgstr "Сизде азырынча анкета жок."
+
+#: .\templates\userauth\profile.html:226
+msgid "Создайте свою первую вакансию, чтобы начать получать отклики"
+msgstr "Жоопторду ала баштоо үчүн биринчи жумуш жарыяңызды түзүңүз"
+
+#: .\templates\userauth\profile.html:228
+msgid "Создайте свою первую анкету, чтобы начать откликаться на вакансии"
+msgstr "Жумушка кайрылууну баштоо үчүн биринчи профилиңизди түзүңүз"
+
+#: .\templates\userauth\profile.html:262
+#: .\templates\vacancy\vacancy_stats.html:42
+#| msgid "Отклики"
+msgid "Отклик от"
+msgstr "Жооб"
+
+#: .\templates\userauth\profile.html:264
+#: .\templates\vacancy\vacancy_detail.html:211
+msgid "Отклик на вакансию"
+msgstr "Вакансияга жооп"
+
+#: .\templates\userauth\profile.html:273 .\templates\userauth\profile.html:293
+#: .\templates\userauth\profile.html:309
+#: .\templates\vacancy\vacancy_stats.html:59
+#: .\templates\vacancy\vacancy_stats.html:75
+#| msgid "Принят"
+msgid "Принято"
+msgstr "Кабыл алуу"
+
+#: .\templates\userauth\profile.html:275 .\templates\userauth\profile.html:295
+#: .\templates\userauth\profile.html:310
+#: .\templates\vacancy\vacancy_stats.html:61
+#: .\templates\vacancy\vacancy_stats.html:76
 #| msgid "Отклонён"
-msgid "Кандидат отклонён"
-msgstr "Кабыл албоо"
+msgid "Отклонено"
+msgstr "Четке кагылды"
 
-#: .\templates\userauth\profile.html:203
-msgid "Посмотреть анкету"
-msgstr "Анкетаны көрүү"
+#: .\templates\userauth\profile.html:303
+#: .\templates\vacancy\vacancy_stats.html:69
+#| msgid "Сохранить"
+msgid "Изменить"
+msgstr "өзгөртүү"
 
-#: .\templates\userauth\profile.html:242
-msgid "Нет откликов."
-msgstr "Жооптор жок."
+#: .\templates\userauth\profile.html:312
+#: .\templates\vacancy\respond_to_vacancy.html:15
+#: .\templates\vacancy\vacancy_stats.html:78
+msgid "Отправить"
+msgstr "Жөнөтүү"
 
-#: .\templates\userauth\public_profile.html:21
-#, fuzzy
+#: .\templates\userauth\profile.html:336 .\templates\userauth\profile.html:340
+msgid "Предыдущая"
+msgstr "Мурунку"
+
+#: .\templates\userauth\profile.html:352 .\templates\userauth\profile.html:356
+msgid "Следующая"
+msgstr "Кийинки"
+
+#: .\templates\userauth\profile.html:366
+#| msgid "У вас пока нет вакансий."
+msgid "У вас пока нет откликов"
+msgstr "Сизде азырынча жооп жок."
+
+#: .\templates\userauth\profile.html:369
+#| msgid "Кандидаты будут оставлять отклики и прикреплять свои анкеты"
+msgid "Когда кандидаты будут откликаться на ваши вакансии, они появятся здесь"
+msgstr ""
+"Талапкерлер сиздин бош орундарыңызга арыз бергенде, алар бул жерде көрүнөт"
+
+#: .\templates\userauth\profile.html:371
+msgid "Когда вы будете откликаться на вакансии, они появятся здесь"
+msgstr "Жумушка тапшырганыңызда, алар бул жерде пайда болот."
+
+#: .\templates\userauth\profile.html:403
+#| msgid "У вас пока нет вакансий."
+msgid "У вас пока нет избранных вакансий"
+msgstr "Сизде азырынча сүйүктүү вакансиялар жок."
+
+#: .\templates\userauth\profile.html:418
+#| msgid "Посмотреть анкету"
+msgid "Настройки профиля"
+msgstr "Профиль жөндөөлөрү"
+
+#: .\templates\userauth\profile.html:425 .\userauth\models.py:48
+msgid "Имя"
+msgstr "Аты"
+
+#: .\templates\userauth\profile.html:432
+msgid "Отвязать Telegram"
+msgstr "Telegramды ажыратыңыз"
+
+#: .\templates\userauth\profile.html:502
+msgid "Токен скопирован в буфер обмена"
+msgstr "Токен алмашуу буферине көчүрүлдү"
+
+#: .\templates\userauth\public_profile.html:77
 #| msgid "Работодателям"
 msgid "Вакансии пользователя"
-msgstr "Иш берүүчүлөр үчүн"
+msgstr "Колдонуучу жумуштары"
 
-#: .\templates\userauth\public_profile.html:42
-#, fuzzy
+#: .\templates\userauth\public_profile.html:107
 #| msgid "У вас пока нет вакансий."
 msgid "У пользователя пока нет вакансий."
-msgstr "Сизде азырынча вакансия жок."
+msgstr "Колдонуучунун азырынча бош орундары жок."
 
-#: .\templates\userauth\public_profile.html:46
-#, fuzzy
+#: .\templates\userauth\public_profile.html:111
 #| msgid "Работодателям"
 msgid "Анкеты пользователя"
-msgstr "Иш берүүчүлөр үчүн"
+msgstr "Колдонуучунун профилдери"
 
-#: .\templates\userauth\public_profile.html:59
-#, fuzzy
+#: .\templates\userauth\public_profile.html:124
 #| msgid "У вас ещё нет активных анкет."
 msgid "У пользователя ещё нет анкет."
-msgstr "Сизде азырынча активдүү профилдер жок."
+msgstr "Колдонуучунун азырынча профилдери жок."
+
+#: .\templates\vacancy\edit_vacancy.html:7
+#| msgid "Редактировать"
+msgid "Редактировать вакансию"
+msgstr "Вакансияны түзөтүү"
+
+#: .\templates\vacancy\edit_vacancy.html:47
+#: .\templates\vacancy\vacancy_create.html:44
+#| msgid "Вы уверены, что хотите удалить эту вакансию?"
+msgid "Вы уверены, что хотите удалить вакансию?"
+msgstr "Бул вакансияны чын эле жок кылгыңыз келеби?"
+
+#: .\templates\vacancy\edit_vacancy.html:50
+#| msgid "Создать вакансию"
+msgid "Удалить вакансию"
+msgstr "Вакансияны жок кылуу"
 
 #: .\templates\vacancy\respond_to_vacancy.html:3
-#, fuzzy, python-format
+#, python-format
 #| msgid "    Отклик на вакансию: %(title)s "
 msgid "    Отклик на вакансию: %(name)s "
-msgstr "Вакансияга жооп: %(title)s"
+msgstr "Вакансияга жооп: %(name)s"
 
 #: .\templates\vacancy\respond_to_vacancy.html:8
 msgid "Выберите анкету:"
 msgstr "Анкетаны тандаңыз:"
 
-#: .\templates\vacancy\respond_to_vacancy.html:15
-msgid "Отправить"
-msgstr "Жөнөтүү"
-
-#: .\templates\vacancy\vacancy_create.html:7
-msgid "Создать вакансиюx"
-msgstr "Вакансия түзүү"
-
 #: .\templates\vacancy\vacancy_create.html:36
 msgid "Создать"
 msgstr "Түзүү"
 
-#: .\templates\vacancy\vacancy_detail.html:21
-#, fuzzy
-#| msgid "Посмотреть анкету"
-msgid "Посмотреть профиль"
-msgstr "Анкетаны көрүү"
-
-#: .\templates\vacancy\vacancy_detail.html:22
-#, fuzzy
-#| msgid "Удалить"
-msgid "Поделиться"
+#: .\templates\vacancy\vacancy_create.html:45
+msgid "Удалить"
 msgstr "Жок кылуу"
 
-#: .\templates\vacancy\vacancy_detail.html:24
-#, fuzzy
+#: .\templates\vacancy\vacancy_detail.html:56
+#| msgid "Посмотреть анкету"
+msgid "Посмотреть профиль"
+msgstr "Профилди көрүү"
+
+#: .\templates\vacancy\vacancy_detail.html:68
+#: .\templates\vacancy\vacancy_detail.html:308
 #| msgid "Отправить отклик"
 msgid "Отправить жалобу"
-msgstr "Жооп жөнөтүңүз"
+msgstr "Арыз тапшырыңыз"
 
-#: .\templates\vacancy\vacancy_detail.html:31
+#: .\templates\vacancy\vacancy_detail.html:79
 msgid "сом"
-msgstr ""
+msgstr "сом"
 
-#: .\templates\vacancy\vacancy_detail.html:44
+#: .\templates\vacancy\vacancy_detail.html:92
+msgid "Удалённая работа"
+msgstr "Алыстан иштөө"
+
+#: .\templates\vacancy\vacancy_detail.html:106
 msgid "Автор"
-msgstr ""
+msgstr "Автор"
 
-#: .\templates\vacancy\vacancy_detail.html:47
+#: .\templates\vacancy\vacancy_detail.html:111
 msgid "О компании"
 msgstr "Компания жөнүндө"
 
-#: .\templates\vacancy\vacancy_detail.html:50
+#: .\templates\vacancy\vacancy_detail.html:116
 msgid "Описание вакансии"
 msgstr "Вакансиянын сүрөттөмөсү"
 
-#: .\templates\vacancy\vacancy_detail.html:62
+#: .\templates\vacancy\vacancy_detail.html:135
 msgid "Вы уже откликнулись"
 msgstr "Сиз буга чейин жооп бергенсиз"
 
-#: .\templates\vacancy\vacancy_detail.html:64
+#: .\templates\vacancy\vacancy_detail.html:139
 msgid "Откликнуться"
 msgstr "Жооп бер"
 
-#: .\templates\vacancy\vacancy_detail.html:73
+#: .\templates\vacancy\vacancy_detail.html:145
+#| msgid "Создать аккаунт"
+msgid "Сперва войди в аккаунт"
+msgstr "Биринчиден, аккаунтуңузга кириңиз"
+
+#: .\templates\vacancy\vacancy_detail.html:159
 msgid "Похожие вакансии"
 msgstr "Окшош вакансиялар"
 
-#: .\templates\vacancy\vacancy_detail.html:102
-msgid "Нет похожих вакансий."
-msgstr "Окшош вакансиялар жок."
-
-#: .\templates\vacancy\vacancy_detail.html:114
-msgid "Отклик на вакансию"
-msgstr "Вакансияга жооп"
-
-#: .\templates\vacancy\vacancy_detail.html:115
+#: .\templates\vacancy\vacancy_detail.html:213
+#: .\templates\vacancy\vacancy_detail.html:285
 msgid "Закрыть"
 msgstr "Жабуу"
 
-#: .\templates\vacancy\vacancy_detail.html:119
+#: .\templates\vacancy\vacancy_detail.html:217
 msgid "Выберите анкету"
 msgstr "Анкетаңызды тандаңыз"
 
-#: .\templates\vacancy\vacancy_detail.html:124
+#: .\templates\vacancy\vacancy_detail.html:222
 msgid "Нет активных анкет"
 msgstr "Жигердүү анкета жок"
 
-#: .\templates\vacancy\vacancy_detail.html:130
+#: .\templates\vacancy\vacancy_detail.html:229
 msgid "Отправить отклик"
 msgstr "Жооп жөнөтүңүз"
 
+#: .\templates\vacancy\vacancy_detail.html:290
+msgid "Ваше имя"
+msgstr "Сенин атың"
+
+#: .\templates\vacancy\vacancy_detail.html:291
+msgid "Имя или Ник"
+msgstr "Аты же лакап аты"
+
+#: .\templates\vacancy\vacancy_detail.html:294
+msgid "Ваш Email"
+msgstr "Сиздин Email"
+
+#: .\templates\vacancy\vacancy_detail.html:295
+msgid "Email для связи"
+msgstr "Байланыш үчүн электрондук почта"
+
+#: .\templates\vacancy\vacancy_detail.html:299
+#| msgid "Отправить отклик"
+msgid "Причина жалобы"
+msgstr "Даттануунун себеби"
+
+#: .\templates\vacancy\vacancy_detail.html:300
+#| msgid "Выберите свою роль"
+msgid "Опишите проблему..."
+msgstr "Көйгөйдү сүрөттөп бериңиз..."
+
 #: .\templates\vacancy\vacancy_stats.html:7
-#, fuzzy, python-format
+#, python-format
 #| msgid "Статистика вакансии: %(title)s "
 msgid "Статистика вакансии: %(name)s"
-msgstr "Жумуш статистикасы: %(title)s"
+msgstr "Жумуш статистикасы: %(name)s"
 
-#: .\templates\vacancy\vacancy_stats.html:13
+#: .\templates\vacancy\vacancy_stats.html:12
 #, python-format
 msgid "Отклики: %(responses)s"
 msgstr "Жооптор: %(responses)s"
 
-#: .\templates\vacancy\vacancy_stats.html:18
-#, python-format
-msgid "Просмотры: %(views)s"
-msgstr ""
-
-#: .\templates\vacancy\vacancy_stats.html:23
-#, fuzzy, python-format
-#| msgid "Работодателям"
-msgid "Уникальные пользователи: %(uniq)s"
-msgstr "Иш берүүчүлөр үчүн"
-
-#: .\templates\vacancy\vacancy_stats.html:28
-#, python-format
-msgid "Уникальные IP: %(uniq_ip)s"
-msgstr ""
-
-#: .\templates\vacancy\vacancy_stats.html:33
-#, fuzzy
-#| msgid "Последние вакансии"
-msgid "Последние просмотры:"
-msgstr "Акыркы вакансиялар"
-
-#: .\templates\vacancy\vacancy_stats.html:43
-#, fuzzy
-#| msgid "Нет откликов."
-msgid "Нет просмотров"
-msgstr "Жооптор жок."
-
-#: .\templates\vacancy\vacancy_stats.html:50
+#: .\templates\vacancy\vacancy_stats.html:16
 #, python-format
 msgid "Создана: %(created)s"
 msgstr "Түзүлгөн: %(created)s"
 
-#: .\templates\vacancy\vacancy_stats.html:57
+#: .\templates\vacancy\vacancy_stats.html:19
+msgid "Статус:"
+msgstr "Статус:"
+
+#: .\templates\vacancy\vacancy_stats.html:21
 msgid "Активна"
 msgstr "Активдүү"
 
-#: .\templates\vacancy\vacancy_stats.html:59
+#: .\templates\vacancy\vacancy_stats.html:23
 msgid "Неактивна"
 msgstr "Жигерсиз"
 
+#: .\templates\vacancy\vacancy_stats.html:92
+#| msgid "У вас пока нет вакансий."
+msgid "У этой вакансии пока нет откликов"
+msgstr "Бул вакансияга азырынча эч кандай жооп жок."
+
+#: .\userauth\admin.py:13
+msgid "Персональная информация"
+msgstr "Жеке маалымат"
+
+#: .\userauth\admin.py:14
+msgid "Права"
+msgstr "Укуктар"
+
+#: .\userauth\admin.py:15
+msgid "Важные даты"
+msgstr "Маанилүү даталар"
+
 #: .\userauth\forms.py:29
-#, fuzzy
 #| msgid "Выберите свою роль"
 msgid "Введите пароль"
-msgstr "Өзүңүздүн ролуңузду тандаңыз"
+msgstr "Сырсөздү киргизиңиз"
 
 #: .\userauth\forms.py:43
-#, fuzzy
 #| msgid "Выберите свою роль"
 msgid "Старый пароль"
-msgstr "Өзүңүздүн ролуңузду тандаңыз"
+msgstr "Эски сырсөз"
 
 #: .\userauth\forms.py:47
 msgid "Новый пароль"
-msgstr ""
+msgstr "Жаңы сыр сөз"
 
 #: .\userauth\forms.py:51
-#, fuzzy
 #| msgid "Выберите свою роль"
 msgid "Повторите новый пароль"
-msgstr "Өзүңүздүн ролуңузду тандаңыз"
+msgstr "Жаңы сырсөздү кайталаңыз"
 
-#: .\userauth\models.py:8
+#: .\userauth\models.py:13
 msgid "Поле Email должно быть установлено."
-msgstr ""
+msgstr "Электрондук почта талаасы коюлушу керек."
 
-#: .\userauth\models.py:26
+#: .\userauth\models.py:31
 msgid "Суперпользователь должен иметь is_staff=True."
-msgstr ""
+msgstr "Супер колдонуучу болушу керек is_staff=True."
 
-#: .\userauth\models.py:28
+#: .\userauth\models.py:33
 msgid "Суперпользователь должен иметь is_superuser=True."
-msgstr ""
-
-#: .\userauth\models.py:39
-#, fuzzy
-#| msgid "Работодателям"
-msgid "Имя пользователя"
-msgstr "Иш берүүчүлөр үчүн"
-
-#: .\userauth\models.py:42
-#, fuzzy
-#| msgid "Удалённая работа"
-msgid "Электронная почта"
-msgstr "Алыстан иштөө"
-
-#: .\userauth\models.py:43
-msgid "Имя"
-msgstr ""
+msgstr "Супер колдонуучу болушу керек is_superuser=True."
 
 #: .\userauth\models.py:44
-#, fuzzy
+#| msgid "Работодателям"
+msgid "Имя пользователя"
+msgstr "Колдонуучунун аты"
+
+#: .\userauth\models.py:47
+#| msgid "Удалённая работа"
+msgid "Электронная почта"
+msgstr "E-mail"
+
+#: .\userauth\models.py:49
 #| msgid "Таргетированные вакансии"
 msgid "Разрешение на публикацию вакансий"
-msgstr "Максаттуу бош орундар"
+msgstr "Вакансияларды жарыялоого уруксат"
 
-#: .\userauth\models.py:52
-#, fuzzy
+#: .\userauth\models.py:58
 #| msgid "Соискатель:"
 msgid "Пользователь"
-msgstr "Талапкер:"
+msgstr "Колдонуучу"
 
-#: .\userauth\models.py:53
-#, fuzzy
+#: .\userauth\models.py:59
 #| msgid "Соискатели"
 msgid "Пользователи"
-msgstr "Талапкерлер"
+msgstr "Колдонуучулар"
 
 #: .\userauth\validation.py:7
-msgid "Неверное имя профиля. Разрешены только буквы, цифры и _ (3-32 символа)."
+msgid ""
+"Неверное имя профиля. Разрешены только буквы, цифры и _ (3-32 символа)."
 msgstr ""
+"Жараксыз профиль аты. Тамгалар, сандар жана _ (3-32 белги) гана уруксат."
+
+#, fuzzy
+#~ msgid "У вас нет доступа к этой анкете."
+#~ msgstr "Сизде азырынча активдүү профилдер жок."
+
+#~ msgid ""
+#~ "Для студентов и молодых специалистов — сотни вакансий от проверенных "
+#~ "работодателей Кыргызстана."
+#~ msgstr ""
+#~ "Студенттер жана жаш адистер үчүн - Кыргызстандагы текшерилген иш "
+#~ "берүүчүлөрдөн жүздөгөн вакансиялар."
+
+#~ msgid "Посмотреть вакансии"
+#~ msgstr "Вакансияларды көрүү"
+
+#~ msgid "Соискатели"
+#~ msgstr "Талапкерлер"
+
+#~ msgid "Почему студенты выбирают JobPortal"
+#~ msgstr "Эмне үчүн Студенттер ТАТТУУ БАЛАны тандашат"
+
+#~ msgid "Вакансии для студентов"
+#~ msgstr "Студенттер үчүн бош орундар"
+
+#~ msgid "Работодатели из Кыргызстана"
+#~ msgstr "Кыргызстандан жумуш берүүчүлөр"
+
+#~ msgid ""
+#~ "Только проверенные компании, которые заинтересованы в молодых талантах."
+#~ msgstr "Жаш таланттарга кызыккан далилденген компаниялар гана."
+
+#~ msgid "Поддержка и советы"
+#~ msgstr "Колдоо жана кеңеш"
+
+#~ msgid "Советы по резюме, подготовке к собеседованиям и развитию навыков."
+#~ msgstr ""
+#~ "Резюме, интервьюга даярдануу жана чеберчиликти өнүктүрүү боюнча кеңештер."
+
+#~ msgid "Готов начать карьеру уже сегодня?"
+#~ msgstr "Карьераңызды бүгүн баштоого даярсызбы?"
+
+#~ msgid "Всего 3 простых шага к найму лучших сотрудников"
+#~ msgstr "Мыкты кызматкерлерди жалдоо үчүн болгону 3 оңой кадам"
+
+#~ msgid "Что говорят работодатели"
+#~ msgstr "Иш берүүчүлөр эмне дейт"
+
+#~ msgid ""
+#~ "Благодаря СЛАДКИЙ МАЛЬЧИК мы сократили время подбора сотрудников в 2 раза. "
+#~ "Отличная платформа!"
+#~ msgstr ""
+#~ "ТАТТУУ БАЛА компаниясынын аркасында кызматкерлерди кабыл алуу убактысын 2 "
+#~ "эсеге кыскарттык. Мыкты платформа!"
+
+#~ msgid "Основатель, StartupKG"
+#~ msgstr "Негиздөөчүсү, StartupKG"
+
+#~ msgid ""
+#~ "Нашли 3 отличных разработчика за неделю. Сервис действительно работает!"
+#~ msgstr ""
+#~ "Бир жуманын ичинде 3 мыкты иштеп чыгуучу табылды. Кызмат чындап иштейт!"
+
+#~ msgid ""
+#~ "Удобный интерфейс и качественные кандидаты. Рекомендую всем HR-специалистам."
+#~ msgstr ""
+#~ "Ыңгайлуу интерфейс жана сапаттуу талапкерлер. Мен аны бардык HR адистерине "
+#~ "сунуштайм."
+
+#, python-format
+#~ msgid "До %(salary)s сом "
+#~ msgstr "%(salary)s сомго чейин"
+
+#~ msgid "У вас ещё нет активных анкет."
+#~ msgstr "Сизде азырынча активдүү профилдер жок."
+
+#~ msgid "Статус отклика:"
+#~ msgstr "Жооптун абалы:"
+
+#~ msgid "Вы ещё не отправляли отклики."
+#~ msgstr "Сиз азырынча эч кандай жооп бере элексиз."
+
+#~ msgid "Деактивировать"
+#~ msgstr "Убактылуу өчүрүү"
+
+#~ msgid "Активировать"
+#~ msgstr "Иштетүү"
+
+#~ msgid "Отклик:"
+#~ msgstr "Жооп:"
+
+#~ msgid "Обновить"
+#~ msgstr "Жаңыртуу"
+
+#, fuzzy
+#~ msgid "Кандидат отклонён"
+#~ msgstr "Кабыл албоо"
+
+#~ msgid "Нет откликов."
+#~ msgstr "Жооптор жок."
+
+#~ msgid "Создать вакансиюx"
+#~ msgstr "Вакансия түзүү"
+
+#, fuzzy
+#~ msgid "Поделиться"
+#~ msgstr "Жок кылуу"
+
+#~ msgid "Нет похожих вакансий."
+#~ msgstr "Окшош вакансиялар жок."
+
+#, fuzzy, python-format
+#~ msgid "Уникальные пользователи: %(uniq)s"
+#~ msgstr "Иш берүүчүлөр үчүн"
+
+#, fuzzy
+#~ msgid "Последние просмотры:"
+#~ msgstr "Акыркы вакансиялар"
+
+#, fuzzy
+#~ msgid "Нет просмотров"
+#~ msgstr "Жооптор жок."
 
 #~ msgid "Главная"
 #~ msgstr "Башкы бет"
