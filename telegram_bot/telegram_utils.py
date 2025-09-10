@@ -68,7 +68,7 @@ async def notify_users(vacancy: Vacancy, user_id):
 async def notify_vacancy_author(telegram_id, response):
     bot = get_bot()
     try:
-        worker_profile = await sync_to_async(lambda: getattr(response.vacancy.user, "telegram_profile", None))()
+        worker_profile = await sync_to_async(lambda: getattr(response.anketa.user, "telegram_profile", None))()
         if worker_profile and worker_profile.username:
             worker_contact = f"@{worker_profile.username}"
         else:
